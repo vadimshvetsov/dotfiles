@@ -35,7 +35,12 @@
         depth: 1
     - name: Install fzf
       script: ~/.fzf/install
-    - name: Install ag
+    - name: Install ag for OS X
       package:
         name: the_silver_searcher
         state: latest
+      when: ansible_distribution == "MacOSX"
+    - name: Install ag for Debian
+      package:
+        name: silversearcher-ag
+      when: ansible_distribution == "Debian"
