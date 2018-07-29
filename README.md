@@ -1,7 +1,7 @@
 # Dotfiles
 
 ### Installation
-- Install `git`, `python` and at master machine
+- Install `git` and `python` at master machine
 - Install `ansible` with `pip` package manager
 ```sh
 pip install ansible
