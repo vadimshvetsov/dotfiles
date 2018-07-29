@@ -40,7 +40,7 @@
         name: the_silver_searcher
         state: latest
       when: ansible_distribution == "MacOSX"
-    - name: Install ag for Debian
+    - name: Install ag for Linux
       package:
         name: silversearcher-ag
       when: ansible_system == "Linux"
