@@ -44,3 +44,5 @@
       package:
         name: silversearcher-ag
       when: ansible_system == "Linux"
+    - name: Install all vim plugins
+      raw: nvim +PlugInstall +q +q
