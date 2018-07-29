@@ -28,10 +28,13 @@
         dest: ~/.local/share/nvim/site/autoload/plug.vim
         url: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
         force: yes
+    - name: Clone fzf
+      git:
+        repo: https://github.com/junegunn/fzf.git
+        dest: ~/.fzf
+        depth: 1
     - name: Install fzf
-      package:
-        name: fzf
-        state: latest
+      script: ~/.fzf/install
     - name: Install ag
       package:
         name: the_silver_searcher
