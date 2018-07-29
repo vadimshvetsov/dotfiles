@@ -43,4 +43,4 @@
     - name: Install ag for Debian
       package:
         name: silversearcher-ag
-      when: ansible_distribution == "Debian"
+      when: ansible_system == "Linux"
