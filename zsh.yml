@@ -1,0 +1,23 @@
+---
+- hosts: local
+  tasks:
+    - name: Install zsh
+      package:
+        name: zsh
+        state: latest
+    - file:
+        src: "{{ playbook_dir }}/zsh/{{ item }}"
+        path: "~/{{ item }}"
+        state: link
+        force: true
+      with_items:
+        - .zshrc
+        - .bashrc
+    - file:
+        path: ~/.zzsh/themes
+        state: directory
+    - file:
+        src: "{{ playbook_dir }}/zsh/dracula.zsh-theme"
+        path: ~/.zzsh/themes/dracula.zsh-theme
+        state: link
+        force: true

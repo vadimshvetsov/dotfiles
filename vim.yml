@@ -1,0 +1,23 @@
+---
+- hosts: local
+  tasks:
+    - name: Install neovim
+      package:
+        name: neovim
+        state: latest
+    - file:
+        path: ~/.config/nvim
+        state: directory
+    - file:
+        src: "{{ playbook_dir }}/vim/init.vim"
+        path: ~/.config/nvim/init.vim
+        state: link
+        force: true
+    - file:
+        path: ~/.vim
+        state: directory
+    - file:
+        src: "{{ playbook_dir }}/vim/UltiSnips"
+        path: ~/.vim/UltiSnips
+        state: link
+        force: true
