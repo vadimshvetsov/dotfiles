@@ -19,7 +19,6 @@
         src: "{{ playbook_dir }}/vim/UltiSnips"
         path: ~/.vim/UltiSnips
         state: link
-        force: true
 
     - file:
         path: ~/.local/share/nvim/site/autoload
@@ -29,7 +28,6 @@
         dest: ~/.local/share/nvim/site/autoload/plug.vim
         url: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
         force: yes
-
     - name: Clone fzf repo
       git:
         repo: https://github.com/junegunn/fzf.git
@@ -37,7 +35,6 @@
         depth: 1
     - name: Install fzf
       script: ~/.fzf/install
-
     - name: Install ag for OS X
       package:
         name: the_silver_searcher
@@ -49,10 +46,9 @@
       when: ansible_system == "Linux"
     - name: Install all vim plugins
       raw: nvim +PlugInstall +q +q
-
     - name: Clone nerd font installer
       git:
-        repo: https://github.com/ryanoasis/nerd-font
+        repo: https://github.com/ryanoasis/nerd-font.git
         dest: ~/.fonts
         depth: 1
     - file:
