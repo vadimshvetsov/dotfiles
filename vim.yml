@@ -51,4 +51,4 @@
         repo: https://github.com/ryanoasis/nerd-fonts.git
         dest: ~/.fonts
     - name: Install Mononoki font
-      script: ~/.fonts/install.sh Mononoki
+      raw: ~/.fonts/install.sh Mononoki
