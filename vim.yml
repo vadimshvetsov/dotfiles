@@ -12,7 +12,8 @@
         src: "{{ playbook_dir }}/vim/init.vim"
         path: ~/.config/nvim/init.vim
         state: link
-        force: true - file:
+        force: true
+    - file:
         path: ~/.vim
         state: directory
     - file:
