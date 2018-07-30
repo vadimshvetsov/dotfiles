@@ -28,3 +28,5 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 [ -f $HOME/.proling ] && source $HOME/.proling # ProLing keys
 [ -f $HOME/.qlean ] && source $HOME/.qlean # Qlean keys
 
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

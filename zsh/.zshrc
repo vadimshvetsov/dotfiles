@@ -6,3 +6,5 @@ plugins=(git zsh-autosuggestions)
 source $ZSH/oh-my-zsh.sh
 
 [ -f $HOME/.bashrc ] && source $HOME/.bashrc
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

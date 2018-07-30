@@ -20,7 +20,6 @@
         src: "{{ playbook_dir }}/vim/UltiSnips"
         path: ~/.vim/UltiSnips
         state: link
-
     - file:
         path: ~/.local/share/nvim/site/autoload
         state: directory
@@ -47,18 +46,9 @@
       when: ansible_system == "Linux"
     - name: Install all vim plugins
       raw: nvim +PlugInstall +q +q
-    - name: Clone nerd font installer
+    - name: Clone nerd font installer and fonts
       git:
-        repo: https://github.com/ryanoasis/nerd-font.git
+        repo: https://github.com/ryanoasis/nerd-fonts.git
         dest: ~/.fonts
-        depth: 1
-    - file:
-        path: ~/.fonts/patched-fonts/
-        state: directory
-    - name: Unarchive a file that needs to be downloaded (added in 2.0)
-      unarchive:
-        src: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.0.0/Mononoki.zip
-        dest: ~/.fonts/patched-fonts/Mononoki
-        remote_src: yes
     - name: Install Mononoki font
       script: ~/.fonts/install.sh Mononoki
