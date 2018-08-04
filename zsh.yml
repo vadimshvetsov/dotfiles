@@ -18,8 +18,8 @@
         state: directory
     - file:
         src: "{{ playbook_dir }}/zsh/dracula.zsh-theme"
-        path: ~/.zzsh/themes/dracula.zsh-theme
+        path: ~/.oh-my-zsh/themes/dracula.zsh-theme
         state: link
         force: true
-    - name: Install oh-my-zsh
+    - name: Install oh-my-zsh framework
       raw: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
