@@ -28,13 +28,23 @@
         dest: ~/.local/share/nvim/site/autoload/plug.vim
         url: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
         force: yes
-    - name: Clone fzf repo
+    - name: Clone fzf repo for Linux
       git:
         repo: https://github.com/junegunn/fzf.git
         dest: ~/.fzf
         depth: 1
-    - name: Install fzf
+      when: ansible_system == "Linux"
+    - name: Install fzf for OS X
+      package:
+        name: fzf
+        state: latest
+      when: ansible_distribution == "MacOSX"
+    - name: Install fzf key bindings for OS X
+      raw: $(brew --prefix)/opt/fzf/install
+      when: ansible_distribution == "MacOSX"
+    - name: Install fzf for Linux
       script: ~/.fzf/install
+      when: ansible_system == "Linux"
     - name: Install ag for OS X
       package:
         name: the_silver_searcher
@@ -46,9 +56,14 @@
       when: ansible_system == "Linux"
     - name: Install all vim plugins
       raw: nvim +PlugInstall +q +q
-    - name: Clone nerd font installer and fonts
+    - name: Install Mononoki font for OS X
+      raw: brew tap caskroom/fonts && brew cask install font-hack-nerd-font
+      when: ansible_distribution == "MacOSX"
+    - name: Clone nerd font installer and fonts for Linux
       git:
         repo: https://github.com/ryanoasis/nerd-fonts.git
         dest: ~/.fonts
-    - name: Install Mononoki font
+      when: ansible_system == "Linux"
+    - name: Install Mononoki font for Linux
       raw: ~/.fonts/install.sh Mononoki
+      when: ansible_system == "Linux"

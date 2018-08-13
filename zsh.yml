@@ -11,6 +11,7 @@
         state: link
         force: true
       with_items:
+        - .aliases
         - .zshrc
         - .bashrc
     - file:

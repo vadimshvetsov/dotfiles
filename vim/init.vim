@@ -116,16 +116,11 @@ nnoremap <silent> <leader>A :exe 'Ag!' expand('<cword>')<CR>
 nnoremap <silent> <leader>F :call fzf#vim#files('.', {'options':'--query '.expand('<cword>')})<CR>
 
 " Ag search only content not filenames
-" https://github.com/junegunn/fzf.vim/issues/346#issuecomment-288483704
 command! -bang -nargs=* Ag
-  \ call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
-
-" Ag search preview
-" command! -bang -nargs=* Ag
-"   \ call fzf#vim#ag(<q-args>,
-"   \                 <bang>0 ? fzf#vim#with_preview('up:60%')
-"   \                         : fzf#vim#with_preview('right:50%:hidden', '?'),
-"   \                 <bang>0)
+  \ call fzf#vim#ag(<q-args>,
+  \                 <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}, 'up:60%')
+  \                         : fzf#vim#with_preview({'options': '--delimeter : --nth 4..'}, 'right:50%:hidden', '?'),
+  \                 <bang>0)
 
 " CtrlSF settings
 nmap <silent> <leader>s <Plug>CtrlSFPrompt<CR>
