@@ -6,7 +6,7 @@
         name: python
         state: latest
     - name: Install neovim
-      raw: pip install neovim
+      raw: pip3 install neovim
     - file:
         path: ~/.config/nvim
         state: directory
