@@ -1,10 +1,12 @@
 ---
 - hosts: local
   tasks:
-    - name: Install neovim
+    - name: Install python
       package:
-        name: neovim
+        name: python
         state: latest
+    - name: Install neovim
+      raw: pip install neovim
     - file:
         path: ~/.config/nvim
         state: directory
