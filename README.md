@@ -12,5 +12,5 @@ git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 ```
 - Run playbooks for install appropriate things
 ```sh
-ansible-playbook vim.yml zsh.yml
+ansible-playbook zsh.yml vim.yml
 ```
