@@ -57,7 +57,7 @@
     - name: Install all vim plugins
       raw: nvim +PlugInstall +q +q
     - name: Install Mononoki font for OS X
-      raw: brew tap caskroom/fonts && brew cask install font-hack-nerd-font
+      raw: brew tap caskroom/fonts && brew cask install font-mononoki-nerd-font
       when: ansible_distribution == "MacOSX"
     - name: Clone nerd font installer and fonts for Linux
       git:
