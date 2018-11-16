@@ -6,6 +6,9 @@
         name: zsh
         state: latest
     - file:
+        path: ~/.oh-my-zsh/themes
+        state: directory
+    - file:
         src: "{{ playbook_dir }}/zsh/{{ item }}"
         path: "~/{{ item }}"
         state: link
