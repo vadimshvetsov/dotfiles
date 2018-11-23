@@ -58,6 +58,8 @@
       when: ansible_system == "Linux"
     - name: Install all vim plugins
       raw: nvim +PlugInstall +q +q
+    - name: Install vim-instant-markdown from npm
+      raw: npm -g install instant-markdown-d
     - name: Install Mononoki font for OS X
       raw: brew tap caskroom/fonts && brew cask install font-mononoki-nerd-font
       when: ansible_distribution == "MacOSX"

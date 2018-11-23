@@ -7,7 +7,7 @@ ZSH_THEME="dracula"
 plugins=(git zsh-autosuggestions)
 source $ZSH/oh-my-zsh.sh
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f $HOME/.fzf.zsh ] && source $HOME/.fzf.zsh
 
 # nvm for Node
 export NVM_DIR="$HOME/.nvm"

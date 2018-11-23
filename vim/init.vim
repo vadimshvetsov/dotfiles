@@ -18,6 +18,7 @@ Plug 'terryma/vim-multiple-cursors' " Multiple cursor
 Plug 'jiangmiao/auto-pairs' " Insert or delete brackets, parens, quotes in pair.
 Plug 'w0rp/ale' " Asynchronous lint engine
 Plug 'SirVer/ultisnips' " Snippet engine
+Plug 'suan/vim-instant-markdown' " Markdown instant preview support
 
 " Syntax plugins
 
@@ -165,3 +166,7 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-n>"
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
+
+" Markdown instant preview
+let g:instant_markdown_autostart = 0
+nmap <silent> <leader>P :InstantMarkdownPreview<CR>
