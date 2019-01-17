@@ -19,6 +19,7 @@ Plug 'jiangmiao/auto-pairs' " Insert or delete brackets, parens, quotes in pair.
 Plug 'w0rp/ale' " Asynchronous lint engine
 Plug 'SirVer/ultisnips' " Snippet engine
 Plug 'suan/vim-instant-markdown' " Markdown instant preview support
+Plug 'heavenshell/vim-jsdoc' " JSDoc support
 
 " Syntax plugins
 
@@ -170,3 +171,9 @@ let g:UltiSnipsSnippetsDir="~/.vim/UltiSnips"
 " Markdown instant preview
 let g:instant_markdown_autostart = 0
 nmap <silent> <leader>P :InstantMarkdownPreview<CR>
+
+" JSDoc prompt
+nmap <silent> <C-l> <Plug>(jsdoc)
+let g:jsdoc_allow_input_prompt = 1
+let g:jsdoc_input_description = 1
+let g:jsdoc_additional_descriptions = 0
