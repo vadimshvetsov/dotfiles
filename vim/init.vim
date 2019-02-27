@@ -16,7 +16,9 @@ Plug 'ryanoasis/vim-devicons' " Show icons for filetypes at NERDTree
 Plug 'tpope/vim-surround' " Surround add, replace and delete
 Plug 'terryma/vim-multiple-cursors' " Multiple cursor
 Plug 'jiangmiao/auto-pairs' " Insert or delete brackets, parens, quotes in pair.
+
 Plug 'w0rp/ale' " Asynchronous lint engine
+Plug 'prettier/vim-prettier', { 'do': 'npm install' }
 Plug 'SirVer/ultisnips' " Snippet engine
 Plug 'suan/vim-instant-markdown' " Markdown instant preview support
 Plug 'heavenshell/vim-jsdoc' " JSDoc support
@@ -48,6 +50,10 @@ set clipboard=unnamed
 set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
+
+" Set undofile
+set undodir=~/.vim/undodir
+set undofile
 
 " Set mouse
 if has('mouse')
@@ -136,18 +142,23 @@ nmap <silent> <leader>n <Plug>(ale_next_wrap)
 nmap <silent> <leader>N <Plug>(ale_previous_wrap)
 nmap <silent> <leader>l <Plug>(ale_fix)
 
-let g:ale_fix_on_save = 1
 let g:ale_linters = {
-  \ 'javascrtipt': ['eslint'],
+  \ 'javascript': ['eslint'],
   \}
 let g:ale_fixers = {
   \ 'javascript': ['eslint'],
   \}
+ 
+" Prettier
+nmap <Leader>p <Plug>(Prettier)
+" let g:prettier#exec_cmd_async = 1
+let g:prettier#autoformat = 0
+" autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.yaml,*.html PrettierAsync
 
 " JSON highlight
 let g:vim_json_syntax_conceal = 0
 hi! def link jsonKeyword Identifier
-au BufRead,BufNewFile {.babelrc,.eslintrc} set ft=json
+au BufRead,BufNewFile {.babelrc,.eslintrc,.prettierrc} set ft=json
 
 " Git
 nmap <silent> <leader>gs :Gstatus<CR>
@@ -173,7 +184,7 @@ let g:instant_markdown_autostart = 0
 nmap <silent> <leader>P :InstantMarkdownPreview<CR>
 
 " JSDoc prompt
-nmap <silent> <C-l> <Plug>(jsdoc)
+nmap <silent> <leader>j <Plug>(jsdoc)
 let g:jsdoc_allow_input_prompt = 1
 let g:jsdoc_input_description = 1
 let g:jsdoc_additional_descriptions = 0
