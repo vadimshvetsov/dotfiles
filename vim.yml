@@ -5,8 +5,19 @@
       package:
         name: python
         state: latest
+    - name: Install nvm
+      shell: 'curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash'
+      args:
+        creates: "~/.nvm/nvm.sh"
+    - name: Install node
+      shell: 'source ~/.nvm/nvm.sh && nvm install node'
+      args:
+        creates: "~/.nvm/versions/node"
+        executable: /bin/bash
     - name: Install neovim
-      raw: pip3 install neovim
+      package:
+        name: neovim
+        state: latest
     - file:
         path: ~/.config/nvim
         state: directory

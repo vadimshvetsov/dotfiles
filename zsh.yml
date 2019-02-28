@@ -6,9 +6,6 @@
         name: zsh
         state: latest
     - file:
-        path: ~/.oh-my-zsh/themes
-        state: directory
-    - file:
         src: "{{ playbook_dir }}/zsh/{{ item }}"
         path: "~/{{ item }}"
         state: link
@@ -17,6 +14,8 @@
         - .aliases
         - .zshrc
         - .bashrc
+    - name: Install oh-my-zsh framework
+      raw: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     - file:
         path: ~/.zzsh/themes
         state: directory
@@ -25,5 +24,7 @@
         path: ~/.oh-my-zsh/themes/dracula.zsh-theme
         state: link
         force: true
-    - name: Install oh-my-zsh framework
-      raw: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    - name: Add zsh to shell
+      raw: sudo sh -c "echo $(which zsh) >> /etc/shells"
+    - name: Make zsh default shell
+      raw: chsh -s $(which zsh)
