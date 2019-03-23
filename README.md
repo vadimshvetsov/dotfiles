@@ -1,7 +1,7 @@
 # Dotfiles
 
 ### Installation
-- Install `git` and `python` at master machine
+- Install `git` and `brew` at master machine
 - Install `ansible` with `pip` package manager
 ```sh
 sudo easy_install pip
