@@ -4,7 +4,8 @@
 - Install `git` and `python` at master machine
 - Install `ansible` with `pip` package manager
 ```sh
-sudo easy_install pip && pip install ansible
+sudo easy_install pip
+sudo pip install ansible
 ```
 - Clone this repo and jump into `dotfiles` folder
 ```sh
