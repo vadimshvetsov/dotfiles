@@ -71,6 +71,10 @@
       raw: nvim +PlugInstall +q +q
     - name: Install vim-instant-markdown from npm
       raw: npm -g install instant-markdown-d
+    - name: Install neovim from pip
+      raw: pip3 install --user neovim
+    - name: Install neovim from npm
+      raw: npm -g install neovim
     - name: Install Mononoki font for OS X
       raw: brew tap caskroom/fonts && brew cask install font-mononoki-nerd-font
       when: ansible_distribution == "MacOSX"

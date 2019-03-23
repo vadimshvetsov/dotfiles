@@ -28,3 +28,5 @@
       raw: sudo sh -c "echo $(which zsh) >> /etc/shells"
     - name: Make zsh default shell
       raw: chsh -s $(which zsh)
+    - name: Add zsh-suggestions
+      raw: git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
