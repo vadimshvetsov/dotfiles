@@ -22,6 +22,7 @@ Plug 'prettier/vim-prettier', { 'do': 'npm install' }
 Plug 'SirVer/ultisnips' " Snippet engine
 Plug 'suan/vim-instant-markdown' " Markdown instant preview support
 Plug 'heavenshell/vim-jsdoc' " JSDoc support
+Plug 'rizzatti/dash.vim' " Dash support
 
 " Syntax plugins
 
