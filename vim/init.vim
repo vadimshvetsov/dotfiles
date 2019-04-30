@@ -12,7 +12,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " Fuzzy finder
 Plug 'junegunn/fzf.vim' " Extend work with fzf
 Plug 'dyng/ctrlsf.vim' " Multiple file edit
 Plug 'tpope/vim-fugitive' " Git wrapper
-Plug 'ryanoasis/vim-devicons' " Show icons for filetypes at NERDTree
 Plug 'tpope/vim-surround' " Surround add, replace and delete
 Plug 'terryma/vim-multiple-cursors' " Multiple cursor
 Plug 'jiangmiao/auto-pairs' " Insert or delete brackets, parens, quotes in pair.
@@ -28,10 +27,11 @@ Plug 'rizzatti/dash.vim' " Dash support
 
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'mxw/vim-jsx', { 'for': 'javascript' }
-Plug 'jparise/vim-graphql', { 'for': 'javascript' }
+Plug 'jparise/vim-graphql'
 Plug 'styled-components/vim-styled-components'
 Plug 'elzr/vim-json', { 'for': 'json' }
 Plug 'pearofducks/ansible-vim'
+Plug 'jxnblk/vim-mdx-js'
 
 call plug#end()
 
@@ -149,12 +149,13 @@ let g:ale_linters = {
 let g:ale_fixers = {
   \ 'javascript': ['eslint'],
   \}
- 
+let g:ale_javascript_eslint_suppress_missing_config = 1
+
 " Prettier
 nmap <Leader>p <Plug>(Prettier)
-" let g:prettier#exec_cmd_async = 1
+let g:prettier#exec_cmd_async = 1
 let g:prettier#autoformat = 0
-" autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.yaml,*.html PrettierAsync
+autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.yaml,*.html PrettierAsync
 
 " JSON highlight
 let g:vim_json_syntax_conceal = 0
@@ -166,11 +167,6 @@ nmap <silent> <leader>gs :Gstatus<CR>
 nmap <silent> <leader>gb :Gblame<CR>
 nmap <silent> <leader>gr :Gread<CR>
 nmap <silent> <leader>gd :Gdiff<CR>
-
-" Devicons
-let g:WebDevIconsOS = 'Darwin'
-let g:WebDevIconsUnicodeDecorateFolderNodes = 1
-let g:DevIconsEnableFoldersOpenClose = 1
 
 " UltiSnips configuration
 nmap <silent> <leader>u :UltiSnipsEdit<CR>
