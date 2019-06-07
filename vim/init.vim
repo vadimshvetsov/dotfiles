@@ -51,6 +51,7 @@ set clipboard=unnamed
 set encoding=utf-8
 set termencoding=utf-8
 set fileencoding=utf-8
+language en_US.UTF-8
 
 " Set undofile
 set undodir=~/.vim/undodir
@@ -150,6 +151,7 @@ let g:ale_fixers = {
   \ 'javascript': ['eslint'],
   \}
 let g:ale_javascript_eslint_suppress_missing_config = 1
+let g:ale_pattern_options = {'\.graphql$': {'ale_enabled': 0}}
 
 " Prettier
 nmap <Leader>p <Plug>(Prettier)
