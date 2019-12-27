@@ -25,6 +25,7 @@ Plug 'rizzatti/dash.vim' " Dash support
 
 " Syntax plugins
 
+Plug 'elixir-editors/vim-elixir'
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 Plug 'mxw/vim-jsx', { 'for': 'javascript' }
 Plug 'jparise/vim-graphql'
@@ -146,6 +147,7 @@ nmap <silent> <leader>l <Plug>(ale_fix)
 
 let g:ale_linters = {
   \ 'javascript': ['eslint'],
+  \ 'elixir': [],
   \}
 let g:ale_fixers = {
   \ 'javascript': ['eslint'],
