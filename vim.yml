@@ -1,88 +1,44 @@
 ---
 - hosts: local
   tasks:
-    - name: Install python
+    - name: Install vim
       package:
-        name: python
-        state: latest
-    - name: Install nvm
-      shell: 'curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash'
-      args:
-        creates: "~/.nvm/nvm.sh"
-    - name: Install node
-      shell: 'source ~/.nvm/nvm.sh && nvm install node'
-      args:
-        creates: "~/.nvm/versions/node"
-        executable: /bin/bash
-    - name: Install neovim
-      package:
-        name: neovim
-        state: latest
-    - file:
-        path: ~/.config/nvim
-        state: directory
-    - file:
-        src: "{{ playbook_dir }}/vim/init.vim"
-        path: ~/.config/nvim/init.vim
+        name: vim
+        state: present
+
+    - name: Link ~/.vimrc
+      file:
+        src: "{{ playbook_dir }}/.vimrc"
+        path: ~/.vimrc
         state: link
         force: true
-    - file:
+
+    - name: Create ~/.vim directory    
+      file:
         path: ~/.vim
         state: directory
-    - file:
-        src: "{{ playbook_dir }}/vim/UltiSnips"
-        path: ~/.vim/UltiSnips
-        state: link
-    - file:
-        path: ~/.local/share/nvim/site/autoload
+
+    - name: Create ~/.vim/autoload directory
+      file:
+        path: ~/.vim/autoload
         state: directory
+
+    - name: Create ~/.vim/undodir directory
+      file:
+        path: ~/.vim/undodir
+        state: directory
+
     - name: Install vim-plug
       get_url:
-        dest: ~/.local/share/nvim/site/autoload/plug.vim
+        dest: ~/.vim/autoload/plug.vim
         url: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
         force: yes
-    - name: Clone fzf repo for Linux
-      git:
-        repo: https://github.com/junegunn/fzf.git
-        dest: ~/.fzf
-        depth: 1
-      when: ansible_system == "Linux"
-    - name: Install fzf for OS X
-      package:
-        name: fzf
-        state: latest
-      when: ansible_distribution == "MacOSX"
-    - name: Install fzf key bindings for OS X
-      raw: $(brew --prefix)/opt/fzf/install
-      when: ansible_distribution == "MacOSX"
-    - name: Install fzf for Linux
-      script: ~/.fzf/install
-      when: ansible_system == "Linux"
+
+    - name: Install all vim plugins
+      raw: vim +PlugInstall +q +q
+      
     - name: Install ag for OS X
       package:
         name: the_silver_searcher
         state: latest
       when: ansible_distribution == "MacOSX"
-    - name: Install ag for Linux
-      package:
-        name: silversearcher-ag
-      when: ansible_system == "Linux"
-    - name: Install all vim plugins
-      raw: nvim +PlugInstall +q +q
-    - name: Install vim-instant-markdown from npm
-      raw: npm -g install instant-markdown-d
-    - name: Install neovim from pip
-      raw: pip3 install --user neovim
-    - name: Install neovim from npm
-      raw: npm -g install neovim
-    - name: Install Mononoki font for OS X
-      raw: brew tap homebrew/cask-fonts && brew cask install font-mononoki-nerd-font
-      when: ansible_distribution == "MacOSX"
-    - name: Clone nerd font installer and fonts for Linux
-      git:
-        repo: https://github.com/ryanoasis/nerd-fonts.git
-        dest: ~/.fonts
-      when: ansible_system == "Linux"
-    - name: Install Mononoki font for Linux
-      raw: ~/.fonts/install.sh Mononoki
-      when: ansible_system == "Linux"

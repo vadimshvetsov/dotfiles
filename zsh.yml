@@ -1,32 +1,35 @@
 ---
 - hosts: local
   tasks:
-    - name: Install zsh
+    # Move out somewhere
+    - name: Install zsh and zplu
       package:
-        name: zsh
+        name: "{{ item }}"
         state: latest
-    - file:
-        src: "{{ playbook_dir }}/zsh/{{ item }}"
-        path: "~/{{ item }}"
-        state: link
-        force: true
       with_items:
-        - .aliases
-        - .zshrc
-        - .bashrc
-    - name: Install oh-my-zsh framework
-      raw: sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-    - file:
-        path: ~/.zzsh/themes
-        state: directory
-    - file:
-        src: "{{ playbook_dir }}/zsh/dracula.zsh-theme"
-        path: ~/.oh-my-zsh/themes/dracula.zsh-theme
+        - zsh
+        - zplug
+
+    - name: Link .zshrc to home directory
+      file:
+        src: "{{ playbook_dir }}/.zshrc"
+        path: "~/.zshrc"
         state: link
         force: true
-    - name: Add zsh to shell
-      raw: sudo sh -c "echo $(which zsh) >> /etc/shells"
-    - name: Make zsh default shell
-      raw: chsh -s $(which zsh)
-    - name: Add zsh-suggestions
-      raw: git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
+    - block:
+      - name: Check if homebrew zsh is installed
+        stat: path=/usr/local/bin/zsh
+        register: brew_zsh
+
+      - name: Add homebrew zsh to /etc/shells
+        lineinfile: 
+          dest=/etc/shells
+          line="/usr/local/bin/zsh"
+          state=present
+        when: brew_zsh.stat.exists
+
+      - user:
+          name: "{{ ansible_user_id }}"
+          shell: /usr/local/bin/zsh
+      become: yes

@@ -1,0 +1,11 @@
+---
+- hosts: local
+  tasks:
+    - homebrew_cask:
+        name: hyper
+        state: present
+    - file:
+        src: "{{ playbook_dir }}/.hyper.js"
+        path: "~/.hyper.js"
+        state: link
+        force: true
