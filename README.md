@@ -1,6 +1,7 @@
 # Dotfiles
 
-### Installation
+### Installation for OS X
+
 - Install `git` and [`brew`](https://brew.sh/) at master machine
 
 - Install `python3` with brew for getting pip3
@@ -31,7 +32,32 @@ ansible-playbook apps.yml development.yml terminal.yml vim.yml
 ansible-playbook -K zsh.yml
 ```
 
-Bugs:
+### Installation for Linux
+
+- Install `git` and `ansible`
+
+```sh
+sudo apt get install git ansible -y
+```
+
+- Clone this repo and jump into `dotfiles` folder
+
+```sh
+git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
+```
+- Run playbooks for install appropriate things
+
+```sh
+ansible-playbook vim.yml
+```
+
+- Some playbooks have become directives and need permissions to install
+
+```sh
+ansible-playbook -K zsh.yml
+```
+
+### Known bugs with hyper terminal on Mac:
 
 Hyper terminal not reloading shell after `chsh` execution, issue [here](https://github.com/zeit/hyper/issues/81)
 As temporary solution - only reboot
