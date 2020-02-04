@@ -22,7 +22,7 @@ git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 - Run playbooks for install appropriate things
 
 ```sh
-ansible-playbook apps.yml terminal.yml vim.yml
+ansible-playbook apps.yml development.yml terminal.yml vim.yml
 ```
 
 - Some playbooks have become directives and need permissions to install
@@ -37,6 +37,7 @@ Hyper terminal not reloading shell after `chsh` execution, issue [here](https://
 As temporary solution - only reboot
 
 Hyper terminal showing % (percent sign) on first tab, issue [here](https://github.com/zeit/hyper/issues/2144)
+
 As temporary fix - adding this to .zshrc
 ```sh
 unsetopt PROMPT_SP

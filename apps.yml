@@ -5,3 +5,7 @@
       homebrew_cask:
         name: onedrive
         state: present
+    - name: Install TeamViewer
+      homebrew_cask:
+        name: teamviewer
+        state: present

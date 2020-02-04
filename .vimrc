@@ -2,7 +2,8 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'dracula/vim', { 'as': 'dracula' } " Vim dracula color scheme - https://draculatheme.com/vim/
 
-Plug 'scrooloose/nerdtree' " Show files tree on the left sider Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' } " Fuzzy finder
+Plug 'scrooloose/nerdtree' " Show files tree on the left sider
+Plug '/usr/local/opt/fzf' " Fuzzy finder, installed via brew with Ag
 Plug 'junegunn/fzf.vim' " Extend work with fzf adding Ag
 Plug 'scrooloose/nerdcommenter' " Comments functionality mappings
 Plug 'vim-airline/vim-airline' " Draw a nice statusline at the bottom of each window 
@@ -25,7 +26,7 @@ Plug 'mhinz/vim-mix-format'
 " Syntax plugins
 
 Plug 'pearofducks/ansible-vim'
-Plug 'elixir-editors/vim-elixir'
+Plug 'elixir-editors/vim-elixir' 
 " Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
 " Plug 'mxw/vim-jsx', { 'for': 'javascript' }
 " Plug 'jparise/vim-graphql'
@@ -65,6 +66,9 @@ let mapleader = "\<Space>"
 " File save/quit
 nmap <silent> <leader>s :w<CR>
 nmap <silent> <leader>q :q<CR>
+
+" Format Elixir files on save
+let g:mix_format_on_save = 1
 
 " Edit .vimrc
 map <silent> <leader>v :vsp $MYVIMRC<CR>

@@ -36,6 +36,11 @@
 
     - name: Install all vim plugins
       raw: vim +PlugInstall +q +q
+
+    - name: Install fzf
+      package:
+        name: fzf
+        state: latest
       
     - name: Install ag for OS X
       package:

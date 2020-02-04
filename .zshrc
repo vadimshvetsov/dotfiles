@@ -20,5 +20,3 @@ fi
 # Temp fix with hyper terminal showing % (percent sign) on first tab
 # https://github.com/zeit/hyper/issues/2144
 unsetopt PROMPT_SP
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
