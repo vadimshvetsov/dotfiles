@@ -23,13 +23,13 @@ git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 - Run playbooks for install appropriate things
 
 ```sh
-ansible-playbook apps.yml development.yml terminal.yml vim.yml
+ansible-playbook vim/vim.yml
 ```
 
 - Some playbooks have become directives and need permissions to install
 
 ```sh
-ansible-playbook -K zsh.yml
+ansible-playbook -K zsh/zsh.yml
 ```
 
 ### Installation for Linux
@@ -37,7 +37,7 @@ ansible-playbook -K zsh.yml
 - Install `git` and `ansible`
 
 ```sh
-sudo apt get install git ansible -y
+sudo apt-get install git ansible python3-distutils python-minimal aptitude -y
 ```
 
 - Clone this repo and jump into `dotfiles` folder
@@ -48,13 +48,7 @@ git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 - Run playbooks for install appropriate things
 
 ```sh
-ansible-playbook vim.yml
-```
-
-- Some playbooks have become directives and need permissions to install
-
-```sh
-ansible-playbook -K zsh.yml
+ansible-playbook vim/vim.yml
 ```
 
 ### Known bugs with hyper terminal on Mac:

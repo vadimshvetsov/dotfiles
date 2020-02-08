@@ -4,6 +4,8 @@ Plug 'dracula/vim', { 'as': 'dracula' } " Vim dracula color scheme - https://dra
 
 Plug 'scrooloose/nerdtree' " Show files tree on the left sider
 Plug '/usr/local/opt/fzf' " Fuzzy finder, installed via brew with Ag
+
+
 Plug 'junegunn/fzf.vim' " Extend work with fzf adding Ag
 Plug 'scrooloose/nerdcommenter' " Comments functionality mappings
 Plug 'vim-airline/vim-airline' " Draw a nice statusline at the bottom of each window 
@@ -111,3 +113,9 @@ command! -bang -nargs=* Ag
 	\                 <bang>0 ? fzf#vim#with_preview({'options': '--color=bg+:-1 --delimiter : --nth 4..'}, 'up:60%')
 	\                         : fzf#vim#with_preview({'options': '--color=bg+:-1 --delimeter : --nth 4..'}, 'right:50%:hidden', '?'),
 	\                 <bang>0)
+
+" FZF existance workaround for installed fzf via apt-get
+" https://github.com/junegunn/fzf.vim/issues/848#issuecomment-512777975
+if !empty(glob("/usr/share/doc/fzf/examples/fzf.vim"))
+	source /usr/share/doc/fzf/examples/fzf.vim
+endif

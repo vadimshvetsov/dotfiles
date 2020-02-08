@@ -9,3 +9,18 @@
       homebrew_cask:
         name: teamviewer
         state: present
+    - name: Install SQLPro for Postgres
+      homebrew_cask:
+        name: sqlpro-for-postgres
+        state: present
+
+    - name: Install Sequel Pro
+      homebrew_cask:
+        name: sequel-pro
+        state: present
+
+    - name: Install Docker Desktop
+      homebrew_cask:
+        name: docker
+        state: present
+

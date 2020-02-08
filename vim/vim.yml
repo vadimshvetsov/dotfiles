@@ -5,6 +5,26 @@
       package:
         name: vim
         state: present
+      become: yes
+
+    - name: Install fzf
+      package:
+        name: fzf
+        state: latest
+      become: yes
+      
+    - name: Install ag on OS X
+      package:
+        name: the_silver_searcher
+        state: latest
+      when: ansible_distribution == "MacOSX"
+
+    - name: Install ag on Linux
+      package:
+        name: silversearcher-ag
+        state: latest
+      when: ansible_system == "Linux"
+      become: yes
 
     - name: Link ~/.vimrc
       file:
@@ -22,6 +42,7 @@
       file:
         path: ~/.vim/autoload
         state: directory
+        mode: '0755'
 
     - name: Create ~/.vim/undodir directory
       file:
@@ -35,15 +56,5 @@
         force: yes
 
     - name: Install all vim plugins
-      raw: vim +PlugInstall +q +q
+      raw: vim +"PlugInstall" +qa
 
-    - name: Install fzf
-      package:
-        name: fzf
-        state: latest
-      
-    - name: Install ag for OS X
-      package:
-        name: the_silver_searcher
-        state: latest
-      when: ansible_distribution == "MacOSX"
