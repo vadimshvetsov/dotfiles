@@ -5,13 +5,13 @@
       package:
         name: vim
         state: present
-      become: yes
+      become: {{ 'yes' if ansible_system == "Linux" else 'no' }}
 
     - name: Install fzf
       package:
         name: fzf
         state: latest
-      become: yes
+      become: {{ 'yes' if ansible_system == "Linux" else 'no' }}
       
     - name: Install ag on OS X
       package:
