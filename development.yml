@@ -15,3 +15,9 @@
       package:
         name:  postgresql
         state: present
+
+    - name: Create ~/.iex_history file on OS X
+      file:
+        path: ~/.iex_history
+        state: directory
+      when: ansible_distribution == "MacOSX"

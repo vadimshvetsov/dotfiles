@@ -9,6 +9,9 @@ if zplug check || zplug install; then
   zplug load
 fi
 
+# Enable shell_history in IEx
+export ERL_AFLAGS="-kernel shell_history enabled"
+
 # Temp fix with hyper terminal showing % (percent sign) on first tab
 # https://github.com/zeit/hyper/issues/2144
 unsetopt PROMPT_SP
