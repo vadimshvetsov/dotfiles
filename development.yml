@@ -19,5 +19,5 @@
     - name: Create ~/.iex_history file on OS X
       file:
         path: ~/.iex_history
-        state: directory
+        state: touch
       when: ansible_distribution == "MacOSX"
