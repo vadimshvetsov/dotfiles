@@ -15,26 +15,20 @@ Plug 'jiangmiao/auto-pairs' " Insert or delete brackets, parens, quotes in pair.
 " Plug 'dyng/ctrlsf.vim' " Multiple file edit
 " Plug 'terryma/vim-multiple-cursors' " Multiple cursor
 
-" Plug 'w0rp/ale' " Asynchronous lint engine
 " Plug 'SirVer/ultisnips' " Snippet engine
 " Plug 'suan/vim-instant-markdown' " Markdown instant preview support
-" Plug 'heavenshell/vim-jsdoc' " JSDoc support
-" Plug 'rizzatti/dash.vim' " Dash support
 
 " Format plugins
 Plug 'mhinz/vim-mix-format'
-" Plug 'prettier/vim-prettier', { 'do': 'npm install' }
+Plug 'prettier/vim-prettier', { 'do': 'npm install' }
+Plug 'sheerun/vim-polyglot'
 
-" Syntax plugins
-
-Plug 'pearofducks/ansible-vim'
-Plug 'elixir-editors/vim-elixir' 
-" Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
-" Plug 'mxw/vim-jsx', { 'for': 'javascript' }
-" Plug 'jparise/vim-graphql'
-" Plug 'styled-components/vim-styled-components'
-" Plug 'elzr/vim-json', { 'for': 'json' }
-" Plug 'jxnblk/vim-mdx-js'
+" Language Server Client dependecies
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
 
 call plug#end()
 
@@ -52,10 +46,15 @@ set showmatch
 set clipboard=unnamed " Yank to clipboard back and force
 set splitright " Split right new buffer
 
-" " Set undofile
+" Set undofile
 set undodir=~/.vim/undodir
 set undofile
 set noswapfile
+
+" Set mouse
+if has('mouse')
+  set mouse=a
+endif
 
 " Dracula theme
 syntax on
@@ -133,3 +132,16 @@ command! -bang -nargs=* Ag
 if !empty(glob("/usr/share/doc/fzf/examples/fzf.vim"))
 	source /usr/share/doc/fzf/examples/fzf.vim
 endif
+
+" Prettier works async
+let g:prettier#exec_cmd_async = 1
+let g:prettier#autoformat_config_present = 1
+let g:prettier#autoformat_require_pragma = 0
+
+" Language servers mappings
+
+let g:lsp_signs_enabled = 0
+let g:lsp_highlights_enabled = 0
+let g:lsp_textprop_enabled = 0
+nmap <silent> <leader>gd :LspDefinition<CR>
+nmap <silent> <leader>gh :LspHover<CR>

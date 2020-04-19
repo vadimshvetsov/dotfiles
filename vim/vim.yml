@@ -57,4 +57,3 @@
 
     - name: Install all vim plugins
       raw: vim +"PlugInstall" +qa
-

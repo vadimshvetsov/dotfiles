@@ -24,3 +24,8 @@
         name: docker
         state: present
 
+    - name: Install Source Tree
+      homebrew_cask:
+        name: sourcetree
+        state: present
+
