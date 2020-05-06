@@ -11,12 +11,8 @@ Plug 'scrooloose/nerdcommenter' " Comments functionality mappings
 Plug 'vim-airline/vim-airline' " Draw a nice statusline at the bottom of each window 
 Plug 'vim-airline/vim-airline-themes' " Statusline theme configuring possibility
 Plug 'jiangmiao/auto-pairs' " Insert or delete brackets, parens, quotes in pair.
-" Plug 'tpope/vim-surround' " Surround add, replace and delete
-" Plug 'dyng/ctrlsf.vim' " Multiple file edit
-" Plug 'terryma/vim-multiple-cursors' " Multiple cursor
-
+Plug 'tpope/vim-surround' " Surround add, replace and delete
 " Plug 'SirVer/ultisnips' " Snippet engine
-" Plug 'suan/vim-instant-markdown' " Markdown instant preview support
 
 " Format plugins
 Plug 'mhinz/vim-mix-format'
@@ -133,15 +129,28 @@ if !empty(glob("/usr/share/doc/fzf/examples/fzf.vim"))
 	source /usr/share/doc/fzf/examples/fzf.vim
 endif
 
-" Prettier works async
+" LSP
+
+set updatetime=300 
+
+let g:lsp_diagnostics_float_delay = 100
+let g:lsp_diagnostics_float_cursor = 1
+let g:lsp_signs_error = {'text': '✗'}
+let g:lsp_signs_warning = {'text': '!'}
+let g:lsp_signs_information = {'text': '•'}
+let g:lsp_signs_hint = {'text': '✐'}
+
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr> <CR> pumvisible() ? asyncomplete#close_popup() . "\<CR>" : "\<CR>"
+
+nmap <silent> <leader>d :LspDefinition<CR>
+nmap <silent> <leader>t :LspTypeDefinition<CR>
+nmap <silent> <leader>h :LspHover<CR>
+
+" Prettier works async (must be after LSP)
 let g:prettier#exec_cmd_async = 1
+let g:prettier#autoformat = 1
 let g:prettier#autoformat_config_present = 1
 let g:prettier#autoformat_require_pragma = 0
 
-" Language servers mappings
-
-let g:lsp_signs_enabled = 0
-let g:lsp_highlights_enabled = 0
-let g:lsp_textprop_enabled = 0
-nmap <silent> <leader>gd :LspDefinition<CR>
-nmap <silent> <leader>gh :LspHover<CR>
