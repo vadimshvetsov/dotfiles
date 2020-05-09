@@ -11,28 +11,30 @@ Plug 'scrooloose/nerdcommenter' " Comments functionality mappings
 Plug 'vim-airline/vim-airline' " Draw a nice statusline at the bottom of each window 
 Plug 'vim-airline/vim-airline-themes' " Statusline theme configuring possibility
 Plug 'jiangmiao/auto-pairs' " Insert or delete brackets, parens, quotes in pair.
+Plug 'tpope/vim-endwise' " Autocomplete end after a do
 Plug 'tpope/vim-surround' " Surround add, replace and delete
-" Plug 'SirVer/ultisnips' " Snippet engine
 
 " Format plugins
 Plug 'mhinz/vim-mix-format'
 Plug 'prettier/vim-prettier', { 'do': 'npm install' }
+
+" Syntax
 Plug 'sheerun/vim-polyglot'
 
-" Language Server Client dependecies
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
+" LSP
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 call plug#end()
 
-set number
+set number " Show line numbers
+set ruler " Show column number in statusline
 
-set smartindent
+set autoindent " Indent new line
+set smartindent " Indent inside brackets
+
 set tabstop=2
 set shiftwidth=2
+set expandtab " Default to spaces instead tabs
 set backspace=indent,eol,start " Use without limits
 
 set hlsearch
@@ -46,6 +48,10 @@ set splitright " Split right new buffer
 set undodir=~/.vim/undodir
 set undofile
 set noswapfile
+
+" Faster redrawing
+set ttyfast
+set updatetime=300
 
 " Set mouse
 if has('mouse')
@@ -64,9 +70,6 @@ let mapleader = "\<Space>"
 " File save/quit
 nmap <silent> <leader>s :w<CR>
 nmap <silent> <leader>q :q<CR>
-
-" Format Elixir files on save
-let g:mix_format_on_save = 1
 
 " Edit .vimrc
 map <silent> <leader>v :vsp $MYVIMRC<CR>
@@ -129,28 +132,59 @@ if !empty(glob("/usr/share/doc/fzf/examples/fzf.vim"))
 	source /usr/share/doc/fzf/examples/fzf.vim
 endif
 
-" LSP
+" LSP (Most of settings from docs)
 
-set updatetime=300 
+set cmdheight=2 " More space for messages
+set signcolumn=yes " Prevent shifting
+set hidden
 
-let g:lsp_diagnostics_float_delay = 100
-let g:lsp_diagnostics_float_cursor = 1
-let g:lsp_signs_error = {'text': '✗'}
-let g:lsp_signs_warning = {'text': '!'}
-let g:lsp_signs_information = {'text': '•'}
-let g:lsp_signs_hint = {'text': '✐'}
+" Use tab for completion
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr> <CR> pumvisible() ? asyncomplete#close_popup() . "\<CR>" : "\<CR>"
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
-nmap <silent> <leader>d :LspDefinition<CR>
-nmap <silent> <leader>t :LspTypeDefinition<CR>
-nmap <silent> <leader>h :LspHover<CR>
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
-" Prettier works async (must be after LSP)
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gt <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> <leader>d :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" CoC extensions
+let g:coc_global_extensions = ['coc-elixir', 'coc-tsserver', 'coc-json']
+
+" Add CoC ESLint if ESLint is installed
+if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
+endif
+
+" Prettier works async
 let g:prettier#exec_cmd_async = 1
 let g:prettier#autoformat = 1
 let g:prettier#autoformat_config_present = 1
 let g:prettier#autoformat_require_pragma = 0
+
+" Format Elixir files on save
+let g:mix_format_on_save = 1
 

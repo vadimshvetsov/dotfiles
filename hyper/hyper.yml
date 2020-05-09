@@ -9,3 +9,8 @@
         path: "~/.hyper.js"
         state: link
         force: true
+    - homebrew_tap:
+        name: homebrew/cask-fonts
+    - homebrew_cask:
+        name: font-fira-code
+        state: present
