@@ -16,7 +16,6 @@ Plug 'tpope/vim-surround' " Surround add, replace and delete
 
 " Format plugins
 Plug 'mhinz/vim-mix-format'
-Plug 'prettier/vim-prettier', { 'do': 'npm install' }
 
 " Syntax
 Plug 'sheerun/vim-polyglot'
@@ -111,6 +110,8 @@ nmap <silent> <leader>i :NERDTreeFind<CR> " Open NERDTree in file directory
 
 " NERDCommenter
 let g:NERDSpaceDelims = 1
+" Highlighting comments in JSON
+autocmd FileType json syntax match Comment +\/\/.\+$+
 
 " FZF and AG settings
 " Left rail background color issue https://github.com/junegunn/fzf/issues/1468
@@ -160,7 +161,7 @@ nmap <silent> gt <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
-" Use K to show documentation in preview window.
+" Use d to show documentation in preview window.
 nnoremap <silent> <leader>d :call <SID>show_documentation()<CR>
 
 function! s:show_documentation()
@@ -172,18 +173,11 @@ function! s:show_documentation()
 endfunction
 
 " CoC extensions
-let g:coc_global_extensions = ['coc-elixir', 'coc-tsserver', 'coc-json']
+let g:coc_global_extensions = ['coc-elixir', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier']
 
-" Add CoC ESLint if ESLint is installed
-if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
-  let g:coc_global_extensions += ['coc-eslint']
-endif
-
-" Prettier works async
-let g:prettier#exec_cmd_async = 1
-let g:prettier#autoformat = 1
-let g:prettier#autoformat_config_present = 1
-let g:prettier#autoformat_require_pragma = 0
+" CoC Prettier
+command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
+nmap <silent> <leader>p :Prettier<CR>
 
 " Format Elixir files on save
 let g:mix_format_on_save = 1

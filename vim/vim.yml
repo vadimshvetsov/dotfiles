@@ -26,7 +26,7 @@
       when: ansible_system == "Linux"
       become: yes
 
-    - name: Link ~/.vimrc
+    - name: Link .vimrc
       file:
         src: "{{ playbook_dir }}/.vimrc"
         path: ~/.vimrc
@@ -57,3 +57,11 @@
 
     - name: Install all vim plugins
       raw: vim +"PlugInstall" +qa
+
+    - name: Link coc-settings.json
+      file:
+        src: "{{ playbook_dir }}/coc-settings.json"
+        path: ~/.vim/coc-settings.json
+        state: link
+        force: true
+
