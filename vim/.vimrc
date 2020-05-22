@@ -69,6 +69,8 @@ let mapleader = "\<Space>"
 " File save/quit
 nmap <silent> <leader>s :w<CR>
 nmap <silent> <leader>q :q<CR>
+" File save without coc-nvim autoformatting
+nmap <silent> <leader>S :noa w<CR>
 
 " Edit .vimrc
 map <silent> <leader>v :vsp $MYVIMRC<CR>
@@ -176,7 +178,7 @@ endfunction
 let g:coc_global_extensions = ['coc-elixir', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier']
 
 " CoC Prettier
-command! -nargs=0 Prettier :call CocAction('runCommand', 'prettier.formatFile')
+command! -nargs=0 Prettier :call CocActionAsync('runCommand', 'prettier.formatFile')
 nmap <silent> <leader>p :Prettier<CR>
 
 " Format Elixir files on save
