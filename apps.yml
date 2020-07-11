@@ -28,8 +28,3 @@
       homebrew_cask:
         name: sourcetree
         state: present
-
-    - name: Install Spectrum
-      homebrew_cask:
-        name: spectrum
-        state: present

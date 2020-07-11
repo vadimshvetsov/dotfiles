@@ -183,4 +183,3 @@ nmap <silent> <leader>p :Prettier<CR>
 
 " Format Elixir files on save
 let g:mix_format_on_save = 1
-
