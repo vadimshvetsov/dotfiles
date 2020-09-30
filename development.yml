@@ -21,3 +21,8 @@
         path: ~/.iex_history
         state: touch
       when: ansible_distribution == "MacOSX"
+
+    - name: Install ImageMagick
+      package:
+        name: imagemagick
+        state: present
