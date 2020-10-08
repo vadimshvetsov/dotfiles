@@ -5,10 +5,7 @@
       homebrew_cask:
         name: onedrive
         state: present
-    - name: Install TeamViewer
-      homebrew_cask:
-        name: teamviewer
-        state: present
+
     - name: Install SQLPro for Postgres
       homebrew_cask:
         name: sqlpro-for-postgres
@@ -27,4 +24,9 @@
     - name: Install Source Tree
       homebrew_cask:
         name: sourcetree
+        state: present
+
+    - name: Install iTerm2
+      homebrew_cask:
+        name: iterm2
         state: present

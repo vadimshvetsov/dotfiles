@@ -51,6 +51,12 @@ git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 ansible-playbook vim/vim.yml
 ```
 
+### iTerm2 theme setup
+
+Import `iterm2/profile.json` for setting up theme and settings
+
+To reinstall dracula theme from scratch or update follow this [instructions](https://draculatheme.com/iterm)
+
 ### Known bugs with hyper terminal on Mac:
 
 Hyper terminal not reloading shell after `chsh` execution, issue [here](https://github.com/zeit/hyper/issues/81)
