@@ -39,3 +39,8 @@
       package:
         name: imagemagick
         state: present
+
+    - name: Install htop
+      package:
+        name: htop
+        state: present
