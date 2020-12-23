@@ -29,6 +29,11 @@
         name:  postgresql
         state: present
 
+    - name: Install Redis
+      package:
+        name:  redis
+        state: present
+
     - name: Create ~/.iex_history file on OS X
       file:
         path: ~/.iex_history
@@ -55,3 +60,5 @@
         name: kubectl
         state: present
 
+    - name: Install Yandex CLI
+      shell: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash

@@ -175,7 +175,7 @@ function! s:show_documentation()
 endfunction
 
 " CoC extensions
-let g:coc_global_extensions = ['coc-elixir', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier']
+let g:coc_global_extensions = ['coc-elixir', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier', 'coc-yaml']
 
 " CoC Prettier
 command! -nargs=0 Prettier :call CocActionAsync('runCommand', 'prettier.formatFile')
