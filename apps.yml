@@ -1,11 +1,6 @@
 ---
 - hosts: local
   tasks:
-    - name: Install OneDrive
-      homebrew_cask:
-        name: onedrive
-        state: present
-
     - name: Install SQLPro for Postgres
       homebrew_cask:
         name: sqlpro-for-postgres

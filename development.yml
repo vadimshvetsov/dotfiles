@@ -50,11 +50,6 @@
         name: htop
         state: present
 
-    - name: Install minicube
-      package:
-        name: minicube
-        state: present
-
     - name: Install kubectl
       package:
         name: kubectl
