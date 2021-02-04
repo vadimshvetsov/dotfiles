@@ -16,9 +16,9 @@
         name: docker
         state: present
 
-    - name: Install Source Tree
+    - name: Install Github Desktop
       homebrew_cask:
-        name: sourcetree
+        name: github
         state: present
 
     - name: Install iTerm2
