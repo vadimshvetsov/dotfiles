@@ -13,5 +13,8 @@
   ],
   "diagnostic.errorSign": "✗",
   "diagnostic.warningSign": "!",
-  "diagnostic.infoSign": "•"
+  "diagnostic.infoSign": "•",
+  // For TS debug use with `:CocCommand tsserver.openTsServerLog`
+  "tsserver.log": "verbose",
+  "tsserver.trace.server": "verbose"
 }

@@ -28,3 +28,10 @@ if [ -f '/Users/vadim/yandex-cloud/path.bash.inc' ]; then source '/Users/vadim/y
 # The next line enables shell command completion for yc.
 if [ -f '/Users/vadim/yandex-cloud/completion.zsh.inc' ]; then source '/Users/vadim/yandex-cloud/completion.zsh.inc'; fi
 
+# The next line updates PATH for Yandex Cloud CLI.
+if [ -f '/Users/v.shvetsov/yandex-cloud/path.bash.inc' ]; then source '/Users/v.shvetsov/yandex-cloud/path.bash.inc'; fi
+
+# The next line enables shell command completion for yc.
+if [ -f '/Users/v.shvetsov/yandex-cloud/completion.zsh.inc' ]; then source '/Users/v.shvetsov/yandex-cloud/completion.zsh.inc'; fi
+
+
