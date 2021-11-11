@@ -59,7 +59,10 @@ endif
 
 " Dracula theme
 syntax on
-let g:dracula_italic = 0 " Terminal doesn't support italic
+" Add useage for italic
+let &t_ZH="\e[3m"
+let &t_ZR="\e[23m"
+
 colorscheme dracula
 highlight Normal ctermbg=None " Use terminal background
 
