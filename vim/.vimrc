@@ -13,15 +13,19 @@ Plug 'vim-airline/vim-airline-themes' " Statusline theme configuring possibility
 Plug 'jiangmiao/auto-pairs' " Insert or delete brackets, parens, quotes in pair.
 Plug 'tpope/vim-endwise' " Autocomplete end after a do
 Plug 'tpope/vim-surround' " Surround add, replace and delete
+Plug 'weirongxu/plantuml-previewer.vim' " PlantUML editing with liveviewing
+Plug 'tyru/open-browser.vim' " Open browser
 
 " Format plugins
 Plug 'mhinz/vim-mix-format'
 
 " Syntax
 Plug 'sheerun/vim-polyglot'
+Plug 'aklt/plantuml-syntax'
 
 " LSP
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
 
 call plug#end()
 
@@ -178,7 +182,7 @@ function! s:show_documentation()
 endfunction
 
 " CoC extensions
-let g:coc_global_extensions = ['coc-elixir', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier', 'coc-yaml']
+let g:coc_global_extensions = ['coc-elixir', 'coc-tsserver', 'coc-json', 'coc-eslint', 'coc-prettier', 'coc-yaml', 'coc-styled-components']
 
 " CoC Prettier
 command! -nargs=0 Prettier :call CocActionAsync('runCommand', 'prettier.formatFile')

@@ -26,6 +26,11 @@
       when: ansible_system == "Linux"
       become: yes
 
+    - name: Install Graphviz
+      package:
+        name: graphviz
+        state: latest
+
     - name: Link .vimrc
       file:
         src: "{{ playbook_dir }}/.vimrc"
@@ -64,4 +69,3 @@
         path: ~/.vim/coc-settings.json
         state: link
         force: true
-

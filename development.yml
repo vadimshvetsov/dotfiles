@@ -34,6 +34,16 @@
         name:  redis
         state: present
 
+    - name: Install Java
+      package:
+        name:  java
+        state: present
+
+    - name: Symlink Java in MacOS
+      shell: ln -sfn /usr/local/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+      become: yes
+      when: ansible_distribution == "MacOSX"
+
     - name: Create ~/.iex_history file on OS X
       file:
         path: ~/.iex_history
