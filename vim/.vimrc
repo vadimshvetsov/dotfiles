@@ -124,17 +124,19 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 
 " FZF and AG settings
 " Left rail background color issue https://github.com/junegunn/fzf/issues/1468
-nmap <silent> <leader>f :FZF --color=bg+:-1<CR>
+let g:fzf_preview_window = ['up:70%', 'ctrl-/']
+let g:fzf_layout = { 'window': { 'width': 1, 'height': 1 } }
+let $FZF_DEFAULT_OPTS .= ' --color=bg+:-1'
+
+" nmap <silent> <leader>f :FZF!<CR>
+nmap <silent> <leader>f :call fzf#vim#files('.', fzf#vim#with_preview(), 1)<CR>
 nmap <silent> <leader>a :Ag!<CR>
 nnoremap <silent> <leader>A :Ag!<C-R><C-W><CR>
-nnoremap <silent> <leader>F :call fzf#vim#files('.', {'options':'--color=bg+:-1 --query '.expand('<cword>')})<CR>
+nnoremap <silent> <leader>F :call fzf#vim#files('.', fzf#vim#with_preview({'options':' --query '.expand('<cword>')}), 1)<CR>
 
 " Ag search only content not filenames
 command! -bang -nargs=* Ag
-	\ call fzf#vim#ag(<q-args>,
-	\                 <bang>0 ? fzf#vim#with_preview({'options': '--color=bg+:-1 --delimiter : --nth 4..'}, 'up:60%')
-	\                         : fzf#vim#with_preview({'options': '--color=bg+:-1 --delimeter : --nth 4..'}, 'right:50%:hidden', '?'),
-	\                 <bang>0)
+	\ call fzf#vim#ag(<q-args>, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
 
 " FZF existance workaround for installed fzf via apt-get
 " https://github.com/junegunn/fzf.vim/issues/848#issuecomment-512777975
