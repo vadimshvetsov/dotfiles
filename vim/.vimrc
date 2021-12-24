@@ -127,6 +127,7 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 let g:fzf_preview_window = ['up:70%', 'ctrl-/']
 let g:fzf_layout = { 'window': { 'width': 1, 'height': 1 } }
 let $FZF_DEFAULT_OPTS .= ' --color=bg+:-1'
+let $FZF_DEFAULT_COMMAND = 'ag -g ""'
 
 " nmap <silent> <leader>f :FZF!<CR>
 nmap <silent> <leader>f :call fzf#vim#files('.', fzf#vim#with_preview(), 1)<CR>
