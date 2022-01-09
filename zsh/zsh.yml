@@ -19,17 +19,17 @@
 
     - block:
       - name: Check if homebrew zsh is installed
-        stat: path=/usr/local/bin/zsh
+        stat: path=/opt/homebrew/bin/zsh
         register: brew_zsh
 
       - name: Add homebrew zsh to /etc/shells
         lineinfile: 
           dest=/etc/shells
-          line="/usr/local/bin/zsh"
+          line="/opt/homebrew/bin/zsh"
           state=present
         when: brew_zsh.stat.exists
 
       - user:
           name: "{{ ansible_user_id }}"
-          shell: /usr/local/bin/zsh
+          shell: /opt/homebrew/bin/zsh
       become: yes

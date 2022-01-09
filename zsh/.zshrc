@@ -1,6 +1,8 @@
 # Zplug plugins
 
-export ZPLUG_HOME=/usr/local/opt/zplug
+export PATH="/opt/homebrew/bin:$PATH"
+
+export ZPLUG_HOME=/opt/homebrew/opt/zplug
 source $ZPLUG_HOME/init.zsh
 
 zplug 'dracula/zsh', as:theme
@@ -23,15 +25,7 @@ export ERL_AFLAGS="-kernel shell_history enabled"
 unsetopt PROMPT_SP
 
 # The next line updates PATH for Yandex Cloud CLI.
-if [ -f '/Users/vadim/yandex-cloud/path.bash.inc' ]; then source '/Users/vadim/yandex-cloud/path.bash.inc'; fi
+if [ -f "/Users/$USER/yandex-cloud/path.bash.inc" ]; then source "/Users/$USER/yandex-cloud/path.bash.inc"; fi
 
 # The next line enables shell command completion for yc.
-if [ -f '/Users/vadim/yandex-cloud/completion.zsh.inc' ]; then source '/Users/vadim/yandex-cloud/completion.zsh.inc'; fi
-
-# The next line updates PATH for Yandex Cloud CLI.
-if [ -f '/Users/v.shvetsov/yandex-cloud/path.bash.inc' ]; then source '/Users/v.shvetsov/yandex-cloud/path.bash.inc'; fi
-
-# The next line enables shell command completion for yc.
-if [ -f '/Users/v.shvetsov/yandex-cloud/completion.zsh.inc' ]; then source '/Users/v.shvetsov/yandex-cloud/completion.zsh.inc'; fi
-
-
+if [ -f "/Users/$USER/yandex-cloud/completion.zsh.inc" ]; then source "/Users/$USER/yandex-cloud/completion.zsh.inc"; fi

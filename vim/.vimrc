@@ -3,10 +3,10 @@ call plug#begin('~/.vim/plugged')
 Plug 'dracula/vim', { 'as': 'dracula' } " Vim dracula color scheme - https://draculatheme.com/vim/
 
 Plug 'scrooloose/nerdtree' " Show files tree on the left sider
-Plug '/usr/local/opt/fzf' " Fuzzy finder, installed via brew with Ag
-
+Plug '/opt/homebrew/opt/fzf' " Fuzzy finder, installed via brew with Ag
 
 Plug 'junegunn/fzf.vim' " Extend work with fzf adding Ag
+
 Plug 'scrooloose/nerdcommenter' " Comments functionality mappings
 Plug 'vim-airline/vim-airline' " Draw a nice statusline at the bottom of each window 
 Plug 'vim-airline/vim-airline-themes' " Statusline theme configuring possibility
