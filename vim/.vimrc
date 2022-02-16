@@ -56,6 +56,9 @@ set noswapfile
 set ttyfast
 set updatetime=300
 
+" Faster moving from visual to normal on escape
+set timeoutlen=1000 ttimeoutlen=0
+
 " Set mouse
 if has('mouse')
   set mouse=a
