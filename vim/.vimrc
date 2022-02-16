@@ -3,7 +3,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'dracula/vim', { 'as': 'dracula' } " Vim dracula color scheme - https://draculatheme.com/vim/
 
 Plug 'scrooloose/nerdtree' " Show files tree on the left sider
-Plug '/opt/homebrew/opt/fzf' " Fuzzy finder, installed via brew with Ag
+Plug '/usr/local/opt/fzf' " Fuzzy finder, installed via brew with Ag
 
 Plug 'junegunn/fzf.vim' " Extend work with fzf adding Ag
 

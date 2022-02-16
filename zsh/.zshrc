@@ -1,8 +1,8 @@
 # Zplug plugins
 
-export PATH="/opt/homebrew/bin:$PATH"
 
-export ZPLUG_HOME=/opt/homebrew/opt/zplug
+export ZPLUG_HOME=/usr/local/opt/zplug
+
 source $ZPLUG_HOME/init.zsh
 
 zplug 'dracula/zsh', as:theme
