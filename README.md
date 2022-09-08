@@ -4,11 +4,7 @@
 
 - Install `git` and [`brew`](https://brew.sh/) at master machine
 
-- Install `python3` with brew for getting pip3
-
-```sh
-brew install python3
-```
+- Download and install [`python3`](https://www.python.org/downloads/)
 
 - Install `ansible` with `pip3` package manager
 
