@@ -1,8 +1,10 @@
 # Zplug plugins
 
-export PATH="/opt/homebrew/bin:$PATH"
+# For M1 
+# export PATH="/opt/homebrew/bin:$PATH"
+# export ZPLUG_HOME=/opt/homebrew/opt/zplug
+export ZPLUG_HOME=/usr/local/opt/zplug
 
-export ZPLUG_HOME=/opt/homebrew/opt/zplug
 source $ZPLUG_HOME/init.zsh
 
 zplug 'dracula/zsh', as:theme
@@ -16,6 +18,7 @@ fi
 # This loads NVM and Node
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # Enable shell_history in IEx
 export ERL_AFLAGS="-kernel shell_history enabled"
