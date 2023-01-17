@@ -3,14 +3,13 @@
 ### Installation for OS X
 
 - Install `git` and [`brew`](https://brew.sh/) at master machine
-
-- Download and install [`python3`](https://www.python.org/downloads/)
-
-- Install `ansible` with `pip3` package manager
+- Install `ansible` with `pip3` package manager and make sure that ansible exists in a path.
 
 ```sh
 pip3 install ansible
 ```
+
+- Read output of ansible installation. There would be a suggestion to add python binaries to the $PATH. For example for default 3.9 Python it may looks like `export PATH="$PATH:$HOME/Library/Python/3.9/bin"`. This added at .zshrc
 
 - Clone this repo and jump into `dotfiles` folder
 ```sh
@@ -19,7 +18,7 @@ git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 - Run playbooks for install appropriate things
 
 ```sh
-ansible-playbook vim/vim.yml
+ansible-playbook astronvim/astronvim.yml
 ```
 
 - Some playbooks have become directives and need permissions to install
@@ -44,7 +43,7 @@ git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 - Run playbooks for install appropriate things
 
 ```sh
-ansible-playbook vim/vim.yml
+ansible-playbook astronvim/astronvim.yml
 ```
 
 ### iTerm2 theme setup
