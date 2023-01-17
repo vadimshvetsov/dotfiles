@@ -27,16 +27,21 @@
         state: present
 
     - name: Clone AstroNvim
-      ansible.builtin.git:
+      git:
         repo: https://github.com/AstroNvim/AstroNvim.git
         dest: ~/.config/nvim
-        single_branch: yes
-        version: master
+        clone: yes
+        update: yes
+
+    - name: Create ~/.config/nvim/user directory    
+      file:
+        path: ~/.config/nvim/lua/user
+        state: directory
 
     - name: Link user AstroNvim config
       file:
         src: "{{ playbook_dir }}/init.lua"
-        path: ~/.config/nvim/user/init.lua
+        path: ~/.config/nvim/lua/user/init.lua
         state: link
         force: true
 

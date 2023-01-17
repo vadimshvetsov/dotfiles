@@ -3,6 +3,7 @@
 # For M1 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 export ZPLUG_HOME=/opt/homebrew/opt/zplug
+export PATH="$PATH:$HOME/Library/Python/3.9/bin"
 
 # For Intel
 # export ZPLUG_HOME=/usr/local/opt/zplug
