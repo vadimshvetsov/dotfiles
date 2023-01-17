@@ -1,0 +1,44 @@
+---
+- hosts: local
+  tasks:
+    - name: Install Neovim
+      package:
+        name: neovim
+        state: present
+
+    - name: Install RipGrep
+      package:
+        name: ripgrep
+        state: present
+
+    - name: Install Lazygit
+      package:
+        name: lazygit
+        state: present
+
+    - name: Install go DiskUsage()
+      package:
+        name: gdu
+        state: present
+
+    - name: Install Bottom
+      package:
+        name: bottom
+        state: present
+
+    - name: Clone AstroNvim
+      ansible.builtin.git:
+        repo: https://github.com/AstroNvim/AstroNvim.git
+        dest: ~/.config/nvim
+        single_branch: yes
+        version: master
+
+    - name: Link user AstroNvim config
+      file:
+        src: "{{ playbook_dir }}/init.lua"
+        path: ~/.config/nvim/user/init.lua
+        state: link
+        force: true
+
+    - name: Install all vim plugins
+      raw: nvim --headless -c 'autocmd User PackerComplete quitall'

@@ -1,9 +1,11 @@
 # Zplug plugins
 
 # For M1 
-# export PATH="/opt/homebrew/bin:$PATH"
-# export ZPLUG_HOME=/opt/homebrew/opt/zplug
-export ZPLUG_HOME=/usr/local/opt/zplug
+eval "$(/opt/homebrew/bin/brew shellenv)"
+export ZPLUG_HOME=/opt/homebrew/opt/zplug
+
+# For Intel
+# export ZPLUG_HOME=/usr/local/opt/zplug
 
 source $ZPLUG_HOME/init.zsh
 
