@@ -9,7 +9,7 @@
 pip3 install ansible
 ```
 
-- Read output of ansible installation. There would be a suggestion to add python binaries to the $PATH. For example for default 3.9 Python it may looks like `export PATH="$PATH:$HOME/Library/Python/3.9/bin"`. This added at .zshrc
+- Read output of ansible installation. There would be a suggestion to add python binaries to the $PATH. For example for default 3.9 Python it may looks like `PATH="$PATH:$HOME/Library/Python/3.9/bin"`. This added at .zshrc
 
 - Clone this repo and jump into `dotfiles` folder
 ```sh
