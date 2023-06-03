@@ -5,26 +5,16 @@
       package:
         name: vim
         state: present
-      become: "{{ 'yes' if ansible_system == 'Linux' else 'no' }}"
 
     - name: Install fzf
       package:
         name: fzf
         state: latest
-      become: "{{ 'yes' if ansible_system == 'Linux' else 'no' }}"
       
     - name: Install ag on OS X
       package:
         name: the_silver_searcher
         state: latest
-      when: ansible_distribution == "MacOSX"
-
-    - name: Install ag on Linux
-      package:
-        name: silversearcher-ag
-        state: latest
-      when: ansible_system == "Linux"
-      become: yes
 
     - name: Install Graphviz
       package:
@@ -33,7 +23,7 @@
 
     - name: Link .vimrc
       file:
-        src: "{{ playbook_dir }}/.vimrc"
+        src: "{{ playbook_dir }}/../../vim/.vimrc"
         path: ~/.vimrc
         state: link
         force: true
@@ -66,7 +56,7 @@
 
     - name: Link coc-settings.json
       file:
-        src: "{{ playbook_dir }}/coc-settings.json"
+        src: "{{ playbook_dir }}/../../vim/coc-settings.json"
         path: ~/.vim/coc-settings.json
         state: link
         force: true

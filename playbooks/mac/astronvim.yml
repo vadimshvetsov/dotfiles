@@ -33,17 +33,17 @@
         clone: yes
         update: yes
 
-    - name: Create ~/.config/nvim/user directory    
+    - name: Remove user folder
       file:
         path: ~/.config/nvim/lua/user
-        state: directory
+        state: absent 
 
     - name: Link user AstroNvim config
       file:
-        src: "{{ playbook_dir }}/init.lua"
-        path: ~/.config/nvim/lua/user/init.lua
+        src: "{{ playbook_dir }}/../../astronvim/user/"
+        dest: ~/.config/nvim/lua/user
         state: link
         force: true
 
-    - name: Install all vim plugins
-      raw: nvim --headless -c 'autocmd User PackerComplete quitall'
+    - name: Update neovim plugins
+      raw: nvim +AstroUpdatePackages +qa

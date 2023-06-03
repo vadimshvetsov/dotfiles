@@ -1,18 +1,20 @@
 ---
 - hosts: local
   tasks:
-    # Move out somewhere
-    - name: Install zsh and zplu
+    - name: Install zsh
       package:
-        name: "{{ item }}"
+        name: zsh
         state: latest
-      with_items:
-        - zsh
-        - zplug
+
+    - name: Install zplug
+      git:
+        repo: https://github.com/zplug/zplug.git
+        dest: "~/.zplug"
+        version: master
 
     - name: Link .zshrc to home directory
       file:
-        src: "{{ playbook_dir }}/.zshrc"
+        src: "{{ playbook_dir }}/../../../zsh/.zshrc"
         path: "~/.zshrc"
         state: link
         force: true

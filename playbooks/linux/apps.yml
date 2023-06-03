@@ -1,0 +1,18 @@
+---
+- hosts: local
+  tasks:
+    - name: Install Spotify
+      command: snap install spotify
+      become: yes
+
+    - name: Install Bitwarden
+      command: snap install bitwarden
+      become: yes
+
+    - name: Install DBeaver
+      command: snap install dbeaver-ce
+      become: yes
+
+    - name: Install Telegram
+      command: snap install telegram-desktop
+      become: yes

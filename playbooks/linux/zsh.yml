@@ -1,0 +1,49 @@
+---
+- hosts: local
+  tasks:
+    - name: Install zsh
+      package:
+        name: zsh
+        state: latest
+
+    - name: Install zplug
+      git:
+        repo: https://github.com/zplug/zplug.git
+        dest: "~/.zplug"
+        version: master
+
+    - name: Link .zshrc to home directory
+      file:
+        src: "{{ playbook_dir }}/../../zsh/.zshrc"
+        path: "~/.zshrc"
+        state: link
+        force: true
+
+    - name: Change default Shell to zsh
+      user:
+        name: "{{ ansible_user_id }}"
+        shell: /bin/zsh
+      become: yes
+
+    - name: Install Dracula theme for Gnome
+      block:
+        - name: Install dconf for tweak Gnome
+          package:
+            name: dconf-cli
+            state: latest
+        - name: Clone Gnome terminal Dracula theme
+          git:
+            repo: https://github.com/dracula/gnome-terminal.git
+            dest: ~/.gnome-terminal-dracula
+            version: master
+        # Source https://github.com/dracula/gnome-terminal/issues/11
+        # If it wouldn't work just run install.sh manually
+        - name: Install Dracula theme
+          expect:
+            command: bash ~/.gnome-terminal-dracula/install.sh --scheme Dracula --skip-dircolors
+            responses:
+              Question:
+                - yes
+                - 1
+                - 2
+      become: yes
