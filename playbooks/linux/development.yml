@@ -8,28 +8,28 @@
 
     - name: Install nvm and Node
       block:
-      - name: Create ~/.nvm directory    
-        file:
-          path: ~/.nvm
-          state: directory
+        - name: Create ~/.nvm directory
+          file:
+            path: ~/.nvm
+            state: directory
 
-      - name: Install nvm
-        shell: >
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-        args:
-          executable: /bin/bash
-          chdir: "{{ ansible_env.HOME }}"
-          creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+        - name: Install nvm
+          shell: >
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+          args:
+            executable: /bin/bash
+            chdir: "{{ ansible_env.HOME }}"
+            creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
 
-      - name: Install Node via nvm
-        shell: >
-          . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install {{ item }}
-        args:
-          executable: /bin/bash
-          chdir: "{{ ansible_env.HOME }}"
-          creates: "{{ ansible_env.HOME }}/.nvm/versions/{{ item }}"
-        loop:
-          - node
+        - name: Install Node via nvm
+          shell: >
+            . {{ ansible_env.HOME }}/.nvm/nvm.sh && nvm install {{ item }}
+          args:
+            executable: /bin/bash
+            chdir: "{{ ansible_env.HOME }}"
+            creates: "{{ ansible_env.HOME }}/.nvm/versions/{{ item }}"
+          loop:
+            - node
 
     - name: Install Elixir
       apt:
@@ -40,14 +40,23 @@
     - name: Install Docker
       command: snap install docker
       become: yes
-      
+
     - name: Install kubectl
       command: snap install kubectl --classic
       become: yes
 
     - name: Install k9s
-      command: snap install k9s
-      become: yes
+      block:
+        - name: Install k9s package
+          shell: curl -sS https://webi.sh/k9s | sh
+
+        - name: Create ~/.config/k9s directory
+          file:
+            path: ~/.config/k9s
+            state: directory
+
+        - name: Install k9s dracula theme
+          shell: curl -L https://raw.githubusercontent.com/derailed/k9s/master/skins/dracula.yml --output ~/.config/k9s/skin.yml
 
     - name: Install Yandex CLI
       shell: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash

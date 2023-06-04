@@ -4,6 +4,8 @@
 if [[ $(uname) == "Linux" ]]; then
   export ZPLUG_HOME=$HOME/.zplug
   export KUBECONFIG=$HOME/.kube/config
+  export K9SCONFIG=$HOME/.config/k9s
+  export XDG_CONFIG_HOME=$HOME/.config
 # For M1 
 elif [[ $(uname -p) == "arm" ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -23,6 +25,12 @@ zplug "zsh-users/zsh-syntax-highlighting"
 if zplug check || zplug install; then
   zplug load
 fi
+
+# Set default editor for k9s and other utilities
+export EDITOR=nvim
+
+# Generated for envman. Do not edit. Loads k9s
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
 # Load NVM and Node
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
@@ -44,4 +52,3 @@ if [ -f '/home/vadim/yandex-cloud/path.bash.inc' ]; then source '/home/vadim/yan
 
 # The next line enables shell command completion for yc.
 if [ -f '/home/vadim/yandex-cloud/completion.zsh.inc' ]; then source '/home/vadim/yandex-cloud/completion.zsh.inc'; fi
-
