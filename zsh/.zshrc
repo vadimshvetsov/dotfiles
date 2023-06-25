@@ -6,11 +6,13 @@ if [[ $(uname) == "Linux" ]]; then
   export KUBECONFIG=$HOME/.kube/config
   export K9SCONFIG=$HOME/.config/k9s
   export XDG_CONFIG_HOME=$HOME/.config
+  export NVM_DIR="${HOME}/.nvm"
 # For M1 
 elif [[ $(uname -p) == "arm" ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
   export ZPLUG_HOME=/opt/homebrew/opt/zplug
   export PATH="$PATH:$HOME/Library/Python/3.9/bin"
+  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 # For Intel
 elif [[ $(uname) == "Darwin" ]]; then
   export ZPLUG_HOME=/usr/local/opt/zplug
@@ -32,8 +34,6 @@ export EDITOR=nvim
 # Generated for envman. Do not edit. Loads k9s
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
-# Load NVM and Node
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
@@ -52,3 +52,4 @@ if [ -f '/home/vadim/yandex-cloud/path.bash.inc' ]; then source '/home/vadim/yan
 
 # The next line enables shell command completion for yc.
 if [ -f '/home/vadim/yandex-cloud/completion.zsh.inc' ]; then source '/home/vadim/yandex-cloud/completion.zsh.inc'; fi
+
