@@ -11,7 +11,7 @@ return {
       -- Set a formatter
       -- https://github.com/jose-elias-alvarez/null-ls.nvim/tree/main/lua/null-ls/builtins/formatting
       null_ls.builtins.formatting.stylua,
-      null_ls.builtins.formatting.prettier,
+      null_ls.builtins.formatting.prettierd,
       null_ls.builtins.formatting.fixjson,
       null_ls.builtins.formatting.mix,
       -- Set a linter
