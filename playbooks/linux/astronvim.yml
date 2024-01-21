@@ -10,6 +10,11 @@
         name: ripgrep
         state: present
 
+    - name: Install XClip for clipboard
+      package:
+        name: xclip
+        state: present
+
     # TODO Install lazygit
     # https://github.com/jesseduffield/lazygit#ubuntu
 
