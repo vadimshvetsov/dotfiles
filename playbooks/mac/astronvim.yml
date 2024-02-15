@@ -4,27 +4,27 @@
     - name: Install Neovim
       package:
         name: neovim
-        state: present
+        state: latest
 
     - name: Install RipGrep
       package:
         name: ripgrep
-        state: present
+        state: latest
 
     - name: Install Lazygit
       package:
         name: lazygit
-        state: present
+        state: latest
 
     - name: Install go DiskUsage()
       package:
         name: gdu
-        state: present
+        state: latest
 
     - name: Install Bottom
       package:
         name: bottom
-        state: present
+        state: latest
 
     - name: Clone AstroNvim
       git:
@@ -36,7 +36,7 @@
     - name: Remove user folder
       file:
         path: ~/.config/nvim/lua/user
-        state: absent 
+        state: absent
 
     - name: Link user AstroNvim config
       file:

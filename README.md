@@ -20,7 +20,7 @@ brew install ansible
 - Run playbooks for install appropriate things
 
 ```sh
-ansible-playbook -K playbooks/mac/astronvim.yml
+ansible-playbook -K playbooks/mac/zsh.yml
 ```
 
 ### iTerm2 theme setup
@@ -42,5 +42,5 @@ sudo apt install ansible
 - Run playbooks for install appropriate things
 
 ```sh
-ansible-playbook -K playbooks/linux/astronvim.yml
+ansible-playbook -K playbooks/linux/zsh.yml
 ```
