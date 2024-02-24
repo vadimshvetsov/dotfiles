@@ -14,7 +14,7 @@
 
     - name: Link .zshrc to home directory
       file:
-        src: "{{ playbook_dir }}/../../../zsh/.zshrc"
+        src: "{{ playbook_dir }}/../../zsh/.zshrc"
         path: "~/.zshrc"
         state: link
         force: true
