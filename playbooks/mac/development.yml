@@ -29,9 +29,14 @@
         name: elixir
         state: present
 
-    - name: Install PYENV
+    - name: Install Pyenv
       package:
         name: pyenv
+        state: present
+
+    - name: Install Pyenv virtualenv
+      package:
+        name: pyenv-virtualenv
         state: present
 
     - name: Install PostgreSQL

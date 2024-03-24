@@ -8,7 +8,6 @@ if [[ $(uname) == "Linux" ]]; then
 elif [[ $(uname -p) == "arm" ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
   export ZPLUG_HOME=/opt/homebrew/opt/zplug
-  export PATH="$PATH:$HOME/Library/Python/3.9/bin"
   export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 # For Intel
 elif [[ $(uname) == "Darwin" ]]; then
@@ -66,4 +65,5 @@ if [ -f '/Users/vadim/yandex-cloud/path.bash.inc' ]; then source '/Users/vadim/y
 
 # The next line enables shell command completion for yc.
 if [ -f '/Users/vadim/yandex-cloud/completion.zsh.inc' ]; then source '/Users/vadim/yandex-cloud/completion.zsh.inc'; fi
+
 
