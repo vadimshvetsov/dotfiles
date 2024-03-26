@@ -46,6 +46,9 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
+# Update PATH for pipx packages
+export PATH="$PATH:$HOME/.local/bin"
+
 # Update PATH for Yandex Cloud CLI.
 if [ -f "$HOME/yandex-cloud/path.bash.inc" ]; then source "$HOME/yandex-cloud/path.bash.inc"; fi
 
