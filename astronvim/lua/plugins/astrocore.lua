@@ -28,7 +28,7 @@ return {
         relativenumber = true, -- sets vim.opt.relativenumber
         number = true, -- sets vim.opt.number
         spell = false, -- sets vim.opt.spell
-        signcolumn = "auto", -- sets vim.opt.signcolumn to auto
+        signcolumn = "yes", -- sets vim.opt.signcolumn to auto
         wrap = false, -- sets vim.opt.wrap
       },
       g = { -- vim.g.<key>
@@ -53,11 +53,20 @@ return {
           desc = "Pick to close",
         },
         ["<Leader>b"] = { desc = "Buffers" },
-        ["<leader>bn"] = { "<cmd>tabnew<cr>", desc = "New tab" },
+        ["<Leader>bn"] = { "<cmd>tabnew<cr>", desc = "New tab" },
         -- text replace
-        ["<leader>r"] = {
+        ["<Leader>r"] = {
           ":%s///g<Left><Left>",
           desc = "Find and replace",
+        },
+        -- open homescreen when last buffer closed
+        ["<Leader>c"] = {
+          function()
+            local bufs = vim.fn.getbufinfo { buflisted = true }
+            require("astrocore.buffer").close(0)
+            if require("astrocore").is_available "alpha-nvim" and not bufs[2] then require("alpha").start() end
+          end,
+          desc = "Close buffer",
         },
       },
       t = {

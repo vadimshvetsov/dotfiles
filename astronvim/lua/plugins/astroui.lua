@@ -15,7 +15,7 @@ return {
       init = { -- this table overrides highlights in all themes
         -- Normal = { bg = "#000000" },
       },
-      dracula = { -- a table of overrides/changes when applying the astrotheme theme
+      dracula = { -- a table of overrides/changes when applying the dracula theme
         -- Normal = { bg = "None" },
       },
     },
