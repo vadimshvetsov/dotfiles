@@ -1,11 +1,11 @@
-return {
-  -- Add the community repository of plugin specifications
-  "AstroNvim/astrocommunity",
-  -- example of imporing a plugin, comment out to use it or add your own
-  -- available plugins can be found at https://github.com/AstroNvim/astrocommunity
+-- AstroCommunity: import any community modules here
+-- We import this file in `lazy_setup.lua` before the `plugins/` folder.
+-- This guarantees that the specs are processed before any user plugins.
 
-  -- { import = "astrocommunity.colorscheme.catppuccin" },
-  -- { import = "astrocommunity.completion.copilot-lua-cmp" },
+---@type LazySpec
+return {
+  "AstroNvim/astrocommunity",
+  { import = "astrocommunity.colorscheme.dracula-nvim" },
   { import = "astrocommunity.pack.ansible" },
   { import = "astrocommunity.pack.docker" },
   { import = "astrocommunity.pack.html-css" },

@@ -26,22 +26,15 @@
         name: bottom
         state: latest
 
-    - name: Clone AstroNvim
-      git:
-        repo: https://github.com/AstroNvim/AstroNvim.git
-        dest: ~/.config/nvim
-        clone: yes
-        update: yes
-
-    - name: Remove user folder
+    - name: Remove astronvim folder
       file:
-        path: ~/.config/nvim/lua/user
+        path: ~/.config/nvim
         state: absent
 
-    - name: Link user AstroNvim config
+    - name: Link AstroNvim config
       file:
-        src: "{{ playbook_dir }}/../../astronvim/user/"
-        dest: ~/.config/nvim/lua/user
+        src: "{{ playbook_dir }}/../../astronvim"
+        dest: ~/.config/nvim
         state: link
         force: true
 
