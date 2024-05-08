@@ -24,6 +24,8 @@ if zplug check || zplug install; then
   zplug load
 fi
 
+source $HOME/.zshrc_aliases
+
 # Set env variables for utilities
 export KUBECONFIG=$HOME/.kube/config
 export K9SCONFIG=$HOME/.config/k9s

@@ -19,6 +19,13 @@
         state: link
         force: true
 
+    - name: Link .zshrc_aliases to home directory
+      file:
+        src: "{{ playbook_dir }}/../../zsh/.zshrc_aliases"
+        path: "~/.zshrc_aliases"
+        state: link
+        force: true
+
     - block:
       - name: Check if homebrew zsh is installed
         stat: path=/opt/homebrew/bin/zsh
