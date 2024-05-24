@@ -38,6 +38,13 @@ export EDITOR=nvim
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
+# pnpm
+export PNPM_HOME=~/.pnpm/store
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
 # Enable shell_history in IEx
 export ERL_AFLAGS="-kernel shell_history enabled"
 

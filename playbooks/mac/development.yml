@@ -24,6 +24,11 @@
       loop:
         - node
 
+    - name: Create ~/.pnpm/store directory
+      file:
+        path: ~/.pnpm/store
+        state: directory
+
     - name: Install Elixir
       package:
         name: elixir

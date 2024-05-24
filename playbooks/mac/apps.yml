@@ -16,9 +16,9 @@
         name: docker
         state: present
 
-    - name: Install Github Desktop
+    - name: Install Github CLI
       homebrew_cask:
-        name: github
+        name: gh
         state: present
 
     - name: Install iTerm2
