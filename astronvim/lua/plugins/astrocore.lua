@@ -68,10 +68,21 @@ return {
           end,
           desc = "Close buffer",
         },
+        ["<Leader><cr>"] = {
+          ":so %<cr>",
+          desc = "Source current file",
+        },
       },
       t = {
         -- setting a mapping to false will disable it
         -- ["<esc>"] = false,
+      },
+      v = {
+        -- text replace
+        ["<Leader>r"] = {
+          ":s/",
+          desc = "Find and replace",
+        },
       },
     },
   },
