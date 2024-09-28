@@ -1,0 +1,16 @@
+FROM ubuntu:latest
+
+# Set environment variables to avoid user interaction during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y software-properties-common curl git ssh sudo && \
+    apt-add-repository --yes --update ppa:ansible/ansible && \
+    apt-get install -y ansible python3-pip python3 && \
+    apt-get clean
+
+WORKDIR /root/dotfiles
+
+VOLUME ["/root/dotfiles"]
+
+CMD ["/bin/bash"]

@@ -1,0 +1,13 @@
+FROM almalinux:8
+
+RUN yum -y update && \
+    yum -y install epel-release && \
+    yum -y install ansible python3-pip git curl sudo openssh-clients && \
+    yum clean all
+
+WORKDIR /root/dotfiles
+
+VOLUME ["/root/dotfiles"]
+
+CMD ["/bin/bash"]
+

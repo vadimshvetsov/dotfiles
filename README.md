@@ -44,3 +44,17 @@ sudo apt install ansible
 ```sh
 ansible-playbook -K playbooks/linux/zsh.yml
 ```
+
+### Testing changes
+
+To test changes run playbook within OS containers. To build and run containers:
+
+```sh
+docker compose up --build -d
+```
+
+Run interactive shell using:
+
+```sh
+docker-compose exec debian bash
+```

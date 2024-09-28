@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  debian:
+    build:
+      context: .
+      dockerfile: .containers/Dockerfile_debian
+    volumes:
+      - .:/root/dotfiles
+    stdin_open: true
+    tty: true
+  redhat:
+    build:
+      context: .
+      dockerfile: .containers/Dockerfile_redhat
+    volumes:
+      - .:/root/dotfiles
+    stdin_open: true
+    tty: true
