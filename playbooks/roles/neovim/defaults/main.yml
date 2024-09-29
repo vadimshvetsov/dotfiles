@@ -1,0 +1,3 @@
+neovim_version: 0.10.1
+neovim_dl_dir: "/opt/nvim/{{ neovim_version }}"
+neovim_appimage_url: "https://github.com/neovim/neovim/releases/download/v{{ neovim_version }}/nvim.appimage"

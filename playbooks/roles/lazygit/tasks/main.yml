@@ -1,0 +1,12 @@
+---
+- name: Import lazygit Darwin tasks
+  ansible.builtin.import_tasks: tasks_darwin.yml
+  when: ansible_os_family == "Darwin"
+
+- name: Import lazygit Debian tasks
+  ansible.builtin.import_tasks: tasks_debian.yml
+  when: ansible_os_family == "Debian"
+
+- name: Import lazygit RedHat tasks
+  ansible.builtin.import_tasks: tasks_redhat.yml
+  when: ansible_os_family == "RedHat"

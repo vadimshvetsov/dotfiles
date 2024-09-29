@@ -1,5 +1,5 @@
 ---
-- hosts: local
+- hosts: all
   tasks:
     - name: Install zsh
       package:
@@ -27,18 +27,17 @@
         force: true
 
     - block:
-      - name: Check if homebrew zsh is installed
-        stat: path=/opt/homebrew/bin/zsh
-        register: brew_zsh
+        - name: Check if homebrew zsh is installed
+          stat: path=/opt/homebrew/bin/zsh
+          register: brew_zsh
 
-      - name: Add homebrew zsh to /etc/shells
-        lineinfile: 
-          dest=/etc/shells
-          line="/opt/homebrew/bin/zsh"
-          state=present
-        when: brew_zsh.stat.exists
+        - name: Add homebrew zsh to /etc/shells
+          lineinfile: dest=/etc/shells
+            line="/opt/homebrew/bin/zsh"
+            state=present
+          when: brew_zsh.stat.exists
 
-      - user:
-          name: "{{ ansible_user_id }}"
-          shell: /opt/homebrew/bin/zsh
+        - user:
+            name: "{{ ansible_user_id }}"
+            shell: /opt/homebrew/bin/zsh
       become: yes

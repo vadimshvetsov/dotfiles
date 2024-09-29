@@ -1,4 +1,0 @@
-- name: Install Lazygit for Darwin
-  ansible.builtin.package:
-    name: lazygit
-    state: present

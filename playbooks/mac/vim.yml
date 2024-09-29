@@ -1,5 +1,5 @@
 ---
-- hosts: local
+- hosts: all
   tasks:
     - name: Install vim
       package:
@@ -10,7 +10,7 @@
       package:
         name: fzf
         state: latest
-      
+
     - name: Install ag on OS X
       package:
         name: the_silver_searcher
@@ -28,7 +28,7 @@
         state: link
         force: true
 
-    - name: Create ~/.vim directory    
+    - name: Create ~/.vim directory
       file:
         path: ~/.vim
         state: directory
@@ -37,7 +37,7 @@
       file:
         path: ~/.vim/autoload
         state: directory
-        mode: '0755'
+        mode: "0755"
 
     - name: Create ~/.vim/undodir directory
       file:
