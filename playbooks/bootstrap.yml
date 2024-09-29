@@ -1,0 +1,3 @@
+---
+- name: Install AstroNvim
+  ansible.builtin.import_playbook: astronvim.yml

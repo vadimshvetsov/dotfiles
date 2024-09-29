@@ -1,0 +1,42 @@
+---
+- name: Install AstroNvim
+  hosts: all
+  roles:
+    - neovim
+    - lazygit
+  tasks:
+    - name: Install Ripgrep
+      ansible.builtin.package:
+        name: ripgrep
+        state: present
+
+    - name: Install Bottom
+      ansible.builtin.package:
+        name: bottom
+        state: present
+      when: ansible_os_family == "Darwin"
+
+    - name: Install go DiskUsage()
+      ansible.builtin.package:
+        name: gdu
+        state: present
+      when: ansible_os_family in ["Darwin", "Debian"]
+
+    - name: Install XClip for clipboard
+      ansible.builtin.package:
+        name: xclip
+        state: present
+      when: ansible_os_family in ["Debian", "RedHat"]
+
+    - name: Create astronvim folder
+      ansible.builtin.file:
+        path: ~/.config/nvim
+        mode: "0755"
+        state: directory
+
+    - name: Link AstroNvim config
+      ansible.builtin.file:
+        src: "{{ playbook_dir }}/../astronvim"
+        dest: "{{ ansible_env.HOME }}/.config/nvim"
+        state: link
+        force: true
