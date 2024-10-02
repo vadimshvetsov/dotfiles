@@ -1,5 +1,5 @@
 ---
-- name: Install lazygit
+- name: Install Lazygit
   ansible.builtin.unarchive:
     src: "{{ lazygit_dl_url }}"
     dest: "{{ lazygit_bin_path }}"

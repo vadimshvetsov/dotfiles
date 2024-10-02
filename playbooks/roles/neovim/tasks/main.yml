@@ -1,12 +1,12 @@
 ---
-- name: Import neovim Darwin tasks
-  ansible.builtin.import_tasks: tasks_darwin.yml
+- name: Install Neovim for Darwin
+  ansible.builtin.include_tasks: tasks_darwin.yml
   when: ansible_os_family == "Darwin"
 
-- name: Import neovim Debian tasks
-  ansible.builtin.import_tasks: tasks_debian.yml
+- name: Install Neovim for Debian
+  ansible.builtin.include_tasks: tasks_debian.yml
   when: ansible_os_family == "Debian"
 
-- name: Import neovim RedHat tasks
-  ansible.builtin.import_tasks: tasks_redhat.yml
+- name: Install Neovim for RedHat
+  ansible.builtin.include_tasks: tasks_redhat.yml
   when: ansible_os_family == "RedHat"
