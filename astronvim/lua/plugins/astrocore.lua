@@ -83,11 +83,11 @@ return {
           desc = "Find and replace",
         },
         J = {
-          ":m '>+1<cr>gv=gv",
+          ":m '>+1<cr>gv-gv",
           desc = "Move selected line above",
         },
         K = {
-          ":m '<-2<cr>gv=gv",
+          ":m '<-2<cr>gv-gv",
           desc = "Move selected line below",
         },
       },
