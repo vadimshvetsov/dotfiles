@@ -30,6 +30,7 @@ return {
         spell = false, -- sets vim.opt.spell
         signcolumn = "yes", -- sets vim.opt.signcolumn to auto
         wrap = false, -- sets vim.opt.wrap
+        clipboard = "", -- sets vim.opt.clipboard to empty
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -62,7 +63,7 @@ return {
         -- open homescreen when last buffer closed
         ["<Leader>c"] = {
           function()
-            local bufs = vim.fn.getbufinfo { buflisted = true }
+            local bufs = vim.fn.getbufinfo { buflisted = 1 }
             require("astrocore.buffer").close(0)
             if require("astrocore").is_available "alpha-nvim" and not bufs[2] then require("alpha").start() end
           end,
@@ -72,6 +73,10 @@ return {
           ":so %<cr>",
           desc = "Source current file",
         },
+        -- clipboard
+        ["<Leader>y"] = { '"+y', desc = "Yank to system clipboard" },
+        ["<Leader>p"] = { '"+p', desc = "Paste from system clipboard" },
+        ["<Leader>Y"] = { '"+Y', desc = "Yank line to system clipboard" },
       },
       t = {
         -- setting a mapping to false will disable it
@@ -82,6 +87,9 @@ return {
           ":s/",
           desc = "Find and replace",
         },
+        -- clipboard
+        ["<Leader>y"] = { '"+y', desc = "Yank selection to system clipboard" },
+        ["<Leader>p"] = { '"+p', desc = "Paste from system clipboard" },
       },
     },
   },
