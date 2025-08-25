@@ -58,24 +58,4 @@ fi
 # Update PATH for pipx packages
 export PATH="$PATH:$HOME/.local/bin"
 
-# Update PATH for Yandex Cloud CLI.
-if [ -f "$HOME/yandex-cloud/path.bash.inc" ]; then source "$HOME/yandex-cloud/path.bash.inc"; fi
-
-if [ -f "$HOME/yandex-cloud/completion.zsh.inc" ]; then source "$HOME/yandex-cloud/completion.zsh.inc"; fi
-
 if [ -f "$HOME/.work_zshrc" ]; then source "$HOME/.work_zshrc"; fi
-
-# The next line updates PATH for Yandex Cloud CLI.
-if [ -f '/home/vadim/yandex-cloud/path.bash.inc' ]; then source '/home/vadim/yandex-cloud/path.bash.inc'; fi
-
-# The next line enables shell command completion for yc.
-if [ -f '/home/vadim/yandex-cloud/completion.zsh.inc' ]; then source '/home/vadim/yandex-cloud/completion.zsh.inc'; fi
-
-
-# The next line updates PATH for Yandex Cloud CLI.
-if [ -f '/Users/vadim/yandex-cloud/path.bash.inc' ]; then source '/Users/vadim/yandex-cloud/path.bash.inc'; fi
-
-# The next line enables shell command completion for yc.
-if [ -f '/Users/vadim/yandex-cloud/completion.zsh.inc' ]; then source '/Users/vadim/yandex-cloud/completion.zsh.inc'; fi
-
-
