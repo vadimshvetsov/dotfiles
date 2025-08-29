@@ -48,11 +48,13 @@ esac
 # Enable shell_history in IEx
 export ERL_AFLAGS="-kernel shell_history enabled"
 
-# Check if pyenv is installed
 if command -v pyenv 1>/dev/null 2>&1; then
-  # Add pyenv init to shell
   eval "$(pyenv init --path)"
   eval "$(pyenv init -)"
+fi
+
+if command -v direnv &> /dev/null; then
+  eval "$(direnv hook zsh)"
 fi
 
 # Update PATH for pipx packages
