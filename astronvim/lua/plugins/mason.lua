@@ -22,6 +22,15 @@ return {
       opts.ensure_installed = require("astrocore").list_insert_unique(opts.ensure_installed, {
         "mix",
       })
+
+      -- hadolint from docker pack fails on ARM64 systems due to architecture incompatibility
+      -- https://github.com/mason-org/mason.nvim/issues/1865
+      if vim.fn.has "mac" == 1 and vim.fn.system("uname -m"):match "arm64" then
+        opts.ensure_installed = vim.tbl_filter(
+          function(tool) return tool ~= "hadolint" end,
+          opts.ensure_installed or {}
+        )
+      end
     end,
   },
   {
