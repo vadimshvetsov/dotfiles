@@ -1,0 +1,46 @@
+---
+- name: Install fontconfig (Debian/Ubuntu)
+  apt:
+    name: 
+      - fontconfig
+      - unzip
+    state: present
+    update_cache: yes
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+  become: yes
+
+- name: Install fontconfig (RedHat/CentOS/Fedora)
+  dnf:
+    name:
+      - fontconfig
+      - unzip
+    state: present
+  when: ansible_distribution in ["RedHat", "CentOS", "Fedora"]
+  become: yes
+
+- name: Create fonts directory
+  file:
+    path: "{{ ansible_env.HOME }}/.local/share/fonts"
+    state: directory
+    mode: '0755'
+
+- name: Download FiraCode Nerd Font
+  get_url:
+    url: "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip"
+    dest: "/tmp/FiraCode.zip"
+    mode: '0644'
+
+- name: Extract FiraCode Nerd Font
+  unarchive:
+    src: "/tmp/FiraCode.zip"
+    dest: "{{ ansible_env.HOME }}/.local/share/fonts"
+    remote_src: true
+    creates: "{{ ansible_env.HOME }}/.local/share/fonts/FiraCodeNerdFont-Regular.ttf"
+
+- name: Clean up download
+  file:
+    path: "/tmp/FiraCode.zip"
+    state: absent
+
+- name: Refresh font cache
+  command: fc-cache -f -v

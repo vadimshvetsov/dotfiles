@@ -1,0 +1,32 @@
+---
+- name: Install Alacritty (Debian/Ubuntu)
+  apt:
+    name: alacritty
+    state: present
+    update_cache: yes
+  when: ansible_distribution in ["Debian", "Ubuntu"]
+  become: yes
+
+- name: Install Alacritty (RedHat/Fedora/CentOS)
+  dnf:
+    name: alacritty
+    state: present
+  when: ansible_distribution in ["RedHat", "Fedora", "CentOS"]
+  become: yes
+
+- name: Create .config directory
+  file:
+    path: "{{ config_home }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+
+- name: Link Alacritty config directory
+  file:
+    src: "{{ dotfiles_home }}/alacritty"
+    dest: "{{ config_home }}/alacritty"
+    state: link
+    force: true
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"

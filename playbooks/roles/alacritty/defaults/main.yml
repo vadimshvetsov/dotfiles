@@ -1,0 +1,2 @@
+dotfiles_home: "{{ ansible_env.HOME }}/dev/dotfiles"
+config_home: "{{ ansible_env.HOME }}/.config"

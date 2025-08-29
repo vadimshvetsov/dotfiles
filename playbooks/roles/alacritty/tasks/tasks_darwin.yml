@@ -1,0 +1,15 @@
+---
+- name: Install Alacritty via Homebrew
+  homebrew_cask:
+    name: alacritty
+    state: present
+
+- name: Link Alacritty config directory
+  file:
+    src: "{{ dotfiles_home }}/alacritty"
+    dest: "{{ config_home }}/alacritty"
+    state: link
+    force: true
+
+- name: Disable font smoothing for Alacritty
+  command: defaults write org.alacritty AppleFontSmoothing -int 0

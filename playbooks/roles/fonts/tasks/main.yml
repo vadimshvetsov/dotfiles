@@ -1,0 +1,8 @@
+---
+- name: Install FiraCode Nerd Font for macOS
+  ansible.builtin.include_tasks: tasks_darwin.yml
+  when: ansible_os_family == "Darwin"
+
+- name: Install FiraCode Nerd Font for Linux
+  ansible.builtin.include_tasks: tasks_linux.yml
+  when: ansible_os_family != "Darwin"

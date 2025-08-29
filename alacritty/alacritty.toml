@@ -11,20 +11,19 @@ padding.x = 4
 padding.y = 4
 
 [font]
-size = 20.0
-builtin_box_drawing = true
+size = 20
 
 [font.normal]
 family = "FiraCode Nerd Font"
-style = "Regular"
+style = "Retina"
 
 [font.bold]
 family = "FiraCode Nerd Font"
-style = "Bold"
+style = "Medium"
 
 [font.italic]
 family = "FiraCode Nerd Font"
-style = "Italic"
+style = "Light"
 
 [[keyboard.bindings]]
 key = "Left"
