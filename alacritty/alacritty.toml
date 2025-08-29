@@ -1,0 +1,37 @@
+[env]
+TERM = "xterm-256color"
+
+[general]
+import = [
+    "./themes/dracula.toml"
+]
+
+[window]
+padding.x = 4
+padding.y = 4
+
+[font]
+size = 20.0
+builtin_box_drawing = true
+
+[font.normal]
+family = "FiraCode Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "FiraCode Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "FiraCode Nerd Font"
+style = "Italic"
+
+[[keyboard.bindings]]
+key = "Left"
+mods = "Alt"
+chars = "\u001bb"
+
+[[keyboard.bindings]]
+key = "Right"
+mods = "Alt"
+chars = "\u001bf"
