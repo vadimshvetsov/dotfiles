@@ -1,0 +1,4 @@
+---
+# Default variables for astronvim role
+astronvim_config_dir: "{{ ansible_env.HOME }}/.config/nvim"
+astronvim_source_dir: "{{ playbook_dir }}/../config/astronvim"

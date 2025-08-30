@@ -1,0 +1,7 @@
+---
+- name: Install Nerd Fonts
+  homebrew_cask:
+    name: 
+      - font-fira-code-nerd-font
+      - font-victor-mono-nerd-font
+    state: present

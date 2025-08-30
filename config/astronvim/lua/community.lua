@@ -6,6 +6,7 @@
 return {
   "AstroNvim/astrocommunity",
   { import = "astrocommunity.colorscheme.dracula-nvim" },
+  { import = "astrocommunity.markdown-and-latex.render-markdown-nvim" },
   { import = "astrocommunity.pack.ansible" },
   { import = "astrocommunity.pack.docker" },
   { import = "astrocommunity.pack.html-css" },

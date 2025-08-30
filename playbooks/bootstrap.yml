@@ -1,8 +1,0 @@
----
-- name: Bootstrap development environment
-  hosts: all
-  roles:
-    - fonts
-    - alacritty
-- name: Install AstroNvim
-  ansible.builtin.import_playbook: astronvim.yml

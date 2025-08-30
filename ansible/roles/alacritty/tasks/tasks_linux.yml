@@ -24,7 +24,7 @@
 
 - name: Link Alacritty config directory
   file:
-    src: "{{ dotfiles_home }}/alacritty"
+    src: "{{ playbook_dir }}/../config/alacritty"
     dest: "{{ config_home }}/alacritty"
     state: link
     force: true

@@ -1,0 +1,9 @@
+---
+- name: Bootstrap development environment
+  hosts: all
+  roles:
+    - { role: fonts, tags: fonts }
+    - { role: alacritty, tags: alacritty }
+    - { role: neovim, tags: neovim }
+    - { role: lazygit, tags: lazygit }
+    - { role: astronvim, tags: astronvim }

@@ -1,0 +1,83 @@
+---
+- name: Install build dependencies (Debian/Ubuntu)
+  ansible.builtin.package:
+    name:
+      - ninja-build
+      - gettext
+      - libtool
+      - libtool-bin
+      - autoconf
+      - automake
+      - cmake
+      - g++
+      - pkg-config
+      - unzip
+      - curl
+      - git
+    state: present
+  when: ansible_os_family == "Debian"
+
+- name: Install build dependencies (RedHat/CentOS/Fedora)
+  ansible.builtin.package:
+    name:
+      - ninja-build
+      - libtool
+      - autoconf
+      - automake
+      - cmake
+      - gcc
+      - gcc-c++
+      - make
+      - pkgconfig
+      - unzip
+      - patch
+      - gettext
+      - curl
+      - git
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install build dependencies (Arch Linux)
+  ansible.builtin.package:
+    name:
+      - base-devel
+      - cmake
+      - unzip
+      - ninja
+      - tree-sitter
+      - curl
+      - git
+    state: present
+  when: ansible_os_family == "Archlinux"
+
+- name: Create neovim build directory
+  ansible.builtin.file:
+    path: /tmp/neovim-build
+    state: directory
+    mode: "0755"
+
+- name: Clone Neovim repository
+  ansible.builtin.git:
+    repo: https://github.com/neovim/neovim.git
+    dest: /tmp/neovim-build
+    version: "v{{ neovim_version }}"
+    force: yes
+
+- name: Build Neovim from source
+  ansible.builtin.shell:
+    cmd: |
+      cd /tmp/neovim-build
+      make CMAKE_BUILD_TYPE=RelWithDebInfo
+    creates: /tmp/neovim-build/build/bin/nvim
+
+- name: Install Neovim
+  ansible.builtin.shell:
+    cmd: |
+      cd /tmp/neovim-build
+      make install
+    creates: /usr/local/bin/nvim
+
+- name: Clean up build directory
+  ansible.builtin.file:
+    path: /tmp/neovim-build
+    state: absent
