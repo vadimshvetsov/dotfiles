@@ -1,0 +1,34 @@
+---
+- name: Install Ripgrep
+  ansible.builtin.package:
+    name: ripgrep
+    state: present
+
+- name: Install fzf
+  ansible.builtin.package:
+    name: fzf
+    state: present
+
+- name: Install fd
+  ansible.builtin.package:
+    name: fd
+    state: present
+
+- name: Install XClip for clipboard
+  ansible.builtin.package:
+    name: xclip
+    state: present
+  when: ansible_os_family in ["Debian", "RedHat"]
+
+- name: Create lazyvim folder
+  ansible.builtin.file:
+    path: "{{ lazyvim_config_dir }}"
+    mode: "0755"
+    state: directory
+
+- name: Link LazyVim config
+  ansible.builtin.file:
+    src: "{{ lazyvim_source_dir }}"
+    dest: "{{ lazyvim_config_dir }}"
+    state: link
+    force: true

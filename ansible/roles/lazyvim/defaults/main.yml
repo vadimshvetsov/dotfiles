@@ -1,0 +1,4 @@
+---
+# Default variables for lazyvim role
+lazyvim_config_dir: "{{ ansible_env.HOME }}/.config/nvim"
+lazyvim_source_dir: "{{ playbook_dir }}/../config/lazyvim"

@@ -6,4 +6,4 @@
     - { role: alacritty, tags: alacritty }
     - { role: neovim, tags: neovim }
     - { role: lazygit, tags: lazygit }
-    - { role: astronvim, tags: astronvim }
+    - { role: lazyvim, tags: lazyvim }
