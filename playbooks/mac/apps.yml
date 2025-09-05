@@ -20,8 +20,3 @@
       homebrew_cask:
         name: gh
         state: present
-
-    - name: Install iTerm2
-      homebrew_cask:
-        name: iterm2
-        state: present

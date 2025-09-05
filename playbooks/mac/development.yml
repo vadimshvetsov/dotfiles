@@ -98,6 +98,3 @@
       package:
         name: k9s
         state: present
-
-    - name: Install Yandex CLI
-      shell: curl https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash

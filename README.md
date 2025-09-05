@@ -23,12 +23,6 @@ brew install ansible
 ansible-playbook -K playbooks/mac/zsh.yml
 ```
 
-### iTerm2 theme setup
-
-Import `iterm2/profile.json` for setting up theme and settings
-
-To reinstall dracula theme from scratch or update follow this [instructions](https://draculatheme.com/iterm)
-
 ### Installation for Linux
 
 - Install `ansible` and `git`

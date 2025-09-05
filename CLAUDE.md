@@ -84,7 +84,6 @@ The repository supports Darwin (macOS), Debian, and RedHat systems through:
 Dracula theme is consistently applied across:
 
 - Alacritty terminal configuration
-- iTerm2 profile settings
 - Neovim color scheme preferences
 
 ## Important Development Notes
@@ -122,4 +121,3 @@ Use the Docker testing environment for validating changes:
 - Neovim is pinned to version 0.10.1 for stability
 - LazyVim uses the latest starter template from GitHub
 - Application versions are managed through Ansible variables for easy updates
-
