@@ -5,6 +5,9 @@ return {
     opts = {
       overrides = function(colors)
         return {
+          -- Lua Line
+          StatusLine = { bg = colors.selection },
+
           -- SnacksDashboard
           SnacksDashboardHeader = { fg = colors.purple },
           SnacksDashboardKey = { fg = colors.orange },
