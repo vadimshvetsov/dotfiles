@@ -30,6 +30,7 @@ return {
           SnacksPickerInput = { link = "NormalFloat" },
           SnacksPickerInputBorder = { link = "SnacksPickerBorder" },
           SnacksPickerMatch = { fg = colors.green, italic = true },
+          SnacksPickerPathIgnored = { fg = colors.comment },
           SnacksPickerPathHidden = { fg = colors.comment },
           SnacksPickerPrompt = { fg = colors.purple },
           SnacksPickerTitle = { fg = colors.cyan, bold = true },
