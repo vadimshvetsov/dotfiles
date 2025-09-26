@@ -36,6 +36,9 @@ key = "Right"
 mods = "Alt"
 chars = "\u001bf"
 
+[terminal]
+osc52 = "CopyPaste"
+
 [window]
 padding.x = 4
 padding.y = 4

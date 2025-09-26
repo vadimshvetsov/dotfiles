@@ -7,6 +7,7 @@ return {
         return {
           -- Lua Line
           StatusLine = { bg = colors.selection },
+          StatusLineTerm = { bg = colors.selection },
 
           -- SnacksDashboard
           SnacksDashboardHeader = { fg = colors.purple },
