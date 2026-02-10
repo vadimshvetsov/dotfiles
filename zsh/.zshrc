@@ -4,7 +4,7 @@
 if [[ $(uname) == "Linux" ]]; then
   export ZPLUG_HOME=$HOME/.zplug
   export NVM_DIR="${HOME}/.nvm"
-# For M1 
+# For Apple Silicon
 elif [[ $(uname -p) == "arm" ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
   export ZPLUG_HOME=/opt/homebrew/opt/zplug

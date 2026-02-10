@@ -4,6 +4,14 @@
     name: alacritty
     state: present
 
+- name: Create .config directory
+  file:
+    path: "{{ config_home }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+
 - name: Link Alacritty config directory
   file:
     src: "{{ playbook_dir }}/../config/alacritty"

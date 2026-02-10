@@ -20,6 +20,14 @@
     state: present
   when: ansible_os_family in ["Debian", "RedHat"]
 
+- name: Create .config directory
+  file:
+    path: "{{ config_home }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_env.USER }}"
+
 - name: Create lazyvim folder
   ansible.builtin.file:
     path: "{{ lazyvim_config_dir }}"

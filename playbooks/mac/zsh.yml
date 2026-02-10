@@ -6,11 +6,10 @@
         name: zsh
         state: latest
 
-    - name: Install zplug
-      git:
-        repo: https://github.com/zplug/zplug.git
-        dest: "~/.zplug"
-        version: master
+    - name: Install zplug via Homebrew
+      package:
+        name: zplug
+        state: latest
 
     - name: Link .zshrc to home directory
       file:
