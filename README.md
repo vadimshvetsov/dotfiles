@@ -1,6 +1,6 @@
 # Dotfiles
 
-### Prerequisites
+## Prerequisites
 
 - Install `git`
 - Clone this repo
@@ -9,7 +9,7 @@
 git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 ```
 
-### Installation for OS X
+## Installation for OS X
 
 - Install `git` and [`brew`](https://brew.sh/) at master machine
 
@@ -23,7 +23,7 @@ brew install ansible
 ansible-playbook -K playbooks/mac/zsh.yml
 ```
 
-### Installation for Linux
+## Installation for Linux
 
 - Install `ansible` and `git`
 
@@ -39,7 +39,7 @@ sudo apt install ansible
 ansible-playbook -K playbooks/linux/zsh.yml
 ```
 
-### Testing changes
+## Testing changes
 
 To test changes run playbook within OS containers. To build and run containers:
 
