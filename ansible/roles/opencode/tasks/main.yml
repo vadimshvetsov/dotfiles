@@ -1,0 +1,30 @@
+---
+- name: Install OpenCode for macOS
+  ansible.builtin.include_tasks: tasks_darwin.yml
+  when: ansible_os_family == "Darwin"
+
+- name: Install OpenCode for Linux
+  ansible.builtin.include_tasks: tasks_linux.yml
+  when: ansible_os_family != "Darwin"
+
+- name: Create .config directory
+  ansible.builtin.file:
+    path: "{{ config_home }}"
+    state: directory
+    mode: '0755'
+
+- name: Link OpenCode config directory
+  ansible.builtin.file:
+    src: "{{ opencode_source_dir }}"
+    dest: "{{ opencode_config_dir }}"
+    state: link
+    force: true
+
+- name: Create global skills directory
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.agents/skills"
+    state: directory
+    mode: '0755'
+
+- name: Install opencode skills
+  ansible.builtin.include_tasks: tasks_skills.yml

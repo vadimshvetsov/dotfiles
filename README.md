@@ -39,6 +39,14 @@ sudo apt install ansible
 ansible-playbook -K playbooks/linux/zsh.yml
 ```
 
+## OpenCode
+
+`~/.config/opencode` is symlinked from `config/opencode` via Ansible. Agent files live in `config/opencode/agents`. Global skills install to `~/.agents/skills`. Custom OpenCode skills live in `~/.config/opencode/skills`.
+
+```sh
+npx skills add <skill>
+```
+
 ## Testing changes
 
 To test changes run playbook within OS containers. To build and run containers:

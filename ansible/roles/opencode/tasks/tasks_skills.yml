@@ -1,0 +1,6 @@
+---
+- name: Install skill-creator for opencode
+  ansible.builtin.shell: npx skills add anthropics/skills --skill skill-creator --agent opencode -g -y
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.agents/skills/skill-creator"

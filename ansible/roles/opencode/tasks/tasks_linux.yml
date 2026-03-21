@@ -1,0 +1,6 @@
+---
+- name: Install OpenCode via curl
+  ansible.builtin.shell: curl -fsSL https://opencode.ai/install | bash -s -- --no-modify-path
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.opencode/bin/opencode"

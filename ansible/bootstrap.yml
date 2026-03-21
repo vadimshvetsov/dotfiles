@@ -7,3 +7,4 @@
     - { role: neovim, tags: neovim }
     - { role: lazygit, tags: lazygit }
     - { role: lazyvim, tags: lazyvim }
+    - { role: opencode, tags: opencode }

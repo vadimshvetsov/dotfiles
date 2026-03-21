@@ -1,0 +1,4 @@
+---
+config_home: "{{ ansible_env.HOME }}/.config"
+opencode_config_dir: "{{ config_home }}/opencode"
+opencode_source_dir: "{{ playbook_dir }}/../config/opencode"

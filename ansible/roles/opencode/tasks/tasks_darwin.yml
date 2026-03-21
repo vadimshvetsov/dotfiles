@@ -1,0 +1,5 @@
+---
+- name: Install OpenCode via Homebrew
+  homebrew:
+    name: anomalyco/tap/opencode
+    state: present
