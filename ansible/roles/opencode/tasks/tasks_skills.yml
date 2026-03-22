@@ -4,3 +4,9 @@
   args:
     executable: /bin/bash
     creates: "{{ ansible_env.HOME }}/.agents/skills/skill-creator"
+
+- name: Install opencode-expert skill for opencode
+  ansible.builtin.shell: npx skills add https://github.com/s-hiraoku/synapse-a2a --skill opencode-expert --agent opencode -g -y
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_env.HOME }}/.agents/skills/opencode-expert"
