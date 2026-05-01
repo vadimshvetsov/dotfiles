@@ -10,6 +10,27 @@ permission:
   webfetch: allow
   websearch: allow
   write: allow
+  bash:
+    "*": ask
+    "cat *": allow
+    "find *": allow
+    "git diff*": allow
+    "git log*": allow
+    "git show*": allow
+    "git status*": allow
+    "grep *": allow
+    "head *": allow
+    "ls *": allow
+    "make *": allow
+    "npm *": allow
+    "pwd": allow
+    "rg *": allow
+    "sort *": allow
+    "stat *": allow
+    "tail *": allow
+    "tree *": allow
+    "wc *": allow
+    "which *": allow
   skills:
     "*": deny
   context7*: allow
