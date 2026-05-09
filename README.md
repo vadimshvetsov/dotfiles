@@ -9,23 +9,15 @@
 git clone https://github.com/vadimshvetsov/dotfiles.git && cd dotfiles
 ```
 
-## Installation for OS X
+## Installation
 
-- Install `git` and [`brew`](https://brew.sh/) at master machine
+Install Ansible. On macOS, use Homebrew.
 
 ```sh
 brew install ansible
 ```
 
-- Run playbooks for install appropriate things
-
-```sh
-ansible-playbook -K playbooks/mac/zsh.yml
-```
-
-## Installation for Linux
-
-- Install `ansible` and `git`
+On Debian or Ubuntu, use apt.
 
 ```sh
 sudo apt-add-repository ppa:ansible/ansible
@@ -33,10 +25,20 @@ sudo apt update
 sudo apt install ansible
 ```
 
-- Run playbooks for install appropriate things
+Install Ansible Galaxy collections, then run bootstrap.
 
 ```sh
-ansible-playbook -K playbooks/linux/zsh.yml
+ansible-galaxy collection install -r requirements.yml
+ansible-playbook -K ansible/bootstrap.yml
+```
+
+Use `-K` only when a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo.
+
+Run a tagged bootstrap when needed.
+
+```sh
+ansible-playbook ansible/bootstrap.yml -t skills
+ansible-playbook -K ansible/bootstrap.yml -t zsh
 ```
 
 ## OpenCode
@@ -45,18 +47,4 @@ ansible-playbook -K playbooks/linux/zsh.yml
 
 ```sh
 npx skills add <skill>
-```
-
-## Testing changes
-
-To test changes run playbook within OS containers. To build and run containers:
-
-```sh
-docker compose up --build -d
-```
-
-Run interactive shell using:
-
-```sh
-docker-compose exec debian bash
 ```
