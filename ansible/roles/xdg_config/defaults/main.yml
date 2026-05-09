@@ -1,0 +1,2 @@
+---
+xdg_config_home: "{{ ansible_env.HOME }}/.config"

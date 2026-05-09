@@ -1,0 +1,11 @@
+---
+zsh_source_dir: "{{ playbook_dir }}/../zsh"
+zsh_zplug_home: "{{ ansible_env.HOME }}/.zplug"
+zsh_shell_candidates:
+  Darwin:
+    - /opt/homebrew/bin/zsh
+    - /usr/local/bin/zsh
+    - /bin/zsh
+  default:
+    - /usr/bin/zsh
+    - /bin/zsh

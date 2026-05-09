@@ -1,0 +1,33 @@
+---
+- name: Create global skills directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ skills_global_dirs }}"
+
+- name: Check installed skill directories
+  ansible.builtin.stat:
+    path: "{{ item.1 }}/{{ item.0.name }}"
+  loop: "{{ skills_items | product(skills_global_dirs) | list }}"
+  loop_control:
+    label: "{{ item.1 }}/{{ item.0.name }}"
+  register: skills_installed_dirs
+
+- name: Install global skills
+  ansible.builtin.command:
+    argv: >-
+      {{ ['npx', '--yes', 'skills', 'add', item.source]
+      + ((['--skill', item.skill]) if item.skill is defined else [])
+      + ['-a', 'opencode', '-a', 'claude-code', '-g'] }}
+    chdir: "{{ ansible_env.HOME }}"
+  changed_when: true
+  loop: "{{ skills_items }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: >-
+    (skills_installed_dirs.results
+    | selectattr('item.0.name', 'equalto', item.name)
+    | selectattr('stat.exists', 'equalto', false)
+    | list
+    | length) > 0

@@ -1,0 +1,37 @@
+---
+skills_global_dirs:
+  - "{{ ansible_env.HOME }}/.agents/skills"
+  - "{{ ansible_env.HOME }}/.claude/skills"
+skills_items:
+  - name: skill-creator
+    source: anthropics/skills
+    skill: skill-creator
+  - name: agent-development
+    source: https://github.com/anthropics/claude-code
+    skill: Agent Development
+  - name: opencode-expert
+    source: https://smithery.ai/skills/neversight/opencode-expert
+  - name: frontend-design
+    source: https://github.com/anthropics/skills
+    skill: frontend-design
+  - name: typescript-expert
+    source: https://github.com/sickn33/antigravity-awesome-skills
+    skill: typescript-expert
+  - name: vercel-react-best-practices
+    source: https://github.com/vercel-labs/agent-skills
+    skill: vercel-react-best-practices
+  - name: vercel-react-view-transitions
+    source: https://github.com/vercel-labs/agent-skills
+    skill: vercel-react-view-transitions
+  - name: vercel-react-native-skills
+    source: https://github.com/vercel-labs/agent-skills
+    skill: vercel-react-native-skills
+  - name: next-best-practices
+    source: https://github.com/vercel-labs/next-skills
+    skill: next-best-practices
+  - name: next-cache-components
+    source: https://github.com/vercel-labs/next-skills
+    skill: next-cache-components
+  - name: next-upgrade
+    source: https://github.com/vercel-labs/next-skills
+    skill: next-upgrade

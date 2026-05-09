@@ -1,0 +1,4 @@
+---
+dependencies:
+  - role: skills
+  - role: xdg_config

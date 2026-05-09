@@ -1,0 +1,10 @@
+---
+- name: Install zsh
+  ansible.builtin.package:
+    name: zsh
+    state: present
+
+- name: Install zplug
+  ansible.builtin.package:
+    name: zplug
+    state: present

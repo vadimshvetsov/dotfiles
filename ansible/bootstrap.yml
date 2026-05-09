@@ -2,9 +2,11 @@
 - name: Bootstrap development environment
   hosts: all
   roles:
+    - { role: zsh, tags: zsh }
     - { role: fonts, tags: fonts }
-    - { role: alacritty, tags: alacritty }
+    - { role: ghostty, tags: ghostty }
     - { role: neovim, tags: neovim }
     - { role: lazygit, tags: lazygit }
     - { role: lazyvim, tags: lazyvim }
+    - { role: skills, tags: skills }
     - { role: opencode, tags: opencode }

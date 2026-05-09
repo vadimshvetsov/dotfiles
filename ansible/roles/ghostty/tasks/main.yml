@@ -1,15 +1,15 @@
 ---
-- name: Install OpenCode for macOS
+- name: Install Ghostty for macOS
   ansible.builtin.include_tasks: tasks_darwin.yml
   when: ansible_os_family == "Darwin"
 
-- name: Install OpenCode for Linux
+- name: Install Ghostty for Linux
   ansible.builtin.include_tasks: tasks_linux.yml
   when: ansible_os_family != "Darwin"
 
-- name: Link OpenCode config directory
+- name: Link Ghostty config directory
   ansible.builtin.file:
-    src: "{{ opencode_source_dir }}"
-    dest: "{{ opencode_config_dir }}"
+    src: "{{ ghostty_source_dir }}"
+    dest: "{{ ghostty_config_dir }}"
     state: link
     force: true

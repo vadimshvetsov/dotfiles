@@ -1,6 +1,6 @@
 ---
 - name: Install Neovim
-  ansible.builtin.homebrew:
+  community.general.homebrew:
     name: neovim
     state: present
     update_homebrew: true

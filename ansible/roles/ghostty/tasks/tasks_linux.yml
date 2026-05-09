@@ -1,0 +1,11 @@
+---
+- name: Install Ghostty (Arch Linux)
+  ansible.builtin.package:
+    name: ghostty
+    state: present
+  when: ansible_os_family == "Archlinux"
+
+- name: Skip Ghostty package install on unsupported Linux
+  ansible.builtin.debug:
+    msg: "Ghostty package install is only automated for Arch Linux; config will still be linked."
+  when: ansible_os_family != "Archlinux"

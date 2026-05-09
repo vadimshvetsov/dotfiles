@@ -1,0 +1,13 @@
+theme = dracula
+
+font-family = "FiraCode Nerd Font"
+font-family-bold = "FiraCode Nerd Font"
+font-style-bold = "SemiBold"
+font-family-italic = "VictorMono Nerd Font"
+font-style-italic = "Medium Italic"
+font-family-bold-italic = "VictorMono Nerd Font"
+font-style-bold-italic = "Bold Italic"
+font-size = 20
+
+window-padding-x = 16
+window-padding-y = 12

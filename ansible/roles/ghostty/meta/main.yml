@@ -1,0 +1,4 @@
+---
+dependencies:
+  - role: fonts
+  - role: xdg_config

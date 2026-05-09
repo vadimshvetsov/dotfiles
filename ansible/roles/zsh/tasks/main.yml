@@ -1,0 +1,48 @@
+---
+- name: Install zsh
+  ansible.builtin.include_tasks: tasks_darwin.yml
+  when: ansible_os_family == "Darwin"
+
+- name: Install zsh for Linux
+  ansible.builtin.include_tasks: tasks_linux.yml
+  when: ansible_os_family != "Darwin"
+
+- name: Link .zshrc
+  ansible.builtin.file:
+    src: "{{ zsh_source_dir }}/.zshrc"
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    state: link
+    force: true
+
+- name: Link .zshrc_aliases
+  ansible.builtin.file:
+    src: "{{ zsh_source_dir }}/.zshrc_aliases"
+    dest: "{{ ansible_env.HOME }}/.zshrc_aliases"
+    state: link
+    force: true
+
+- name: Check zsh shell candidates
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: "{{ zsh_shell_candidates[ansible_os_family] | default(zsh_shell_candidates.default) }}"
+  register: zsh_shell_stats
+
+- name: Select zsh shell
+  ansible.builtin.set_fact:
+    zsh_shell: >-
+      {{ (zsh_shell_stats.results | selectattr('stat.exists') | map(attribute='item') | list | first) | default('/bin/zsh') }}
+
+- name: Add zsh to valid shells
+  ansible.builtin.lineinfile:
+    path: /etc/shells
+    line: "{{ zsh_shell }}"
+    state: present
+    mode: "0644"
+  become: true
+
+- name: Set user shell to zsh
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    shell: "{{ zsh_shell }}"
+  become: true
+  when: ansible_user_id != "root"

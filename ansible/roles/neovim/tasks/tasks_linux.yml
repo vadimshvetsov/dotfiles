@@ -61,7 +61,7 @@
     repo: https://github.com/neovim/neovim.git
     dest: /tmp/neovim-build
     version: "v{{ neovim_version }}"
-    force: yes
+    force: true
 
 - name: Build Neovim from source
   ansible.builtin.shell:

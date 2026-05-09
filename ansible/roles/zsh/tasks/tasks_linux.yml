@@ -1,0 +1,16 @@
+---
+- name: Install zsh
+  ansible.builtin.package:
+    name: zsh
+    state: present
+
+- name: Install git for zplug
+  ansible.builtin.package:
+    name: git
+    state: present
+
+- name: Install zplug
+  ansible.builtin.git:
+    repo: https://github.com/zplug/zplug.git
+    dest: "{{ zsh_zplug_home }}"
+    version: master

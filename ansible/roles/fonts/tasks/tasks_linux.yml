@@ -1,51 +1,52 @@
 ---
 - name: Install fontconfig (Debian/Ubuntu)
-  apt:
-    name: 
+  ansible.builtin.apt:
+    name:
       - fontconfig
       - unzip
     state: present
-    update_cache: yes
+    update_cache: true
   when: ansible_distribution in ["Debian", "Ubuntu"]
-  become: yes
+  become: true
 
 - name: Install fontconfig (RedHat/CentOS/Fedora)
-  dnf:
+  ansible.builtin.dnf:
     name:
       - fontconfig
       - unzip
     state: present
   when: ansible_distribution in ["RedHat", "CentOS", "Fedora"]
-  become: yes
+  become: true
 
 - name: Create fonts directory
-  file:
+  ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/.local/share/fonts"
     state: directory
     mode: '0755'
 
 - name: Download and install Nerd Fonts
+  loop:
+    - "FiraCode"
+    - "VictorMono"
   block:
-    - name: Download {{ item }} Nerd Font
-      get_url:
+    - name: Download Nerd Font {{ item }}
+      ansible.builtin.get_url:
         url: "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/{{ item }}.zip"
         dest: "/tmp/{{ item }}.zip"
         mode: '0644'
 
-    - name: Extract {{ item }} Nerd Font
-      unarchive:
+    - name: Extract Nerd Font {{ item }}
+      ansible.builtin.unarchive:
         src: "/tmp/{{ item }}.zip"
         dest: "{{ ansible_env.HOME }}/.local/share/fonts"
         remote_src: true
         creates: "{{ ansible_env.HOME }}/.local/share/fonts/{{ item }}NerdFont-Regular.ttf"
 
-    - name: Clean up {{ item }} download
-      file:
+    - name: Clean up download {{ item }}
+      ansible.builtin.file:
         path: "/tmp/{{ item }}.zip"
         state: absent
-  loop:
-    - "FiraCode"
-    - "VictorMono"
 
 - name: Refresh font cache
-  command: fc-cache -f -v
+  ansible.builtin.command: fc-cache -f -v
+  changed_when: false
