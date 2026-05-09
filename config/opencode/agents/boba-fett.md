@@ -30,6 +30,14 @@ permission:
     "wc *": allow
     "which *": allow
   skills:
+    frontend-design: allow
+    typescript-expert: allow
+    vercel-react-best-practices: allow
+    vercel-react-view-transitions: allow
+    vercel-react-native-skills: allow
+    next-best-practices: allow
+    next-cache-components: allow
+    next-upgrade: allow
     "*": deny
   context7*: allow
 tools:
