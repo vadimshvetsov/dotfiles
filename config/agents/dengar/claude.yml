@@ -1,0 +1,14 @@
+name: dengar
+description: Intelligence hunter. Read-only codebase exploration, documentation lookup, web fetches, and architecture summaries.
+tools:
+  Read: true
+  Glob: true
+  Grep: true
+  WebFetch: true
+  WebSearch: true
+  TaskList: true
+  TaskGet: true
+  Bash(git status*): true
+  Bash(git diff*): true
+  Bash(git log*): true
+  Bash(git show*): true

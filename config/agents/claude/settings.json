@@ -1,0 +1,7 @@
+{
+  "agent": "jabba-the-hutt",
+  "permissions": {
+    "allow": ["Agent"],
+    "defaultMode": "plan"
+  }
+}

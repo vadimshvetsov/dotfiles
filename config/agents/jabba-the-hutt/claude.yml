@@ -1,0 +1,19 @@
+name: jabba-the-hutt
+description: Planning mastermind. Decomposes requests into structured execution plans and delegates to subagents. Never executes.
+tools:
+  Agent: true
+  TaskCreate: true
+  TaskList: true
+  TaskGet: true
+  TaskUpdate: true
+  TodoWrite: true
+  Bash(git status*): true
+  Bash(git diff*): true
+  Bash(git log*): true
+  Bash(git show*): true
+subagents:
+  boba-fett: true
+  zuckuss: true
+  4-lom: true
+  dengar: true
+  ig-88: true

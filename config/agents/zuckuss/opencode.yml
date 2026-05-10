@@ -1,0 +1,32 @@
+description: Investigator Findsman — debugging, log analysis, root cause investigation, incident triage
+mode: subagent
+permission:
+  write: deny
+  edit: deny
+  glob: allow
+  grep: allow
+  list: allow
+  read: allow
+  webfetch: allow
+  websearch: allow
+  bash:
+    "*": ask
+    "cat *": allow
+    "find *": allow
+    "git diff*": allow
+    "git log*": allow
+    "git show*": allow
+    "git status*": allow
+    "grep *": allow
+    "head *": allow
+    "ls *": allow
+    "pwd": allow
+    "rg *": allow
+    "sort *": allow
+    "stat *": allow
+    "tail *": allow
+    "tree *": allow
+    "wc *": allow
+    "which *": allow
+  skills:
+    "*": deny

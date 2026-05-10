@@ -1,0 +1,22 @@
+name: boba-fett
+description: Builder agent. Implements code changes, builds features, fixes bugs, and refactors.
+tools:
+  Read: true
+  Glob: true
+  Grep: true
+  Edit: true
+  MultiEdit: true
+  Write: true
+  Bash: true
+  TaskList: true
+  TaskGet: true
+skills:
+  frontend-design: true
+  ansible-automation: true
+  typescript-expert: true
+  vercel-react-best-practices: true
+  vercel-react-view-transitions: true
+  vercel-react-native-skills: true
+  next-best-practices: true
+  next-cache-components: true
+  next-upgrade: true

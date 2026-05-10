@@ -1,0 +1,40 @@
+description: Agent Architect — designs, reviews, and optimizes AI agent configurations, prompts, and tool selections
+mode: subagent
+permission:
+  bash:
+    "*": ask
+    "cat *": allow
+    "find *": allow
+    "git diff*": allow
+    "git log*": allow
+    "git show*": allow
+    "git status*": allow
+    "grep *": allow
+    "head *": allow
+    "ls *": allow
+    "pwd": allow
+    "rg *": allow
+    "sort *": allow
+    "stat *": allow
+    "tail *": allow
+    "tree *": allow
+    "wc *": allow
+    "which *": allow
+  edit: allow
+  glob: allow
+  grep: allow
+  list: allow
+  read: allow
+  skills:
+    skill-creator: allow
+    agent-development: allow
+    skill-development: allow
+    plugin-structure: allow
+    plugin-settings: allow
+    hookify-rules: allow
+    opencode-expert: allow
+    ansible-automation: allow
+    "*": deny
+tools:
+  context7*: true
+  playwright*: true

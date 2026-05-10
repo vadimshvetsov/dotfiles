@@ -1,0 +1,43 @@
+description: Builder agent — implements code changes, builds features, fixes bugs, refactors
+mode: subagent
+permission:
+  edit: allow
+  glob: allow
+  grep: allow
+  list: allow
+  read: allow
+  bash:
+    "*": ask
+    "cat *": allow
+    "find *": allow
+    "git diff*": allow
+    "git log*": allow
+    "git show*": allow
+    "git status*": allow
+    "grep *": allow
+    "head *": allow
+    "ls *": allow
+    "make *": allow
+    "npm *": allow
+    "pwd": allow
+    "rg *": allow
+    "sort *": allow
+    "stat *": allow
+    "tail *": allow
+    "tree *": allow
+    "wc *": allow
+    "which *": allow
+  skills:
+    frontend-design: allow
+    ansible-automation: allow
+    typescript-expert: allow
+    vercel-react-best-practices: allow
+    vercel-react-view-transitions: allow
+    vercel-react-native-skills: allow
+    next-best-practices: allow
+    next-cache-components: allow
+    next-upgrade: allow
+    "*": deny
+  context7*: allow
+tools:
+  context7*: true

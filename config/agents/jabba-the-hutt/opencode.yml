@@ -1,0 +1,24 @@
+description: Planning mastermind — decomposes requests into structured execution plans, never executes
+mode: primary
+permission:
+  write: deny
+  edit: deny
+  question: allow
+  todowrite: allow
+  task:
+    boba-fett: allow
+    zuckuss: allow
+    4-lom: allow
+    dengar: allow
+    ig-88: allow
+    "*": deny
+  bash:
+    "*": deny
+    "git add*": ask
+    "git commit*": ask
+    "git diff*": allow
+    "git log*": allow
+    "git show*": allow
+    "git status*": allow
+  skills:
+    "*": deny

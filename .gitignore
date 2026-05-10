@@ -1,1 +1,3 @@
 .DS_Store
+config/agents/generated/opencode/agents/*.md
+config/agents/generated/claude/agents/*.md
