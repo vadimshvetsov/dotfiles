@@ -1,17 +1,10 @@
 ---
-- name: Create global skills directories
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: '0755'
-  loop: "{{ skills_global_dirs }}"
-
-- name: Check installed skill directories
+- name: Check installed skill manifests
   ansible.builtin.stat:
-    path: "{{ item.1 }}/{{ item.0.name }}"
+    path: "{{ item.1 }}/{{ item.0.name }}/SKILL.md"
   loop: "{{ skills_items | product(skills_global_dirs) | list }}"
   loop_control:
-    label: "{{ item.1 }}/{{ item.0.name }}"
+    label: "{{ item.1 }}/{{ item.0.name }}/SKILL.md"
   register: skills_installed_dirs
 
 - name: Install global skills

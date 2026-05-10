@@ -9,6 +9,18 @@ skills_items:
   - name: agent-development
     source: https://github.com/anthropics/claude-code
     skill: Agent Development
+  - name: skill-development
+    source: https://github.com/anthropics/claude-code
+    skill: Skill Development
+  - name: plugin-structure
+    source: https://github.com/anthropics/claude-code
+    skill: Plugin Structure
+  - name: plugin-settings
+    source: https://github.com/anthropics/claude-code
+    skill: Plugin Settings
+  - name: hookify-rules
+    source: https://github.com/anthropics/claude-code
+    skill: Writing Hookify Rules
   - name: ansible-automation
     source: https://github.com/aj-geddes/useful-ai-prompts
     skill: ansible-automation
