@@ -35,6 +35,6 @@ For container checks, build containers and open distro shells.
 
 ```bash
 docker compose up --build -d
-docker-compose exec debian bash
-docker-compose exec redhat bash
+docker compose exec debian bash
+docker compose exec redhat bash
 ```
