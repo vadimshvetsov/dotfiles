@@ -3,6 +3,4 @@ dependencies:
   - role: skills
     tags:
       - skills
-      - opencode
-  - role: xdg_config
-    tags: opencode
+      - claude

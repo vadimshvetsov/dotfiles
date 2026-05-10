@@ -1,0 +1,29 @@
+---
+- name: Build Claude agents
+  ansible.builtin.command:
+    argv:
+      - python3
+      - "{{ claude_agents_build_script }}"
+      - --target
+      - claude
+  changed_when: false
+
+- name: Create Claude config directory
+  ansible.builtin.file:
+    path: "{{ claude_config_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Link Claude agents directory
+  ansible.builtin.file:
+    src: "{{ claude_agents_source_dir }}"
+    dest: "{{ claude_config_dir }}/agents"
+    state: link
+    force: true
+
+- name: Link Claude settings
+  ansible.builtin.file:
+    src: "{{ claude_settings_source_file }}"
+    dest: "{{ claude_config_dir }}/settings.json"
+    state: link
+    force: true

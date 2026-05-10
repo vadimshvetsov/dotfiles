@@ -8,5 +8,5 @@
     - { role: neovim, tags: neovim }
     - { role: lazygit, tags: lazygit }
     - { role: lazyvim, tags: lazyvim }
-    - { role: skills, tags: skills }
     - { role: opencode, tags: opencode }
+    - { role: claude, tags: claude }

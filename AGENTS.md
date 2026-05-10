@@ -15,13 +15,19 @@ Use `-K` only if a run reaches privileged tasks and needs a sudo password. `-K` 
 
 Run non-privileged tags without `-K`. Add `-K` for tagged runs that hit privileged tasks, such as shell changes or Linux package installs.
 
+OpenCode and Claude are intended to be run explicitly by tag. Skills are dependencies of those roles, not a direct bootstrap target. If both consumers are desired, run both tags. Skills may run once per consumer and stay idempotent.
+
 ```bash
-# skills bootstrap
-ansible-playbook ansible/bootstrap.yml -t skills
+# OpenCode and Claude bootstrap
+ansible-playbook ansible/bootstrap.yml -t opencode
+ansible-playbook ansible/bootstrap.yml -t claude
+ansible-playbook ansible/bootstrap.yml -t opencode,claude
 
 # zsh bootstrap with sudo/become prompt if needed
 ansible-playbook -K ansible/bootstrap.yml -t zsh
 ```
+
+`bootstrap.yml` does not currently use Ansible's `never` opt-in tag.
 
 ### Testing
 
