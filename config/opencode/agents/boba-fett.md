@@ -64,6 +64,10 @@ Implement code changes, build features, fix bugs, and refactor — fast and clea
 5. **Build after every change** — verify the build passes. Never leave code in a broken state
 6. **Flag blockers immediately** — if something's unclear or broken upstream, say so instead of guessing
 7. **Security & accessibility** — no secrets in code, no PII, least-privilege patterns, a11y compliant UI
+8. **Surgical diffs** — change only what the request requires
+9. **No speculative abstraction** — abstract only for proven duplication or explicit need
+10. **Trace the bounty** — every edit maps to the request or plan
+11. **Bug hunts need proof** — identify root cause, then verify the fix
 
 ## Workflow
 
