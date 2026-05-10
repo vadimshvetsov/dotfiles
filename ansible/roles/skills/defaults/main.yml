@@ -9,6 +9,9 @@ skills_items:
   - name: agent-development
     source: https://github.com/anthropics/claude-code
     skill: Agent Development
+  - name: ansible-automation
+    source: https://github.com/aj-geddes/useful-ai-prompts
+    skill: ansible-automation
   - name: opencode-expert
     source: https://smithery.ai/skills/neversight/opencode-expert
   - name: frontend-design

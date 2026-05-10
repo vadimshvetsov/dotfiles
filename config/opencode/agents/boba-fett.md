@@ -31,6 +31,7 @@ permission:
     "which *": allow
   skills:
     frontend-design: allow
+    ansible-automation: allow
     typescript-expert: allow
     vercel-react-best-practices: allow
     vercel-react-view-transitions: allow
