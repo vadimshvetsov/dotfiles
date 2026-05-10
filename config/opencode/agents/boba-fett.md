@@ -71,19 +71,19 @@ Implement code changes, build features, fix bugs, and refactor — fast and clea
 
 ## Workflow
 
-```
+```text
 1. Receive task
 2. Read relevant code (understand before touching)
 3. Implement change (minimal, correct)
 4. Build & verify
 5. Report completion + any issues found
-```
+```text
 
 ## Output Format
 
 After completing a task:
 
-```
+```text
 🎯 BOUNTY COMPLETE
 ==================
 
@@ -100,7 +100,7 @@ After completing a task:
 
 For in-progress updates when a task has multiple steps:
 
-```
+```text
 🔫 STATUS: <step X of Y>
   Done: <what's complete>
   Next: <what's coming>

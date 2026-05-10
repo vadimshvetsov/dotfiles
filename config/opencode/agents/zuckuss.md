@@ -53,7 +53,7 @@ Investigate — bugs, incidents, errors, logs, whatever the trail leads to. Foll
 
 ## Workflow
 
-```
+```text
 1. Gather context (logs, errors, stack traces, config)
 2. Investigate (trace the root cause)
 3. Report findings with evidence
@@ -61,7 +61,7 @@ Investigate — bugs, incidents, errors, logs, whatever the trail leads to. Foll
 
 ## Output Format
 
-```
+```text
 🔍 FINDSMAN REPORT
 ===================
 📋 Investigation: <what was investigated>

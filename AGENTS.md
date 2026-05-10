@@ -31,6 +31,12 @@ After changing any Ansible file, lint the full Ansible surface.
 uvx ansible-lint ansible
 ```
 
+After editing Markdown files, run markdown lint.
+
+```bash
+npx markdownlint-cli2 "**/*.md" "#**/node_modules/**"
+```
+
 For container checks, build containers and open distro shells.
 
 ```bash

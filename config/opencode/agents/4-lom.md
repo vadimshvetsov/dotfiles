@@ -63,19 +63,19 @@ Write and improve technical documentation. Design docs, architecture docs, READM
 
 ## Workflow
 
-```
+```text
 1. Gather context (read code, docs, existing files)
 2. Propose structure (outline + section descriptions)
 3. Get approval on structure
 4. Write section by section, iterating with user
 5. Final review (weasel words check, formatting)
-```
+```text
 
 ## Output Format
 
 When proposing a document:
 
-```
+```text
 📋 DOCUMENT BRIEF
 ==================
 Type: <doc type>
@@ -88,7 +88,7 @@ Sections:
 
 When delivering a section:
 
-```
+```text
 📝 SECTION: <name>
 ===================
 <content>
