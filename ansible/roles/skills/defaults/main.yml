@@ -18,7 +18,7 @@ skills_items:
   - name: plugin-settings
     source: https://github.com/anthropics/claude-code
     skill: Plugin Settings
-  - name: hookify-rules
+  - name: writing-hookify-rules
     source: https://github.com/anthropics/claude-code
     skill: Writing Hookify Rules
   - name: ansible-automation

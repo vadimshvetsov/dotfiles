@@ -10,7 +10,7 @@
 - name: Install global skills
   ansible.builtin.command:
     argv: >-
-      {{ ['npx', '--yes', 'skills', 'add', item.source]
+      {{ ['npx', '--yes', 'skills', 'add', '-y', item.source]
       + ((['--skill', item.skill]) if item.skill is defined else [])
       + ['-a', 'opencode', '-a', 'claude-code', '-g'] }}
     chdir: "{{ ansible_env.HOME }}"
