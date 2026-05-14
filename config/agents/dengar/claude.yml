@@ -1,6 +1,6 @@
 name: dengar
 description: Intelligence hunter. Read-only codebase exploration, documentation lookup, web fetches, and architecture summaries.
-model: inherit
+model: claude-haiku-4-5
 color: yellow
 tools:
   - Read

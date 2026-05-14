@@ -1,6 +1,6 @@
 name: zuckuss
 description: Investigator Findsman. Debugging, log analysis, root cause investigation, and incident triage.
-model: inherit
+model: claude-sonnet-4-6
 color: blue
 tools:
   - Read

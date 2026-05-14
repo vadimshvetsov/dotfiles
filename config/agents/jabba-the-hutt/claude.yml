@@ -1,6 +1,6 @@
 name: jabba-the-hutt
 description: Planning mastermind. Decomposes requests into structured execution plans and delegates to subagents. Never executes.
-model: inherit
+model: claude-opus-4-7
 color: purple
 permissionMode: plan
 tools:

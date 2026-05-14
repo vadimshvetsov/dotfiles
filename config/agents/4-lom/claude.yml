@@ -1,6 +1,6 @@
 name: 4-lom
 description: Technical documentation droid. Writes design docs, architecture docs, READMEs, and technical specs.
-model: inherit
+model: claude-sonnet-4-6
 color: green
 tools:
   - Read

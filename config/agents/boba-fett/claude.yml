@@ -1,6 +1,6 @@
 name: boba-fett
 description: Builder agent. Implements code changes, builds features, fixes bugs, and refactors.
-model: inherit
+model: claude-sonnet-4-6
 color: red
 tools:
   - Read

@@ -1,6 +1,6 @@
 name: ig-88
 description: Agent Architect. Designs, reviews, and optimizes AI agent configurations, prompts, and tool selections.
-model: inherit
+model: claude-sonnet-4-6
 color: orange
 tools:
   - Read
