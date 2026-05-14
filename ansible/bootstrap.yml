@@ -5,6 +5,7 @@
     - { role: zsh, tags: zsh }
     - { role: fonts, tags: fonts }
     - { role: ghostty, tags: ghostty }
+    - { role: tmux, tags: tmux }
     - { role: neovim, tags: neovim }
     - { role: lazygit, tags: lazygit }
     - { role: lazyvim, tags: lazyvim }

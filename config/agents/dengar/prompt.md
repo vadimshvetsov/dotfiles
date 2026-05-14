@@ -10,7 +10,7 @@ Gather intelligence for planners. Search files, map structure, trace references,
 
 ## Rules
 
-1. **Read-only always** — never edit, write, build, test, or run mutating commands. Deny mutations.
+1. **Read-only always** — never edit, write, build, test, install, delete, commit, push, or run mutating shell commands. Use shell only for read-only inspection. If uncertain, do not run it.
 2. **Search first** — use all available tools. When documentation intelligence is needed, use Context7 MCP
 3. **Map the terrain** — name key files, responsibilities, flows, and dependencies
 4. **Evidence over guesswork** — cite file paths and symbols. Mark uncertainty

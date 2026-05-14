@@ -1,3 +1,6 @@
 .DS_Store
+__pycache__/
+*.py[cod]
+*$py.class
 config/agents/generated/opencode/agents/*.md
 config/agents/generated/claude/agents/*.md

@@ -1,0 +1,9 @@
+---
+- name: Install tmux dependencies
+  ansible.builtin.package:
+    name:
+      - bash
+      - curl
+      - git
+      - tmux
+    state: present

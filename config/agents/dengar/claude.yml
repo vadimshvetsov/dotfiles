@@ -8,7 +8,4 @@ tools:
   - Grep
   - WebFetch
   - WebSearch
-  - Bash(git status *)
-  - Bash(git diff *)
-  - Bash(git log *)
-  - Bash(git show *)
+  - Bash

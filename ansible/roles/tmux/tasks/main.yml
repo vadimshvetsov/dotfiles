@@ -1,0 +1,29 @@
+---
+- name: Install tmux for macOS
+  ansible.builtin.include_tasks: tasks_darwin.yml
+  when: ansible_os_family == "Darwin"
+
+- name: Install tmux for Linux
+  ansible.builtin.include_tasks: tasks_linux.yml
+  when: ansible_os_family != "Darwin"
+
+- name: Link tmux config directory
+  ansible.builtin.file:
+    src: "{{ tmux_source_dir }}"
+    dest: "{{ tmux_config_dir }}"
+    state: link
+    force: true
+
+- name: Clone TPM
+  ansible.builtin.git:
+    repo: "{{ tmux_tpm_repo }}"
+    dest: "{{ tmux_tpm_dir }}"
+    version: "{{ tmux_tpm_version }}"
+    update: false
+
+- name: Install tmux plugins
+  ansible.builtin.command: "{{ tmux_tpm_dir }}/bin/install_plugins"
+  args:
+    creates: "{{ tmux_config_dir }}/plugins/tmux/dracula.tmux"
+  environment:
+    TMUX_PLUGIN_MANAGER_PATH: "{{ tmux_config_dir }}/plugins/"
