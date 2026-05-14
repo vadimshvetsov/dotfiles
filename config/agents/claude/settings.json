@@ -1,7 +1,25 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "agent": "jabba-the-hutt",
   "permissions": {
-    "allow": ["Agent"],
-    "defaultMode": "plan"
+    "allow": [
+      "Agent(boba-fett)",
+      "Agent(zuckuss)",
+      "Agent(4-lom)",
+      "Agent(dengar)",
+      "Agent(ig-88)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/*secret*)",
+      "Read(**/*credential*)"
+    ]
   }
 }

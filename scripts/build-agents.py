@@ -26,30 +26,63 @@ def parse_scalar(value: str):
 
 
 def parse_yaml_subset(text: str) -> dict:
-    root: dict = {}
-    stack: list[tuple[int, dict]] = [(-1, root)]
-    for line_no, raw in enumerate(text.splitlines(), 1):
-        if not raw.strip() or raw.lstrip().startswith("#"):
-            continue
+    lines = [
+        (line_no, raw)
+        for line_no, raw in enumerate(text.splitlines(), 1)
+        if raw.strip() and not raw.lstrip().startswith("#")
+    ]
+
+    def line_indent(raw: str, line_no: int) -> int:
         indent = len(raw) - len(raw.lstrip(" "))
         if indent % 2:
             raise ValueError(f"line {line_no}: indentation must use two spaces")
-        line = raw.strip()
-        if ":" not in line:
-            raise ValueError(f"line {line_no}: expected key: value")
-        key, value = line.split(":", 1)
-        key = key.strip().strip('"\'')
-        value = value.strip()
-        while stack[-1][0] >= indent:
-            stack.pop()
-        parent = stack[-1][1]
-        if value == "":
-            node: dict = {}
-            parent[key] = node
-            stack.append((indent, node))
-        else:
-            parent[key] = parse_scalar(value)
-    return root
+        return indent
+
+    def parse_block(index: int, indent: int):
+        if index >= len(lines):
+            return {}, index
+        line_no, raw = lines[index]
+        if line_indent(raw, line_no) != indent:
+            return {}, index
+        if raw.strip().startswith("- "):
+            items = []
+            while index < len(lines):
+                line_no, raw = lines[index]
+                current_indent = line_indent(raw, line_no)
+                if current_indent != indent or not raw.strip().startswith("- "):
+                    break
+                items.append(parse_scalar(raw.strip()[2:].strip()))
+                index += 1
+            return items, index
+
+        data = {}
+        while index < len(lines):
+            line_no, raw = lines[index]
+            current_indent = line_indent(raw, line_no)
+            if current_indent != indent:
+                break
+            line = raw.strip()
+            if line.startswith("- "):
+                break
+            if ":" not in line:
+                raise ValueError(f"line {line_no}: expected key: value")
+            key, value = line.split(":", 1)
+            key = key.strip().strip('"\'')
+            value = value.strip()
+            index += 1
+            if value == "":
+                data[key], index = parse_block(index, indent + 2)
+            else:
+                data[key] = parse_scalar(value)
+        return data, index
+
+    parsed, index = parse_block(0, 0)
+    if index != len(lines):
+        line_no, _ = lines[index]
+        raise ValueError(f"line {line_no}: unexpected indentation")
+    if not isinstance(parsed, dict):
+        raise ValueError("top-level YAML must be a mapping")
+    return parsed
 
 
 def quote_key(key: str) -> str:
@@ -73,9 +106,21 @@ def emit_yaml(data: dict, indent: int = 0) -> list[str]:
         if isinstance(value, dict):
             lines.append(f"{pad}{quote_key(key)}:")
             lines.extend(emit_yaml(value, indent + 2))
+        elif isinstance(value, list):
+            lines.append(f"{pad}{quote_key(key)}:")
+            for item in value:
+                lines.append(f"{pad}  - {quote_value(item)}")
         else:
             lines.append(f"{pad}{quote_key(key)}: {quote_value(value)}")
     return lines
+
+
+def render_claude_frontmatter(config: dict) -> list[str]:
+    allowed = {"name", "description", "model", "color", "permissionMode", "tools", "skills"}
+    data = {key: value for key, value in config.items() if key in allowed}
+    if isinstance(data.get("tools"), list):
+        data["tools"] = ", ".join(str(tool) for tool in data["tools"])
+    return emit_yaml(data)
 
 
 def agent_dirs() -> list[Path]:
@@ -90,7 +135,7 @@ def render(agent: Path, target: str) -> str:
     config = parse_yaml_subset(config_file.read_text())
     prompt = prompt_file.read_text().strip() + "\n"
     if target == "claude":
-        return "\n".join(["---", *emit_yaml(config), "---", "", prompt])
+        return "\n".join(["---", *render_claude_frontmatter(config), "---", "", prompt])
     return "\n".join(["---", *emit_yaml(config), "---", "", MARKER, "", prompt])
 
 

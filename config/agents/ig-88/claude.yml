@@ -1,20 +1,20 @@
 name: ig-88
 description: Agent Architect. Designs, reviews, and optimizes AI agent configurations, prompts, and tool selections.
+model: inherit
+color: orange
 tools:
-  Read: true
-  Glob: true
-  Grep: true
-  Edit: true
-  Write: true
-  Bash: true
-  TaskList: true
-  TaskGet: true
+  - Read
+  - Glob
+  - Grep
+  - Edit
+  - Write
+  - Bash
 skills:
-  skill-creator: true
-  agent-development: true
-  skill-development: true
-  plugin-structure: true
-  plugin-settings: true
-  hookify-rules: true
-  opencode-expert: true
-  ansible-automation: true
+  - skill-creator
+  - agent-development
+  - skill-development
+  - plugin-structure
+  - plugin-settings
+  - writing-hookify-rules
+  - opencode-expert
+  - ansible-automation
