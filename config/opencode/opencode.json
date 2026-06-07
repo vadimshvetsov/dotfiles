@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
   "agent": {
     "build": { "disable": true },
     "plan": { "disable": true },
@@ -31,5 +32,6 @@
     "question": "allow",
     "read": "allow",
     "skill": "allow"
-  }
+  },
+  "plugin": ["opencode-cmux"]
 }
