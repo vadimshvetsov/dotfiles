@@ -4,5 +4,4 @@ __pycache__/
 *$py.class
 config/agents/generated/opencode/agents/*.md
 config/agents/generated/claude/agents/*.md
-config/opencode/agents/*.md
 config/tmux/plugins/
