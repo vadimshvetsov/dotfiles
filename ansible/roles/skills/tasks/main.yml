@@ -12,7 +12,7 @@
     argv: >-
       {{ ['npx', '--yes', 'skills', 'add', '-y', item.source]
       + ((['--skill', item.skill]) if item.skill is defined else [])
-      + ['-a', 'opencode', '-a', 'claude-code', '-g'] }}
+      + ['-a', 'opencode', '-g'] }}
     chdir: "{{ ansible_env.HOME }}"
   changed_when: true
   loop: "{{ skills_items }}"

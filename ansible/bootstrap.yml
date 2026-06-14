@@ -10,4 +10,3 @@
     - { role: lazygit, tags: lazygit }
     - { role: lazyvim, tags: lazyvim }
     - { role: opencode, tags: opencode }
-    - { role: claude, tags: claude }

@@ -34,12 +34,10 @@ ansible-playbook -K ansible/bootstrap.yml
 
 Use `-K` only when a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo.
 
-Run a tagged bootstrap when needed. OpenCode and Claude are intended to be run explicitly by tag. Skills are dependencies of those roles, not a direct bootstrap target. If both consumers are desired, run both tags; skills may run once per consumer and stay idempotent.
+Run a tagged bootstrap when needed. OpenCode is intended to be run explicitly by tag. Skills are dependencies of that role, not a direct bootstrap target.
 
 ```sh
 ansible-playbook ansible/bootstrap.yml -t opencode
-ansible-playbook ansible/bootstrap.yml -t claude
-ansible-playbook ansible/bootstrap.yml -t opencode,claude
 ansible-playbook -K ansible/bootstrap.yml -t zsh
 ```
 

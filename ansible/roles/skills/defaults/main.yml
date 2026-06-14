@@ -1,7 +1,6 @@
 ---
 skills_global_dirs:
   - "{{ ansible_env.HOME }}/.agents/skills"
-  - "{{ ansible_env.HOME }}/.claude/skills"
 skills_items:
   - name: skill-creator
     source: anthropics/skills

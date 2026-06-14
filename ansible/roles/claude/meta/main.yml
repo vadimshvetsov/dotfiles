@@ -1,6 +1,0 @@
----
-dependencies:
-  - role: skills
-    tags:
-      - skills
-      - claude

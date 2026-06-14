@@ -1,5 +1,0 @@
----
-claude_config_dir: "{{ ansible_env.HOME }}/.claude"
-claude_agents_source_dir: "{{ playbook_dir }}/../config/agents/generated/claude/agents"
-claude_settings_source_file: "{{ playbook_dir }}/../config/agents/claude/settings.json"
-claude_agents_build_script: "{{ playbook_dir }}/../scripts/build-agents.py"
