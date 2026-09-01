@@ -1,0 +1,3 @@
+---
+herdr_config_dir: "{{ xdg_config_home }}/herdr"
+herdr_source_dir: "{{ playbook_dir }}/../config/herdr"

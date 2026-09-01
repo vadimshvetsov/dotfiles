@@ -1,0 +1,15 @@
+---
+- name: Install Herdr for macOS
+  ansible.builtin.include_tasks: tasks_darwin.yml
+  when: ansible_os_family == "Darwin"
+
+- name: Install Herdr for Linux
+  ansible.builtin.include_tasks: tasks_linux.yml
+  when: ansible_os_family != "Darwin"
+
+- name: Link Herdr config directory
+  ansible.builtin.file:
+    src: "{{ herdr_source_dir }}"
+    dest: "{{ herdr_config_dir }}"
+    state: link
+    force: true

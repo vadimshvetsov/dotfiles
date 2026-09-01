@@ -1,0 +1,4 @@
+---
+- name: Skip Herdr package install on Linux
+  ansible.builtin.debug:
+    msg: "Herdr package install is not automated on Linux; config will still be linked."

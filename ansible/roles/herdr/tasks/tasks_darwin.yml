@@ -1,0 +1,5 @@
+---
+- name: Install Herdr via Homebrew
+  community.general.homebrew:
+    name: herdr
+    state: present
