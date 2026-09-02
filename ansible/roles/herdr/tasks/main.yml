@@ -7,9 +7,16 @@
   ansible.builtin.include_tasks: tasks_linux.yml
   when: ansible_os_family != "Darwin"
 
-- name: Link Herdr config directory
+- name: Ensure Herdr runtime config directory exists
   ansible.builtin.file:
-    src: "{{ herdr_source_dir }}"
-    dest: "{{ herdr_config_dir }}"
+    path: "{{ herdr_config_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Link Herdr config file
+  ansible.builtin.file:
+    src: "{{ herdr_source_config_file }}"
+    dest: "{{ herdr_config_file }}"
     state: link
     force: true
+    follow: false
