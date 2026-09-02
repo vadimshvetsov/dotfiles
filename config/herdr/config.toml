@@ -1,5 +1,4 @@
 # Place this file at ~/.config/herdr/config.toml
 
 [keys]
-# Prefix, matching tmux
 prefix = "ctrl+a"
