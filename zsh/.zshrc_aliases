@@ -1,2 +1,4 @@
 alias v="nvim"
 alias c="opencode"
+alias cc="claude"
+alias h="herdr"
