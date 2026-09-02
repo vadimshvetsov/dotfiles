@@ -1,4 +1,7 @@
 # Place this file at ~/.config/herdr/config.toml
 
+[theme]
+name = "dracula"
+
 [keys]
 prefix = "ctrl+a"
