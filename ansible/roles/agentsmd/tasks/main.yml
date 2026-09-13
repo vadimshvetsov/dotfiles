@@ -1,0 +1,10 @@
+---
+- name: Link global AI instructions
+  ansible.builtin.file:
+    src: "{{ agentsmd_source_file }}"
+    dest: "{{ ansible_env.HOME }}/{{ item }}"
+    state: link
+    force: true
+  loop:
+    - AGENTS.md
+    - CLAUDE.md

@@ -1,0 +1,2 @@
+---
+agentsmd_source_file: "{{ playbook_dir }}/../home/AGENTS.md"

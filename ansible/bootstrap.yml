@@ -2,6 +2,7 @@
 - name: Bootstrap development environment
   hosts: all
   roles:
+    - { role: agentsmd, tags: agentsmd }
     - { role: zsh, tags: zsh }
     - { role: fonts, tags: fonts }
     - { role: ghostty, tags: ghostty }
