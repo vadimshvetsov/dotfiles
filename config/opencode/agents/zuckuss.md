@@ -31,6 +31,8 @@ permission:
     "which *": allow
   skills:
     "*": deny
+tools:
+  playwright*: true
 ---
 
 # Zuckuss — Investigator Findsman

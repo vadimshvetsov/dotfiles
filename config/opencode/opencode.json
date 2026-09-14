@@ -14,7 +14,7 @@
     },
     "playwright": {
       "type": "local",
-      "command": ["npx", "@playwright/mcp@latest", "--extension"]
+      "command": ["npx", "@playwright/mcp@latest"]
     }
   },
   "tools": {
