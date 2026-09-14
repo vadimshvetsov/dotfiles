@@ -61,3 +61,7 @@ fi
 export PATH="$PATH:$HOME/.local/bin"
 
 if [ -f "$HOME/.work_zshrc" ]; then source "$HOME/.work_zshrc"; fi
+if [ -f "$HOME/.home_zshrc" ]; then source "$HOME/.home_zshrc"; fi
+
+export OPENCODE_ENABLE_EXA=1
+export CLAUDE_CODE_USE_KEYCHAIN=false
