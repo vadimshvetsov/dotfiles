@@ -7,6 +7,7 @@ permission:
   question: allow
   todoread: allow
   todowrite: allow
+  websearch: allow
   bash:
     "*": deny
     "git add*": ask

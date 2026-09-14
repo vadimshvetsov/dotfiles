@@ -7,6 +7,7 @@ permission:
   grep: allow
   list: allow
   read: allow
+  websearch: allow
   todoread: allow
   bash:
     "*": ask
