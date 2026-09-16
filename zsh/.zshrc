@@ -1,64 +1,81 @@
-# Zplug plugins
+# Dedupe PATH and fpath automatically. Keeps repeated exports harmless.
+typeset -U path fpath PATH FPATH
 
-# For Linux
-if [[ $(uname) == "Linux" ]]; then
+# Set env variables early so later blocks can use them.
+export XDG_CONFIG_HOME=$HOME/.config
+export KUBECONFIG=$HOME/.kube/config
+export K9SCONFIG=$XDG_CONFIG_HOME/k9s
+export EDITOR=nvim
+export ERL_AFLAGS="-kernel shell_history enabled"
+
+# Platform setup
+if [[ $OSTYPE == linux* ]]; then
   export ZPLUG_HOME=$HOME/.zplug
-  export NVM_DIR="${HOME}/.nvm"
-# For Apple Silicon
-elif [[ $(uname -p) == "arm" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-  export ZPLUG_HOME=/opt/homebrew/opt/zplug
-  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-# For Intel
-elif [[ $(uname) == "Darwin" ]]; then
-  export ZPLUG_HOME=/usr/local/opt/zplug
+  export NVM_DIR=$HOME/.nvm
+else
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    # Inlined `brew shellenv` output. The eval costs ~40ms per shell.
+    export HOMEBREW_PREFIX=/opt/homebrew
+    export HOMEBREW_CELLAR=/opt/homebrew/Cellar
+    export HOMEBREW_REPOSITORY=/opt/homebrew
+    path=(/opt/homebrew/bin /opt/homebrew/sbin $path)
+    fpath=(/opt/homebrew/share/zsh/site-functions $fpath)
+    manpath=(/opt/homebrew/share/man $manpath)
+    infopath=(/opt/homebrew/share/info $infopath)
+    export ZPLUG_HOME=/opt/homebrew/opt/zplug
+  else
+    export ZPLUG_HOME=/usr/local/opt/zplug
+  fi
+  export NVM_DIR=$XDG_CONFIG_HOME/nvm
 fi
 
+# Zplug plugins
 source $ZPLUG_HOME/init.zsh
 
 zplug 'dracula/zsh', as:theme
 zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-syntax-highlighting"
 
-if zplug check || zplug install; then
-  zplug load
+# `zplug check` runs git and awk on every start. Only re-check when this file
+# changes, which is the only time the plugin list can change.
+_zplug_stamp=$HOME/.cache/zsh/zplug-checked
+if [[ ! -f $_zplug_stamp || ${(%):-%N} -nt $_zplug_stamp ]]; then
+  if zplug check || zplug install; then
+    mkdir -p ${_zplug_stamp:h} && touch $_zplug_stamp
+  fi
 fi
+unset _zplug_stamp
+zplug load
 
 source $HOME/.zshrc_aliases
 
-# Set env variables for utilities
-export KUBECONFIG=$HOME/.kube/config
-export K9SCONFIG=$HOME/.config/k9s
-export XDG_CONFIG_HOME=$HOME/.config
-export EDITOR=nvim
+# nvm: sourcing nvm.sh costs ~850ms, so put the default version on PATH and load
+# the real nvm only when a command needs it.
+if [[ -s $NVM_DIR/nvm.sh ]]; then
+  _nvm_default=default
+  # Follow the alias chain, for example default -> lts/* -> lts/krypton -> v24.x
+  while [[ -r $NVM_DIR/alias/$_nvm_default ]]; do
+    _nvm_default=$(<$NVM_DIR/alias/$_nvm_default)
+  done
+  if [[ -d $NVM_DIR/versions/node/$_nvm_default/bin ]]; then
+    path=($NVM_DIR/versions/node/$_nvm_default/bin $path)
+  fi
+  unset _nvm_default
 
-# Generated for envman. Do not edit. Loads k9s
-[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
-
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  nvm() {
+    unfunction nvm
+    source $NVM_DIR/nvm.sh
+    [[ -s $NVM_DIR/bash_completion ]] && source $NVM_DIR/bash_completion
+    nvm "$@"
+  }
+fi
 
 # pnpm
-export PNPM_HOME=~/.pnpm/store
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
+export PNPM_HOME=$HOME/.pnpm/store
+path=($PNPM_HOME $path)
 
-# Enable shell_history in IEx
-export ERL_AFLAGS="-kernel shell_history enabled"
-
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init --path)"
-  eval "$(pyenv init -)"
-fi
-
-if command -v direnv &> /dev/null; then
-  eval "$(direnv hook zsh)"
-fi
-
-# Update PATH for pipx packages
-export PATH="$PATH:$HOME/.local/bin"
+# pipx packages
+path=($path $HOME/.local/bin)
 
 if [ -f "$HOME/.work_zshrc" ]; then source "$HOME/.work_zshrc"; fi
 if [ -f "$HOME/.home_zshrc" ]; then source "$HOME/.home_zshrc"; fi
