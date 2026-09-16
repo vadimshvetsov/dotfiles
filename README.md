@@ -43,9 +43,32 @@ ansible-playbook -K ansible/bootstrap.yml -t zsh
 
 `bootstrap.yml` does not currently use Ansible's `never` opt-in tag.
 
+## Layout
+
+`home/` mirrors the home directory. A file's path under `home/` is the path Ansible links it to under `$HOME`.
+
+```text
+home/
+  AGENTS.md                  -> ~/AGENTS.md
+  .claude/CLAUDE.md          -> ~/.claude/CLAUDE.md   (symlink to ../AGENTS.md)
+  .zshrc                     -> ~/.zshrc
+  .zshrc_aliases             -> ~/.zshrc_aliases
+  .config/ghostty/           -> ~/.config/ghostty
+  .config/herdr/config.toml  -> ~/.config/herdr/config.toml
+  .config/nvim/              -> ~/.config/nvim
+  .config/opencode/          -> ~/.config/opencode
+  .config/tmux/              -> ~/.config/tmux
+```
+
+Add a new dotfile by putting it at its mirrored path under `home/`, then pointing a role's `*_source_dir` at it.
+
+`agents/` sits outside `home/` because nothing links it into the home directory. It holds per-agent `opencode.yml` and `prompt.md` sources.
+
+Machine-local files stay out of the repo: `~/.zprofile`, `~/.zshenv`, `~/.work_zshrc`, and `~/.claude/rules/`.
+
 ## OpenCode
 
-`~/.config/opencode` is symlinked from `config/opencode` via Ansible. Agent files live in `config/opencode/agents`. Global skills install to `~/.agents/skills`. Custom OpenCode skills live in `~/.config/opencode/skills`.
+`~/.config/opencode` is symlinked from `home/.config/opencode` via Ansible. Agent files live in `home/.config/opencode/agents`. Global skills install to `~/.agents/skills`. Custom OpenCode skills live in `~/.config/opencode/skills`.
 
 ```sh
 npx skills add <skill>

@@ -2,9 +2,25 @@
 - name: Link global AI instructions
   ansible.builtin.file:
     src: "{{ agentsmd_source_file }}"
-    dest: "{{ ansible_env.HOME }}/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/AGENTS.md"
     state: link
     force: true
-  loop:
-    - AGENTS.md
-    - CLAUDE.md
+
+- name: Ensure Claude Code config directory exists
+  ansible.builtin.file:
+    path: "{{ agentsmd_claude_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Link Claude Code global instructions
+  ansible.builtin.file:
+    src: "{{ agentsmd_claude_source_file }}"
+    dest: "{{ agentsmd_claude_dir }}/CLAUDE.md"
+    state: link
+    force: true
+    follow: false
+
+- name: Remove the old home CLAUDE.md link
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/CLAUDE.md"
+    state: absent

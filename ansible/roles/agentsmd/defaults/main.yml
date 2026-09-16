@@ -1,2 +1,4 @@
 ---
 agentsmd_source_file: "{{ playbook_dir }}/../home/AGENTS.md"
+agentsmd_claude_source_file: "{{ playbook_dir }}/../home/.claude/CLAUDE.md"
+agentsmd_claude_dir: "{{ ansible_env.HOME }}/.claude"

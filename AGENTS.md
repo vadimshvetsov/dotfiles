@@ -2,6 +2,18 @@
 
 This repo manages cross-platform dotfiles and tooling with Ansible.
 
+## Layout
+
+`home/` mirrors the home directory. A file's path under `home/` is the path Ansible links it to under `$HOME`. For example `home/.config/nvim` links to `~/.config/nvim`, and `home/.zshrc` links to `~/.zshrc`.
+
+Put a new dotfile at its mirrored path under `home/`, then point the owning role's `*_source_dir` at it. Do not invent a flat directory next to `home/`.
+
+`home/.claude/CLAUDE.md` is a symlink to `../AGENTS.md`, so global AI instructions live in one file.
+
+`agents/` sits outside `home/` because nothing links it into the home directory.
+
+Machine-local files are deliberately not tracked: `~/.zprofile`, `~/.zshenv`, `~/.work_zshrc`, and `~/.claude/rules/`. Do not add them. This repo is public.
+
 ## Common commands
 
 ### Ansible setup
@@ -38,7 +50,7 @@ uvx ansible-lint ansible
 After editing Markdown files, run markdown lint.
 
 ```bash
-npx markdownlint-cli2 "**/*.md" "#**/node_modules/**"
+npx markdownlint-cli2
 ```
 
 For container checks, build containers and open distro shells.

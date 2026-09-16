@@ -1,5 +1,5 @@
 ---
-zsh_source_dir: "{{ playbook_dir }}/../zsh"
+zsh_source_dir: "{{ playbook_dir }}/../home"
 zsh_zplug_home: "{{ ansible_env.HOME }}/.zplug"
 zsh_shell_candidates:
   Darwin:
