@@ -22,7 +22,7 @@ return {
         -- makes DiffAdd solid green and gives the others no background, so H2
         -- is a loud green bar and every other level has no bar at all.
         -- Same colors as the upstream PR. Drop this block once it merges:
-        -- https://github.com/Mofiqul/dracula.nvim/pulls?q=is%3Apr+author%3Avadimshvetsov
+        -- https://github.com/Mofiqul/dracula.nvim/pull/150
         local heading = { colors.fg, colors.pink, colors.cyan, colors.green, colors.purple, colors.orange }
         local md = {}
         for i, c in ipairs(heading) do
