@@ -21,7 +21,9 @@ return {
         -- render-markdown links heading backgrounds to Diff* groups. Dracula
         -- makes DiffAdd solid green and gives the others no background, so H2
         -- is a loud green bar and every other level has no bar at all.
-        local heading = { colors.purple, colors.pink, colors.cyan, colors.green, colors.orange, colors.yellow }
+        -- Same colors as the upstream PR. Drop this block once it merges:
+        -- https://github.com/Mofiqul/dracula.nvim/pulls?q=is%3Apr+author%3Avadimshvetsov
+        local heading = { colors.fg, colors.pink, colors.cyan, colors.green, colors.purple, colors.orange }
         local md = {}
         for i, c in ipairs(heading) do
           md["RenderMarkdownH" .. i] = { fg = c, bold = true }
