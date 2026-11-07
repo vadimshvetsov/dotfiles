@@ -10,13 +10,28 @@
     XDG_STATE_HOME: "{{ user_context_home }}/.local/state"
     PATH: "{{ nodejs_bin_dir | default(user_context_home ~ '/.local/bin') }}:{{ ansible_env.PATH }}"
   block:
-    - name: Install OpenCode for macOS
-      ansible.builtin.include_tasks: tasks_darwin.yml
-      when: ansible_facts['os_family'] == 'Darwin'
+    - name: Inspect legacy provider credentials before V2 migration
+      ansible.builtin.stat:
+        path: "{{ user_context_home }}/.local/share/opencode/auth.json"
+        get_checksum: false
+      register: opencode_legacy_auth
 
-    - name: Install OpenCode for Linux
-      ansible.builtin.include_tasks: tasks_linux.yml
-      when: ansible_facts['os_family'] == 'Debian'
+    - name: Preserve legacy provider credentials locally for rollback
+      ansible.builtin.copy:
+        src: "{{ user_context_home }}/.local/share/opencode/auth.json"
+        dest: "{{ user_context_home }}/.local/share/opencode/auth.json.pre-v2"
+        remote_src: true
+        force: false
+        mode: "0600"
+      no_log: true
+      diff: false
+      when: opencode_legacy_auth.stat.isreg | default(false)
+
+    - name: Resolve the requested stable OpenCode release
+      ansible.builtin.include_tasks: resolve.yml
+
+    - name: Install the verified OpenCode release
+      ansible.builtin.include_tasks: install.yml
 
     - name: Configure OpenCode preferences
       ansible.builtin.include_tasks: configure.yml
@@ -36,9 +51,10 @@
       changed_when: false
       when: not ansible_check_mode
 
-    - name: Validate the resolved OpenCode configuration without a model request
+
+    - name: Validate the resolved OpenCode V2 configuration without a model request
       ansible.builtin.command:
-        argv: ["{{ opencode_executable }}", debug, config]
+        argv: ["{{ opencode_executable }}", debug, config, '--standalone']
       changed_when: false
       no_log: true
       when:

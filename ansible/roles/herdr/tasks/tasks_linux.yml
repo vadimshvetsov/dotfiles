@@ -1,7 +1,32 @@
 ---
-- name: Require a supported Herdr Linux architecture
+- name: Require a supported Herdr architecture
   ansible.builtin.assert:
-    that: ansible_facts['architecture'] in herdr_linux_arch
+    that: ansible_facts['architecture'] in herdr_arch_map
+
+- name: Resolve the official stable Herdr release
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/herdrdev/herdr/releases/{{ 'latest' if herdr_version == 'latest' else 'tags/v' ~ herdr_version }}"
+    return_content: true
+    timeout: 30
+  register: herdr_release_metadata
+  check_mode: false
+  changed_when: false
+
+- name: Resolve the matching Herdr asset
+  ansible.builtin.set_fact:
+    herdr_resolved_version: "{{ herdr_release_metadata.json.tag_name | regex_replace('^v', '') }}"
+    herdr_release_asset: >-
+      {{ herdr_release_metadata.json.assets
+      | selectattr('name', 'equalto', 'herdr-' ~ herdr_platform ~ '-' ~ herdr_arch_map[ansible_facts['architecture']])
+      | first | default({}) }}
+
+- name: Require a stable Herdr asset with a published SHA-256 digest
+  ansible.builtin.assert:
+    that:
+      - not herdr_release_metadata.json.draft
+      - not herdr_release_metadata.json.prerelease
+      - herdr_release_asset.digest | default('') is match('^sha256:[a-f0-9]{64}$')
+    fail_msg: The official stable release must publish a matching binary and checksum.
 
 - name: Create the user executable directory
   ansible.builtin.file:
@@ -11,8 +36,8 @@
 
 - name: Install the verified Herdr release
   ansible.builtin.get_url:
-    url: "https://github.com/herdrdev/herdr/releases/download/v{{ herdr_version }}/herdr-linux-{{ herdr_linux_arch[ansible_facts['architecture']] }}"
+    url: "{{ herdr_release_asset.browser_download_url }}"
     dest: "{{ herdr_executable }}"
-    checksum: "{{ herdr_linux_checksums[ansible_facts['architecture']] }}"
+    checksum: "{{ herdr_release_asset.digest }}"
     mode: "0755"
   when: not ansible_check_mode

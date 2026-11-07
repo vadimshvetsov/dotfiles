@@ -19,10 +19,10 @@
   loop_control:
     label: "{{ item.name }}"
 
-- name: Resolve macOS Homebrew binaries
+- name: Resolve macOS user-local binaries
   ansible.builtin.set_fact:
-    remote_access_herdr_binary: "{{ '/opt/homebrew/bin' if ansible_facts['architecture'] == 'arm64' else '/usr/local/bin' }}/herdr"
-    remote_access_opencode_binary: "{{ '/opt/homebrew/bin' if ansible_facts['architecture'] == 'arm64' else '/usr/local/bin' }}/opencode"
+    remote_access_herdr_binary: "{{ remote_access_bin_dir }}/herdr"
+    remote_access_opencode_binary: "{{ remote_access_bin_dir }}/opencode"
   when: ansible_facts['system'] == 'Darwin'
 
 - name: Create owner-only remote access directories
@@ -78,6 +78,11 @@
     force: false
     mode: '0600'
 
+- name: Inspect the dotfiles-managed OpenCode V2 integration
+  ansible.builtin.stat:
+    path: "{{ remote_access_home }}/.config/opencode/plugins/herdr/index.js"
+  register: remote_access_managed_opencode_plugin
+
 - name: Install Herdr OpenCode integration without unrelated tools
   ansible.builtin.command:
     argv: ["{{ remote_access_herdr_binary }}", integration, install, opencode]
@@ -85,7 +90,9 @@
     PATH: "{{ remote_access_path }}"
   args:
     creates: "{{ remote_access_home }}/.config/opencode/plugins/herdr-agent-state.js"
-  when: not ansible_check_mode
+  when:
+    - not ansible_check_mode
+    - not remote_access_managed_opencode_plugin.stat.exists
 
 - name: Configure each paired Collie instance
   ansible.builtin.include_tasks: instance.yml

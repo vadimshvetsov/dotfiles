@@ -1,5 +1,0 @@
----
-- name: Install OpenCode via Homebrew
-  community.general.homebrew:
-    name: anomalyco/tap/opencode
-    state: present

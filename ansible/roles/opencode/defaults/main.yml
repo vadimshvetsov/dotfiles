@@ -1,17 +1,15 @@
 ---
-opencode_version: 1.19.5
+opencode_version: latest
 opencode_install_only: false
 opencode_config_dir: "{{ user_context_home }}/.config/opencode"
 opencode_source_dir: "{{ dotfiles_repo_dir | default(playbook_dir ~ '/..') }}/home/.config/opencode"
 opencode_bin_dir: "{{ user_context_home }}/.local/bin"
-opencode_install_dir: "{{ user_context_home }}/.local/share/opencode/releases/{{ opencode_version }}"
+opencode_install_dir: "{{ user_context_home }}/.local/share/opencode/releases/{{ opencode_resolved_version }}"
 opencode_cache_dir: "{{ user_context_home }}/.cache/opencode-install"
-opencode_executable: >-
-  {{ (('/opt/homebrew/bin/opencode' if ansible_facts['architecture'] == 'arm64' else '/usr/local/bin/opencode')
-  if ansible_facts['os_family'] == 'Darwin' else opencode_bin_dir ~ '/opencode') }}
-opencode_linux_arch:
+opencode_executable: "{{ opencode_bin_dir }}/opencode"
+opencode_platform: "{{ 'darwin' if ansible_facts['os_family'] == 'Darwin' else 'linux' }}"
+opencode_arch_map:
   x86_64: x64
+  arm64: arm64
   aarch64: arm64
-opencode_linux_checksums:
-  x86_64: sha256:588310a336fa3b9df36b3f0225b26f679d453efaad0cf3d66c3651ef3ec1647a
-  aarch64: sha256:fae5be262d693b7c5e562856cc473e59e741772936db0c0600ac0d5ed5bd088b
+opencode_platform_arch: "{{ opencode_platform }}-{{ opencode_arch_map[ansible_facts['architecture']] }}"

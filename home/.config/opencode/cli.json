@@ -1,0 +1,10 @@
+{
+  "theme": {
+    "name": "dracula",
+    "mode": "dark"
+  },
+  "plugins": [
+    "./herdr-opencode"
+  ],
+  "$schema": "https://opencode.ai/v2/cli.json"
+}

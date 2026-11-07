@@ -51,7 +51,7 @@
     state: link
     force: true
     follow: false
-  loop: [opencode.json, tui.json, tui.jsonc, herdr-tui-session.js, agents, commands, themes, plugins]
+  loop: [opencode.json, cli.json, herdr-tui-session.js, herdr-opencode, agents, commands, themes, plugins]
   when: not ansible_check_mode
 
 - name: Mark the managed OpenCode layout
@@ -59,3 +59,19 @@
     content: "Individual config links; skills are managed by the skills role.\n"
     dest: "{{ opencode_config_dir }}/.dotfiles-managed"
     mode: "0600"
+
+- name: Inspect shared global instructions
+  ansible.builtin.stat:
+    path: "{{ user_context_home }}/AGENTS.md"
+  register: opencode_global_instructions
+
+- name: Retain global instructions after configuration layout migration
+  ansible.builtin.file:
+    src: "{{ user_context_home }}/AGENTS.md"
+    dest: "{{ opencode_config_dir }}/AGENTS.md"
+    state: link
+    force: true
+    follow: false
+  when:
+    - opencode_global_instructions.stat.exists
+    - not ansible_check_mode

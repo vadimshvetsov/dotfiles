@@ -159,12 +159,13 @@ uvx ansible-lint ansible
 ansible-playbook ansible/bootstrap.yml -t herdr
 ```
 
-macOS uses Homebrew. Ubuntu/Debian installs the official pinned release to
-`~/.local/bin/herdr`, verifying its SHA-256 before installation. Linux x86_64 and
-aarch64 are supported. Release pins and checksums live in the role defaults.
+Ansible resolves the latest stable GitHub release on every run, on macOS and
+Ubuntu/Debian x64/arm64. It verifies the release asset's published SHA-256 digest
+and installs `~/.local/bin/herdr`. The default is `herdr_version: latest`;
+a specific version can be supplied explicitly for a controlled rollback.
 The role links `~/.config/herdr/config.toml`, preserves an existing regular file
 as `config.toml.pre-dotfiles`, and runs `herdr config check`.
-It does not start a daemon or configure web access.
+It does not restart a daemon or configure web access.
 
 Run as the owner on either OS. Linux administrators running the local playbook
 as root must set `-e dotfiles_user=<account>`; the role resolves that account's
@@ -180,8 +181,11 @@ The role installs OpenCode, Node.js/npx for MCP servers, and its skill catalog:
 ansible-playbook ansible/bootstrap.yml -t opencode
 ```
 
-On Ubuntu/Debian, the official pinned archive is checked against SHA-256 and the
-executable is linked into `~/.local/bin`. macOS uses Homebrew. The shared
+On both macOS and Linux, Ansible resolves the current stable `@opencode/cli`
+release from npm on every run, verifies the native archive using the package's
+SHA-512 integrity, and links the executable into `~/.local/bin`. The default is
+`opencode_version: latest`; a specific V2 version can be supplied for rollback.
+The shared
 `nodejs` role installs a pinned, checksum-verified official Node.js archive for
 Linux/macOS x64/arm64 into `~/.local/share/nodejs` and links `node`, `npm` and
 `npx` into `~/.local/bin`. It installs no global npm packages and leaves existing
@@ -207,8 +211,8 @@ an old root symlink is replaced without deleting its target. The role refuses
 to overwrite a real configuration when its backup already exists.
 
 The role checks both the executable and resolved configuration without sending
-a model request. OpenCode automatic updates are disabled: update the release
-pins and rerun Ansible. User authentication stays outside the repository.
+a model request. OpenCode background updates are disabled: Ansible owns updates and checks
+for the latest stable release each time the role is applied. User authentication stays outside the repository.
 
 For ChatGPT Pro, connect OpenAI using the ChatGPT subscription sign-in option;
 do not enter an API key. Browser authorization is an interactive account step,
@@ -225,7 +229,8 @@ See [OpenCode skill permissions](https://docs.opencode.ai/docs/skills/#override-
 
 ### Add a skill while working remotely
 
-Start from `~/dev/dotfiles` and select IG-88, or use `opencode --agent ig-88`.
+Start `opencode` from `~/dev/dotfiles`. The project-level `opencode.json` selects
+IG-88 automatically; the V2 TUI does not use a global `--agent` flag.
 IG-88 uses mode `all`, so it also remains callable as a subagent. The installation
 workflow lives in the repository `AGENTS.md`, keeping the agent prompt small.
 
@@ -244,9 +249,9 @@ would bypass this reproducible setup. The workflow is recorded in `AGENTS.md`.
 
 `ansible/remote_access.yml` installs only Herdr, OpenCode and Collie. It skips
 OpenCode's skills dependency and global config link, preserves existing OpenCode
-configuration, and installs Herdr's OpenCode integration. Linux binaries and all
-Collie binaries use pinned release checksums. macOS uses the existing Homebrew
-roles for Herdr/OpenCode and launchd for local server services.
+configuration, and installs Herdr's OpenCode integration. Herdr and OpenCode resolve the latest stable vendor release on every run and
+verify its published integrity. Collie remains checksum-pinned. All platforms
+use user-local binaries; macOS uses launchd for local server services.
 
 Supply `remote_access_instances`, each with `name`, `port`, exact HTTPS `origin`
 and `public` (default false). Public instances also require Cloudflare Access
@@ -273,13 +278,45 @@ under `~/.local/state/valarmorghulis/<name>`. Use the same Unix account and defa
 Herdr session from SSH and web. A server restart ends live pane processes;
 disconnecting a client does not. Reapplying the profile never restarts Herdr.
 
+## Global instructions and editor tools
+
+```sh
+ansible-playbook ansible/bootstrap.yml -t agentsmd
+ansible-playbook ansible/bootstrap.yml -t neovim,lazygit
+ansible-playbook -K ansible/bootstrap.yml -t lazyvim
+```
+
+`agentsmd` links the shared `home/AGENTS.md` into the home directory, Claude's
+configuration and OpenCode's global configuration. Existing regular files are
+preserved; a legacy home `CLAUDE.md` is removed only if it is a symlink.
+
+Neovim and Lazygit use checksum-pinned official archives on Linux/macOS x64/arm64
+and user-local executable links. Neovim is not compiled on the target. Lazygit
+does not install an editor as a dependency. The editor role includes Neovim,
+Node.js, command-line search tools, tree-sitter CLI and a C compiler. Ubuntu uses
+`fd-find` with a user-local `fd` link; macOS uses Homebrew for helper tools.
+Linux administrators can run the local playbook as root with
+`-e dotfiles_user=<owner>`; user files and plugin builds still run as that owner.
+
+LazyVim keeps static Lua links in `~/.config/nvim`; lock/extras JSON files are
+seeded from dotfiles when their sources change. Ansible restores locked plugins
+and installs configured syntax parsers before marking the bootstrap complete.
+A second run skips that bootstrap while still checking initialization. The role
+keeps the CLI clipboard profile and optional `lazyvim_install_xclip: false`.
+
+OpenCode uses native V2 client settings in `~/.config/opencode/cli.json`, a
+V2-compatible Herdr integration and the V2-compatible Neovim plugin revision.
+Supported V1 agent definitions are normalized by V2; no model request is needed
+for configuration validation. Only the OpenAI provider is enabled for this
+ChatGPT subscription setup. Account identifiers and tokens stay outside Git.
+
 ## CLI role integration test
 
-The integration check installs Herdr, OpenCode and dependencies in a disposable
+The integration check installs global instructions, Herdr, OpenCode and dependencies in a disposable
 home, verifies preservation of existing configs, and requires `changed=0` on a
 second run. It needs network access, Git and Ansible, and runs as a regular user.
-On macOS, Herdr and OpenCode must already be installed: the temporary home does
-not sandbox Homebrew package changes. It does not authenticate or call models.
+The installer is user-local on both systems, so it also works on a Mac without
+Homebrew Herdr/OpenCode installations. It does not authenticate or call models.
 
 ```sh
 python3 tests/check_cli_roles.py

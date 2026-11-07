@@ -1,0 +1,51 @@
+---
+- name: Resolve the official OpenCode V2 release
+  ansible.builtin.uri:
+    url: "https://registry.npmjs.org/@opencode/cli/{{ opencode_version }}"
+    return_content: true
+    timeout: 30
+  register: opencode_release_metadata
+  check_mode: false
+  changed_when: false
+
+- name: Require official OpenCode release metadata
+  ansible.builtin.assert:
+    that:
+      - opencode_release_metadata.json.name == '@opencode/cli'
+      - opencode_release_metadata.json.version is match('^[1-9][0-9]*\.[0-9]+\.[0-9]+$')
+    fail_msg: Expected a stable OpenCode release from the official npm package.
+
+- name: Resolve OpenCode release paths
+  ansible.builtin.set_fact:
+    opencode_resolved_version: "{{ opencode_release_metadata.json.version }}"
+
+- name: Fetch the matching native OpenCode distribution metadata
+  ansible.builtin.uri:
+    url: "https://registry.npmjs.org/@opencode/cli-{{ opencode_platform_arch }}/{{ opencode_resolved_version }}"
+    return_content: true
+    timeout: 30
+  register: opencode_native_metadata
+  check_mode: false
+  changed_when: false
+
+- name: Require the matching native package and SHA-512 integrity
+  ansible.builtin.assert:
+    that:
+      - opencode_native_metadata.json.name == '@opencode/cli-' ~ opencode_platform_arch
+      - opencode_native_metadata.json.version == opencode_resolved_version
+      - opencode_native_metadata.json.dist.integrity is match('^sha512-')
+
+- name: Convert npm integrity to a download checksum
+  ansible.builtin.command:
+    argv:
+      - "{{ ansible_facts['python']['executable'] }}"
+      - '-c'
+      - >-
+        import base64,sys;
+        value=base64.b64decode(sys.argv[1].split('-',1)[1],validate=True);
+        assert len(value)==64;
+        print('sha512:'+value.hex())
+      - "{{ opencode_native_metadata.json.dist.integrity }}"
+  register: opencode_integrity_checksum
+  check_mode: false
+  changed_when: false

@@ -89,7 +89,7 @@ Ansible, not an imperative package-manager command on the target machine.
    Keep `"*": deny` first and specific grants after it. Keep the deployed agent
    Markdown and its `agents/<name>/opencode.yml` source synchronized for this rule.
 4. Lint, commit the change, and apply only `ansible/bootstrap.yml -t opencode`
-   from the target's checkout as its owner. Verify the resolved agent permissions
+   from the target's checkout as its owner. Verify the resolved agent permissions (`opencode debug agents --standalone`)
    and skill discovery without sending a model request. Do not restart active
    Herdr/Collie services to install a skill.
 

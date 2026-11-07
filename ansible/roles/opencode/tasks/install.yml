@@ -1,7 +1,7 @@
 ---
-- name: Require a supported OpenCode architecture
+- name: Require a supported OpenCode platform
   ansible.builtin.assert:
-    that: ansible_facts['architecture'] in opencode_linux_arch
+    that: ansible_facts['architecture'] in opencode_arch_map
 
 - name: Create OpenCode installation directories
   ansible.builtin.file:
@@ -16,23 +16,26 @@
 
 - name: Download the verified OpenCode archive
   ansible.builtin.get_url:
-    url: >-
-      https://github.com/anomalyco/opencode/releases/download/v{{ opencode_version
-      }}/opencode-linux-{{ opencode_linux_arch[ansible_facts['architecture']] }}.tar.gz
-    dest: "{{ opencode_cache_dir }}/opencode-{{ opencode_version }}.tar.gz"
-    checksum: "{{ opencode_linux_checksums[ansible_facts['architecture']] }}"
+    url: "{{ opencode_native_metadata.json.dist.tarball }}"
+    dest: "{{ opencode_cache_dir }}/opencode-{{ opencode_resolved_version }}-{{ opencode_platform_arch }}.tgz"
+    checksum: "{{ opencode_integrity_checksum.stdout }}"
     mode: "0600"
   when: not ansible_check_mode
 
-- name: Extract the pinned OpenCode release
+- name: Extract the verified OpenCode release
   ansible.builtin.command:
-    argv: [tar, '-xzf', "{{ opencode_cache_dir }}/opencode-{{ opencode_version }}.tar.gz", '-C', "{{ opencode_install_dir }}"]
-    creates: "{{ opencode_install_dir }}/opencode"
+    argv:
+      - tar
+      - '-xzf'
+      - "{{ opencode_cache_dir }}/opencode-{{ opencode_resolved_version }}-{{ opencode_platform_arch }}.tgz"
+      - '-C'
+      - "{{ opencode_install_dir }}"
+    creates: "{{ opencode_install_dir }}/package/bin/opencode"
   when: not ansible_check_mode
 
 - name: Link the OpenCode executable
   ansible.builtin.file:
-    src: "{{ opencode_install_dir }}/opencode"
+    src: "{{ opencode_install_dir }}/package/bin/opencode"
     dest: "{{ opencode_executable }}"
     state: link
     force: true

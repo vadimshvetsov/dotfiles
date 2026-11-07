@@ -1,20 +1,34 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "autoupdate": false,
   "agent": {
-    "build": { "disable": true },
-    "plan": { "disable": true },
-    "general": { "disable": true },
-    "explore": { "disable": true }
+    "build": {
+      "disable": true
+    },
+    "plan": {
+      "disable": true
+    },
+    "general": {
+      "disable": true
+    },
+    "explore": {
+      "disable": true
+    }
   },
   "mcp": {
     "context7": {
       "type": "local",
-      "command": ["npx", "-y", "@upstash/context7-mcp"]
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp"
+      ]
     },
     "playwright": {
       "type": "local",
-      "command": ["npx", "@playwright/mcp@latest"]
+      "command": [
+        "npx",
+        "@playwright/mcp@latest"
+      ]
     }
   },
   "tools": {
@@ -33,5 +47,12 @@
     "read": "allow",
     "skill": "allow"
   },
-  "plugin": ["opencode-cmux"]
+  "update": "disable",
+  "plugins": [
+    "opencode-cmux@0.4.0",
+    "./plugins/herdr"
+  ],
+  "enabled_providers": [
+    "openai"
+  ]
 }
