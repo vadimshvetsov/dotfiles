@@ -67,7 +67,7 @@
 
 - name: Retain global instructions after configuration layout migration
   ansible.builtin.file:
-    src: "{{ user_context_home }}/AGENTS.md"
+    src: "{{ opencode_global_instructions.stat.lnk_target | default(user_context_home ~ '/AGENTS.md') }}"
     dest: "{{ opencode_config_dir }}/AGENTS.md"
     state: link
     force: true
