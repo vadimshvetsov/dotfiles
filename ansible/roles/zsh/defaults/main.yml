@@ -1,11 +1,24 @@
 ---
-zsh_source_dir: "{{ playbook_dir }}/../home"
-zsh_zplug_home: "{{ ansible_env.HOME }}/.zplug"
+zsh_user: "{{ dotfiles_user | default(ansible_facts['user_id']) }}"
+zsh_home: ""
+zsh_source_dir: "{{ dotfiles_repo_dir | default(playbook_dir ~ '/..') }}/home"
+zsh_manage_login_shell: true
+zsh_zplug_version: 2.4.2
+zsh_plugins:
+  - name: dracula/zsh
+    version: a3e27d47ea2ed1e3b435f44aa71caf71d3219af6
+    options: ["as:theme"]
+  - name: zsh-users/zsh-autosuggestions
+    version: 85919cd1ffa7d2d5412f6d3fe437ebdbeeec4fc5
+    options: []
+  - name: zsh-users/zsh-syntax-highlighting
+    version: e6683f20e5c38d3e5447f45845d04ddda75d0f23
+    options: ["defer:2"]
 zsh_shell_candidates:
   Darwin:
     - /opt/homebrew/bin/zsh
     - /usr/local/bin/zsh
     - /bin/zsh
-  default:
+  Debian:
     - /usr/bin/zsh
     - /bin/zsh

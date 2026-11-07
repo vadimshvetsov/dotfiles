@@ -90,7 +90,7 @@ home/
   AGENTS.md                  -> ~/AGENTS.md
   .claude/CLAUDE.md          -> ~/.claude/CLAUDE.md   (symlink to ../AGENTS.md)
   .zshrc                     -> ~/.zshrc
-  .zshrc_aliases             -> ~/.zshrc_aliases
+  .config/zsh/               -> ~/.config/zsh/      (individual files)
   .config/ghostty/           -> ~/.config/ghostty
   .config/herdr/config.toml  -> ~/.config/herdr/config.toml
   .config/nvim/              -> ~/.config/nvim
@@ -102,6 +102,54 @@ Add a new dotfile by putting it at its mirrored path under `home/`, then pointin
 `agents/` sits outside `home/` because nothing links it into the home directory. It holds per-agent `opencode.yml` and `prompt.md` sources.
 
 Machine-local files stay out of the repo: `~/.zprofile`, `~/.zshenv`, `~/.work_zshrc`, and `~/.claude/rules/`.
+
+## Zsh
+
+Install only the shell and its configuration on macOS (Homebrew) or
+Ubuntu/Debian (APT):
+
+```sh
+ansible-playbook -K ansible/bootstrap.yml -t zsh
+```
+
+Run as the account being configured. On Linux, an administrator can instead
+run the local playbook as root with `-e zsh_user=<account>`; configuration and
+plugins are then created as that account, not in root's home. The role registers
+the installed shell in `/etc/shells` and sets the target account's login shell.
+Use `-e zsh_manage_login_shell=false` to keep the existing login shell.
+
+`~/.zshrc` is a small entry point; the shared configuration lives in
+`~/.config/zsh/`. Only Homebrew initialization is macOS-specific (`macos.zsh`).
+Aliases, history, completion, Dracula, autosuggestions and syntax highlighting
+are shared. Existing regular configuration files are preserved once as
+`*.pre-dotfiles` before linking; an old `~/.zshrc_aliases` symlink is removed.
+
+- Configuration: `~/.config/zsh/`.
+- Private overrides: `~/.config/zsh/local.zsh` (never tracked or overwritten).
+- Plugin repositories: `~/.local/share/zsh/zplug/`.
+- Plugin cache: `~/.cache/zsh/zplug/`.
+- History: `~/.local/state/zsh/history`; legacy `~/.zsh_history` is copied only
+  when the new history does not exist. The original is retained.
+
+Zplug and plugin versions are pinned in `ansible/roles/zsh/defaults/main.yml`;
+Ansible renders `plugins.zsh` from these declarations. Shell startup never
+installs or updates plugins. Update pins deliberately and rerun the Zsh tag.
+The layout uses the standard XDG directories; keep these defaults when running
+the role. The shell also honors XDG variables already set by the environment.
+
+Existing `~/.work_zshrc` and `~/.home_zshrc` are still loaded before `local.zsh`.
+Machine-local `.zprofile` and `.zshenv` are left untouched. NVM is optional and
+lazy-loaded: an existing `~/.nvm` installation is supported, and new installations
+can use `~/.config/nvm`. Common numeric default versions are resolved without
+loading NVM on every shell start. This role does not install Node or NVM.
+
+Config smoke tests run locally on either OS with Python 3 and Zsh, without
+changing the live home, installing packages or downloading plugins:
+
+```sh
+python3 -m unittest discover -s tests -v
+uvx ansible-lint ansible
+```
 
 ## OpenCode
 

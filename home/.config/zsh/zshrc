@@ -1,0 +1,50 @@
+# Shared interactive configuration for macOS and Linux.
+typeset -U path fpath PATH FPATH
+export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
+export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
+export KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config}
+export K9SCONFIG=${K9SCONFIG:-$XDG_CONFIG_HOME/k9s}
+export EDITOR=nvim
+export ERL_AFLAGS="-kernel shell_history enabled"
+
+if [[ $OSTYPE == darwin* ]]; then
+  source "$XDG_CONFIG_HOME/zsh/macos.zsh"
+fi
+
+# Executables installed for this user, including the OpenCode installer.
+path=("$HOME/.local/bin" "$HOME/.opencode/bin" $path)
+[[ -n ${PNPM_HOME:-} ]] && path=("$PNPM_HOME" $path)
+
+HISTFILE=$XDG_STATE_HOME/zsh/history
+HISTSIZE=100000
+SAVEHIST=50000
+setopt EXTENDED_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS HIST_IGNORE_SPACE
+setopt HIST_EXPIRE_DUPS_FIRST HIST_SAVE_NO_DUPS HIST_REDUCE_BLANKS
+bindkey -e
+
+# Ansible installs plugins; starting a shell never downloads or updates them.
+export ZPLUG_HOME=$XDG_DATA_HOME/zsh/zplug
+export ZPLUG_CACHE_DIR=$XDG_CACHE_HOME/zsh/zplug
+if [[ -r $ZPLUG_HOME/init.zsh && -r $XDG_CONFIG_HOME/zsh/plugins.zsh ]]; then
+  source "$ZPLUG_HOME/init.zsh"
+  source "$XDG_CONFIG_HOME/zsh/plugins.zsh"
+  # Zplug also initializes completion; syntax highlighting loads last (defer:2).
+  zplug load
+else
+  autoload -Uz compinit
+  [[ -d $XDG_CACHE_HOME/zsh ]] || mkdir -p -- "$XDG_CACHE_HOME/zsh"
+  compinit -i -d "$XDG_CACHE_HOME/zsh/zcompdump-$ZSH_VERSION"
+fi
+
+source "$XDG_CONFIG_HOME/zsh/aliases.zsh"
+source "$XDG_CONFIG_HOME/zsh/nvm.zsh"
+
+# Machine-local overrides remain private. Older locations stay compatible.
+[[ -r $HOME/.work_zshrc ]] && source "$HOME/.work_zshrc"
+[[ -r $HOME/.home_zshrc ]] && source "$HOME/.home_zshrc"
+[[ -r $XDG_CONFIG_HOME/zsh/local.zsh ]] && source "$XDG_CONFIG_HOME/zsh/local.zsh"
+
+export OPENCODE_ENABLE_EXA=1
+export CLAUDE_CODE_USE_KEYCHAIN=false

@@ -1,0 +1,96 @@
+---
+- name: Create private Zsh configuration and cache directories
+  ansible.builtin.file:
+    path: "{{ zsh_target_home }}/{{ item }}"
+    state: directory
+    mode: "0700"
+  loop: ['.config/zsh', '.cache/zsh', '.local/share/zsh', '.local/state/zsh']
+
+- name: Install the pinned Zplug release
+  ansible.builtin.git:
+    repo: https://github.com/zplug/zplug.git
+    dest: "{{ zsh_target_home }}/.local/share/zsh/zplug"
+    version: "{{ zsh_zplug_version }}"
+
+- name: Install pinned shell plugins
+  ansible.builtin.git:
+    repo: "https://github.com/{{ item.name }}.git"
+    dest: "{{ zsh_target_home }}/.local/share/zsh/zplug/repos/{{ item.name }}"
+    version: "{{ item.version }}"
+  loop: "{{ zsh_plugins }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Render the shared plugin declarations
+  ansible.builtin.template:
+    src: "{{ zsh_source_dir }}/.config/zsh/plugins.zsh"
+    dest: "{{ zsh_target_home }}/.config/zsh/plugins.zsh"
+    mode: "0600"
+    validate: "{{ zsh_shell }} -n %s"
+
+- name: Inspect existing user shell files
+  ansible.builtin.stat:
+    path: "{{ zsh_target_home }}/{{ item }}"
+    follow: false
+  loop: ['.zshrc', '.config/zsh/zshrc', '.config/zsh/aliases.zsh', '.config/zsh/macos.zsh', '.config/zsh/nvm.zsh']
+  register: zsh_existing_files
+
+- name: Preserve existing regular shell files
+  ansible.builtin.copy:
+    src: "{{ item.stat.path }}"
+    dest: "{{ item.stat.path }}.pre-dotfiles"
+    remote_src: true
+    force: false
+    mode: "0600"
+  loop: "{{ zsh_existing_files.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.stat.isreg | default(false)
+
+- name: Link shared shell files
+  ansible.builtin.file:
+    src: "{{ zsh_source_dir }}/{{ item }}"
+    dest: "{{ zsh_target_home }}/{{ item }}"
+    state: link
+    force: true
+    follow: false
+  loop: ['.zshrc', '.config/zsh/zshrc', '.config/zsh/aliases.zsh', '.config/zsh/macos.zsh', '.config/zsh/nvm.zsh']
+
+- name: Check shell syntax without loading configuration
+  ansible.builtin.command:
+    argv: ["{{ zsh_shell }}", '-n', "{{ zsh_target_home }}/{{ item }}"]
+  loop: ['.zshrc', '.config/zsh/zshrc', '.config/zsh/aliases.zsh', '.config/zsh/macos.zsh', '.config/zsh/nvm.zsh', '.config/zsh/plugins.zsh']
+  changed_when: false
+  when: not ansible_check_mode
+
+- name: Inspect the legacy history file
+  ansible.builtin.stat:
+    path: "{{ zsh_target_home }}/.zsh_history"
+    get_checksum: false
+  register: zsh_legacy_history
+
+- name: Preserve history in its XDG state directory
+  ansible.builtin.copy:
+    src: "{{ zsh_target_home }}/.zsh_history"
+    dest: "{{ zsh_target_home }}/.local/state/zsh/history"
+    remote_src: true
+    force: false
+    mode: "0600"
+  no_log: true
+  diff: false
+  when:
+    - zsh_legacy_history.stat.isreg | default(false)
+    - not ansible_check_mode
+
+- name: Inspect the legacy aliases link
+  ansible.builtin.stat:
+    path: "{{ zsh_target_home }}/.zshrc_aliases"
+    follow: false
+    get_checksum: false
+  register: zsh_legacy_aliases
+
+- name: Remove the legacy aliases symlink
+  ansible.builtin.file:
+    path: "{{ zsh_target_home }}/.zshrc_aliases"
+    state: absent
+  when: zsh_legacy_aliases.stat.islnk | default(false)

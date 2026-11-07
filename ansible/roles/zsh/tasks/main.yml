@@ -1,48 +1,95 @@
 ---
-- name: Install zsh
+- name: Validate the Zsh target
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['os_family'] in ['Darwin', 'Debian']
+      - zsh_user != 'root'
+      - ansible_facts['os_family'] != 'Darwin' or zsh_user == ansible_facts['user_id']
+    fail_msg: Run macOS as the target user; on Linux an administrator may set zsh_user explicitly.
+
+- name: Look up the Linux target account
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ zsh_user }}"
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Resolve the target home
+  ansible.builtin.set_fact:
+    zsh_target_home: >-
+      {{ zsh_home if zsh_home | length > 0 else
+      (ansible_facts['getent_passwd'][zsh_user][4] if ansible_facts['os_family'] == 'Debian'
+      else ansible_facts['user_dir']) }}
+
+- name: Inspect Zsh sources on the target machine
+  ansible.builtin.stat:
+    path: "{{ zsh_source_dir }}/{{ item }}"
+  loop: ['.zshrc', '.config/zsh/zshrc', '.config/zsh/aliases.zsh', '.config/zsh/macos.zsh', '.config/zsh/nvm.zsh', '.config/zsh/plugins.zsh']
+  register: zsh_sources
+
+- name: Require complete Zsh sources
+  ansible.builtin.assert:
+    that:
+      - item.stat.exists
+      - item.stat.isreg
+    fail_msg: "Missing source {{ item.item }} in {{ zsh_source_dir }} on the target machine."
+  loop: "{{ zsh_sources.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Install Zsh for macOS
   ansible.builtin.include_tasks: tasks_darwin.yml
-  when: ansible_os_family == "Darwin"
+  when: ansible_facts['os_family'] == 'Darwin'
 
-- name: Install zsh for Linux
+- name: Install Zsh for Debian or Ubuntu
   ansible.builtin.include_tasks: tasks_linux.yml
-  when: ansible_os_family != "Darwin"
+  when: ansible_facts['os_family'] == 'Debian'
 
-- name: Link .zshrc
-  ansible.builtin.file:
-    src: "{{ zsh_source_dir }}/.zshrc"
-    dest: "{{ ansible_env.HOME }}/.zshrc"
-    state: link
-    force: true
-
-- name: Link .zshrc_aliases
-  ansible.builtin.file:
-    src: "{{ zsh_source_dir }}/.zshrc_aliases"
-    dest: "{{ ansible_env.HOME }}/.zshrc_aliases"
-    state: link
-    force: true
-
-- name: Check zsh shell candidates
+- name: Inspect installed Zsh executables
   ansible.builtin.stat:
     path: "{{ item }}"
-  loop: "{{ zsh_shell_candidates[ansible_os_family] | default(zsh_shell_candidates.default) }}"
+  loop: "{{ zsh_shell_candidates[ansible_facts['os_family']] }}"
   register: zsh_shell_stats
 
-- name: Select zsh shell
+- name: Select an executable Zsh
   ansible.builtin.set_fact:
     zsh_shell: >-
-      {{ (zsh_shell_stats.results | selectattr('stat.exists') | map(attribute='item') | list | first) | default('/bin/zsh') }}
+      {{ (zsh_shell_stats.results | selectattr('stat.exists') | selectattr('stat.executable')
+      | map(attribute='item') | first) | default('') }}
 
-- name: Add zsh to valid shells
+- name: Require an installed shell
+  ansible.builtin.assert:
+    that: zsh_shell | length > 0
+    fail_msg: No executable Zsh was found after installation.
+  when: not ansible_check_mode
+
+- name: Configure Zsh for the target user
+  become: "{{ zsh_user != ansible_facts['user_id'] }}"
+  become_user: "{{ zsh_user }}"
+  environment:
+    HOME: "{{ zsh_target_home }}"
+  block:
+    - name: Install user plugins and configuration
+      ansible.builtin.include_tasks: configure.yml
+      when: zsh_shell | length > 0
+
+- name: Register Zsh as a valid login shell
   ansible.builtin.lineinfile:
     path: /etc/shells
     line: "{{ zsh_shell }}"
     state: present
     mode: "0644"
   become: true
+  become_user: root
+  when:
+    - zsh_manage_login_shell | bool
+    - zsh_shell | length > 0
 
-- name: Set user shell to zsh
+- name: Set the target user's login shell
   ansible.builtin.user:
-    name: "{{ ansible_user_id }}"
+    name: "{{ zsh_user }}"
     shell: "{{ zsh_shell }}"
   become: true
-  when: ansible_user_id != "root"
+  become_user: root
+  when:
+    - zsh_manage_login_shell | bool
+    - zsh_shell | length > 0

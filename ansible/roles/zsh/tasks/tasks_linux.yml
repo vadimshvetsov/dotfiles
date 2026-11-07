@@ -1,16 +1,9 @@
 ---
-- name: Install zsh
-  ansible.builtin.package:
-    name: zsh
+- name: Install Zsh and Git
+  ansible.builtin.apt:
+    name: [zsh, git, ca-certificates]
     state: present
-
-- name: Install git for zplug
-  ansible.builtin.package:
-    name: git
-    state: present
-
-- name: Install zplug
-  ansible.builtin.git:
-    repo: https://github.com/zplug/zplug.git
-    dest: "{{ zsh_zplug_home }}"
-    version: master
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+  become_user: root

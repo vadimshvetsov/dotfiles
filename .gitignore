@@ -4,3 +4,4 @@ __pycache__/
 *$py.class
 agents/generated/opencode/agents/*.md
 .ansible/
+home/.config/zsh/local.zsh

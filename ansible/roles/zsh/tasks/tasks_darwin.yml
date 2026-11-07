@@ -1,10 +1,6 @@
 ---
-- name: Install zsh
-  ansible.builtin.package:
+- name: Install Zsh via Homebrew
+  community.general.homebrew:
     name: zsh
     state: present
-
-- name: Install zplug
-  ansible.builtin.package:
-    name: zplug
-    state: present
+  become: false
