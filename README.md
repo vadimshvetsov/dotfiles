@@ -72,14 +72,14 @@ clipboard support for SSH/Herdr/tmux sessions without a display.
 
 Use `-K` only when a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo.
 
-Run a tagged bootstrap when needed. OpenCode is intended to be run explicitly by tag. Skills are dependencies of that role, not a direct bootstrap target.
+Run a tagged bootstrap when needed. OpenCode is included in the default CLI bootstrap. Use `-t opencode` to run only
+OpenCode and its dependencies. Skills are dependencies of that role, not a direct
+bootstrap target.
 
 ```sh
 ansible-playbook ansible/bootstrap.yml -t opencode
 ansible-playbook -K ansible/bootstrap.yml -t zsh
 ```
-
-`bootstrap.yml` does not currently use Ansible's `never` opt-in tag.
 
 ## Layout
 

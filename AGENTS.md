@@ -40,17 +40,17 @@ Use `-K` only if a run reaches privileged tasks and needs a sudo password. `-K` 
 
 Run non-privileged tags without `-K`. Add `-K` for tagged runs that hit privileged tasks, such as shell changes or Linux package installs.
 
-OpenCode is intended to be run explicitly by tag. Skills are dependencies of that role, not a direct bootstrap target.
+OpenCode is included in the default CLI bootstrap. Use `-t opencode` to run only
+OpenCode and its dependencies. Skills are dependencies of that role, not a direct
+bootstrap target.
 
 ```bash
-# OpenCode bootstrap
+# Run only OpenCode and its dependencies
 ansible-playbook ansible/bootstrap.yml -t opencode
 
 # zsh bootstrap with sudo/become prompt if needed
 ansible-playbook -K ansible/bootstrap.yml -t zsh
 ```
-
-`bootstrap.yml` does not currently use Ansible's `never` opt-in tag.
 
 ### Testing
 
