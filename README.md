@@ -17,13 +17,32 @@ Install Ansible. On macOS, use Homebrew.
 brew install ansible
 ```
 
-On Debian or Ubuntu, use apt.
+On Ubuntu, use the [Ansible PPA](https://docs.ansible.com/projects/ansible/latest/installation_guide/installation_distros.html#installing-ansible-on-ubuntu).
+These commands require an account with sudo privileges.
 
 ```sh
-sudo apt-add-repository ppa:ansible/ansible
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
+```
+
+On Debian, use the distribution repository instead of adding the Ubuntu PPA
+with the commands above.
+
+```sh
 sudo apt update
 sudo apt install ansible
 ```
+
+Verify the installation before running any playbooks:
+
+```sh
+ansible --version
+ansible-playbook --version
+```
+
+Run the remaining commands from the root of the cloned repository.
 
 Install Ansible Galaxy collections, then run bootstrap.
 
