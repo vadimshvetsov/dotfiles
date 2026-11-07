@@ -9,7 +9,7 @@
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
+    mode: "{{ '0700' if item.endswith('/.cache/dotfiles') else '0755' }}"
   loop:
     - "{{ ansible_env.HOME }}/.local/bin"
     - "{{ ansible_env.HOME }}/.local/share/opencode/releases/{{ opencode_version }}"
