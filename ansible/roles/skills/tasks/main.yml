@@ -1,26 +1,37 @@
 ---
-- name: Check installed skill manifests
-  ansible.builtin.stat:
-    path: "{{ item.1 }}/{{ item.0.name }}/SKILL.md"
-  loop: "{{ skills_items | product(skills_global_dirs) | list }}"
-  loop_control:
-    label: "{{ item.1 }}/{{ item.0.name }}/SKILL.md"
-  register: skills_installed_dirs
+- name: Install global skills as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+    XDG_CONFIG_HOME: "{{ user_context_home }}/.config"
+    PATH: "{{ nodejs_bin_dir }}:{{ ansible_env.PATH }}"
+    NPM_CONFIG_CACHE: "{{ user_context_home }}/.cache/npm"
+    DISABLE_TELEMETRY: "1"
+  block:
+    - name: Check installed skill manifests
+      ansible.builtin.stat:
+        path: "{{ item.1 }}/{{ item.0.name }}/SKILL.md"
+      loop: "{{ skills_items | product(skills_global_dirs) | list }}"
+      loop_control:
+        label: "{{ item.1 }}/{{ item.0.name }}/SKILL.md"
+      register: skills_installed_dirs
 
-- name: Install global skills
-  ansible.builtin.command:
-    argv: >-
-      {{ ['npx', '--yes', 'skills', 'add', '-y', item.source]
-      + ((['--skill', item.skill]) if item.skill is defined else [])
-      + ['-a', 'opencode', '-g'] }}
-    chdir: "{{ ansible_env.HOME }}"
-  changed_when: true
-  loop: "{{ skills_items }}"
-  loop_control:
-    label: "{{ item.name }}"
-  when: >-
-    (skills_installed_dirs.results
-    | selectattr('item.0.name', 'equalto', item.name)
-    | selectattr('stat.exists', 'equalto', false)
-    | list
-    | length) > 0
+    - name: Install global skills
+      ansible.builtin.command:
+        argv: >-
+          {{ [nodejs_bin_dir ~ '/npx', '--yes', 'skills@' ~ skills_cli_version, 'add', '-y', item.source]
+          + ((['--skill', item.skill]) if item.skill is defined else [])
+          + ['-a', 'opencode', '-g'] }}
+        chdir: "{{ user_context_home }}"
+      changed_when: true
+      loop: "{{ skills_items }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: >-
+        not ansible_check_mode and
+        (skills_installed_dirs.results
+        | selectattr('item.0.name', 'equalto', item.name)
+        | selectattr('stat.exists', 'equalto', false)
+        | list
+        | length) > 0

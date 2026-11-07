@@ -1,51 +1,51 @@
 ---
+skills_cli_version: 1.7.6
+skills_anthropic_plugins_source: https://github.com/anthropics/claude-plugins-official/tree/0412be76f50ab4f4f8abff3753efa9269fbbca5b/plugins
 skills_global_dirs:
-  - "{{ ansible_env.HOME }}/.agents/skills"
+  - "{{ user_context_home }}/.agents/skills"
 skills_items:
   - name: skill-creator
-    source: anthropics/skills
+    source: https://github.com/anthropics/skills/tree/2c5958ecac7cee2b583967a2c4981d0f4a75c579
     skill: skill-creator
   - name: agent-development
-    source: https://github.com/anthropics/claude-code
-    skill: Agent Development
+    source: "{{ skills_anthropic_plugins_source }}/plugin-dev/skills/agent-development"
+    skill: agent-development
   - name: skill-development
-    source: https://github.com/anthropics/claude-code
-    skill: Skill Development
+    source: "{{ skills_anthropic_plugins_source }}/plugin-dev/skills/skill-development"
+    skill: skill-development
   - name: plugin-structure
-    source: https://github.com/anthropics/claude-code
-    skill: Plugin Structure
+    source: "{{ skills_anthropic_plugins_source }}/plugin-dev/skills/plugin-structure"
+    skill: plugin-structure
   - name: plugin-settings
-    source: https://github.com/anthropics/claude-code
-    skill: Plugin Settings
+    source: "{{ skills_anthropic_plugins_source }}/plugin-dev/skills/plugin-settings"
+    skill: plugin-settings
   - name: writing-hookify-rules
-    source: https://github.com/anthropics/claude-code
-    skill: Writing Hookify Rules
+    source: "{{ skills_anthropic_plugins_source }}/hookify/skills/writing-rules"
+    skill: writing-hookify-rules
   - name: ansible-automation
-    source: https://github.com/aj-geddes/useful-ai-prompts
+    source: https://github.com/aj-geddes/useful-ai-prompts/tree/3f5182cfd739fc113f4af5244a1cf342ad7f7911
     skill: ansible-automation
-  - name: opencode-expert
-    source: https://smithery.ai/skills/neversight/opencode-expert
   - name: frontend-design
-    source: https://github.com/anthropics/skills
+    source: https://github.com/anthropics/skills/tree/2c5958ecac7cee2b583967a2c4981d0f4a75c579
     skill: frontend-design
   - name: typescript-expert
-    source: https://github.com/sickn33/antigravity-awesome-skills
+    source: https://github.com/sickn33/antigravity-awesome-skills/tree/828257c3037dc7c3c3ec987decc5a603025a0ce5
     skill: typescript-expert
   - name: vercel-react-best-practices
-    source: https://github.com/vercel-labs/agent-skills
+    source: https://github.com/vercel-labs/agent-skills/tree/1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62
     skill: vercel-react-best-practices
   - name: vercel-react-view-transitions
-    source: https://github.com/vercel-labs/agent-skills
+    source: https://github.com/vercel-labs/agent-skills/tree/1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62
     skill: vercel-react-view-transitions
   - name: vercel-react-native-skills
-    source: https://github.com/vercel-labs/agent-skills
+    source: https://github.com/vercel-labs/agent-skills/tree/1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62
     skill: vercel-react-native-skills
   - name: next-best-practices
-    source: https://github.com/vercel-labs/next-skills
+    source: https://github.com/vercel-labs/next-skills/tree/dc1de9caf7612d73f56a8dec3cb1bd6c9ec096b9/skills
     skill: next-best-practices
   - name: next-cache-components
-    source: https://github.com/vercel-labs/next-skills
+    source: https://github.com/vercel-labs/next-skills/tree/dc1de9caf7612d73f56a8dec3cb1bd6c9ec096b9/skills
     skill: next-cache-components
   - name: next-upgrade
-    source: https://github.com/vercel-labs/next-skills
+    source: https://github.com/vercel-labs/next-skills/tree/dc1de9caf7612d73f56a8dec3cb1bd6c9ec096b9/skills
     skill: next-upgrade
