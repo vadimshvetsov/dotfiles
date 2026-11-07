@@ -1,31 +1,195 @@
 ---
-- name: Install Ripgrep
-  ansible.builtin.package:
-    name: ripgrep
+- name: Install CLI editor dependencies on Ubuntu and Debian
+  ansible.builtin.apt:
+    name: "{{ lazyvim_linux_packages }}"
     state: present
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+  become_user: root
+  when: ansible_facts['os_family'] == 'Debian'
 
-- name: Install fzf
-  ansible.builtin.package:
-    name: fzf
+- name: Install CLI editor dependencies on macOS
+  community.general.homebrew:
+    name: "{{ lazyvim_macos_packages }}"
     state: present
-
-- name: Install fd
-  ansible.builtin.package:
-    name: fd
-    state: present
+  become: false
+  when: ansible_facts['os_family'] == 'Darwin'
 
 - name: Configure optional desktop clipboard provider
   ansible.builtin.import_tasks: clipboard.yml
 
-- name: Create lazyvim folder
-  ansible.builtin.file:
-    path: "{{ lazyvim_config_dir }}"
-    mode: "0755"
-    state: directory
+- name: Configure LazyVim as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+    XDG_CONFIG_HOME: "{{ user_context_home }}/.config"
+    XDG_DATA_HOME: "{{ user_context_home }}/.local/share"
+    XDG_CACHE_HOME: "{{ user_context_home }}/.cache"
+    XDG_STATE_HOME: "{{ user_context_home }}/.local/state"
+    PATH: "{{ user_context_home }}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+  block:
+    - name: Link Debian fd under its portable command name
+      ansible.builtin.file:
+        src: /usr/bin/fdfind
+        dest: "{{ user_context_home }}/.local/bin/fd"
+        state: link
+        force: true
+        follow: false
+      when:
+        - ansible_facts['os_family'] == 'Debian'
+        - not ansible_check_mode
 
-- name: Link LazyVim config
-  ansible.builtin.file:
-    src: "{{ lazyvim_source_dir }}"
-    dest: "{{ lazyvim_config_dir }}"
-    state: link
-    force: true
+    - name: Inspect the existing Neovim configuration
+      ansible.builtin.stat:
+        path: "{{ lazyvim_config_dir }}"
+        follow: false
+      register: lazyvim_existing_config
+
+    - name: Inspect the managed Neovim layout marker
+      ansible.builtin.stat:
+        path: "{{ lazyvim_config_dir }}/.dotfiles-managed"
+      register: lazyvim_layout_marker
+
+    - name: Preserve an unmanaged real Neovim configuration
+      ansible.builtin.command:
+        argv: [mv, "{{ lazyvim_config_dir }}", "{{ lazyvim_config_dir }}.pre-dotfiles"]
+        creates: "{{ lazyvim_config_dir }}.pre-dotfiles"
+      when:
+        - lazyvim_existing_config.stat.isdir | default(false)
+        - not lazyvim_layout_marker.stat.exists
+
+    - name: Remove the old Neovim configuration directory symlink
+      ansible.builtin.file:
+        path: "{{ lazyvim_config_dir }}"
+        state: absent
+      when: lazyvim_existing_config.stat.islnk | default(false)
+
+    - name: Inspect Neovim configuration after preservation
+      ansible.builtin.stat:
+        path: "{{ lazyvim_config_dir }}"
+      register: lazyvim_after_preserve
+      when: not ansible_check_mode
+
+    - name: Require a preserved or already managed Neovim configuration
+      ansible.builtin.assert:
+        that: not lazyvim_after_preserve.stat.exists or lazyvim_layout_marker.stat.exists
+        fail_msg: Both Neovim configuration and backup exist; reconcile them before rerunning.
+      when:
+        - lazyvim_existing_config.stat.isdir | default(false)
+        - not ansible_check_mode
+
+    - name: Create private editor directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0700"
+      loop: ["{{ lazyvim_config_dir }}", "{{ lazyvim_cache_dir }}", "{{ lazyvim_data_dir }}/lazy"]
+
+    - name: Link static Neovim configuration
+      ansible.builtin.file:
+        src: "{{ lazyvim_source_dir }}/{{ item }}"
+        dest: "{{ lazyvim_config_dir }}/{{ item }}"
+        state: link
+        force: true
+        follow: false
+      loop: [init.lua, lua, stylua.toml]
+      when: not ansible_check_mode
+
+    - name: Fingerprint declared Lua and JSON configuration
+      ansible.builtin.find:
+        paths: "{{ lazyvim_source_dir }}"
+        patterns: ['*.lua', '*.json']
+        recurse: true
+        get_checksum: true
+      register: lazyvim_source_files
+
+    - name: Resolve the editor bootstrap stamp and manager revision
+      ansible.builtin.set_fact:
+        lazyvim_bootstrap_stamp: >-
+          {{ lazyvim_cache_dir }}/bootstrap-v2-{{ neovim_version }}-{{ lazyvim_source_files.files
+          | sort(attribute='path') | map(attribute='checksum') | join('') | hash('sha256') }}
+        lazyvim_manager_version: "{{ (lookup('ansible.builtin.file', lazyvim_source_dir ~ '/lazy-lock.json') | from_json)['lazy.nvim'].commit }}"
+
+    - name: Inspect the editor bootstrap stamp
+      ansible.builtin.stat:
+        path: "{{ lazyvim_bootstrap_stamp }}"
+      register: lazyvim_bootstrapped
+
+    - name: Seed declared plugin lock and extras when their sources change
+      ansible.builtin.copy:
+        src: "{{ lazyvim_source_dir }}/{{ item }}"
+        dest: "{{ lazyvim_config_dir }}/{{ item }}"
+        remote_src: true
+        mode: "0600"
+        force: "{{ not lazyvim_bootstrapped.stat.exists }}"
+      loop: [lazy-lock.json, lazyvim.json]
+
+    - name: Install the pinned Lazy plugin manager
+      ansible.builtin.git:
+        repo: https://github.com/folke/lazy.nvim.git
+        dest: "{{ lazyvim_data_dir }}/lazy/lazy.nvim"
+        version: "{{ lazyvim_manager_version }}"
+        refspec: "{{ lazyvim_manager_version }}"
+        depth: 1
+        recursive: false
+
+    - name: Restore the declared Neovim plugins
+      ansible.builtin.command:
+        argv: ["{{ neovim_executable }}", '--headless', '+Lazy! restore', '+qa']
+      register: lazyvim_restore
+      changed_when: lazyvim_restore.rc == 0
+      failed_when: lazyvim_restore.rc != 0 or 'Error detected' in lazyvim_restore.stderr or 'E5113' in lazyvim_restore.stderr
+      when:
+        - not lazyvim_bootstrapped.stat.exists
+        - not ansible_check_mode
+
+    - name: Install configured syntax parsers during Ansible bootstrap
+      ansible.builtin.command:
+        argv:
+          - "{{ neovim_executable }}"
+          - '--headless'
+          - >-
+            +lua require('lazy').load({plugins={'nvim-treesitter'}});
+            local p=require('lazy.core.config').plugins['nvim-treesitter'];
+            local opts=require('lazy.core.plugin').values(p,'opts',false);
+            local langs=opts.ensure_installed or {'lua'};
+            local ts=require('nvim-treesitter'); ts.install(langs);
+            assert(vim.wait(300000,function() local have=ts.get_installed();
+            for _,lang in ipairs(langs) do if not vim.tbl_contains(have,lang) then return false end end;
+            return true end,100),'syntax parser installation did not complete')
+          - '+qa'
+      register: lazyvim_parsers
+      changed_when: lazyvim_parsers.rc == 0
+      failed_when: >-
+        lazyvim_parsers.rc != 0 or 'Error detected' in lazyvim_parsers.stderr
+        or 'E5108' in lazyvim_parsers.stderr
+      when:
+        - not lazyvim_bootstrapped.stat.exists
+        - not ansible_check_mode
+
+    - name: Check LazyVim initialization
+      ansible.builtin.command:
+        argv:
+          - "{{ neovim_executable }}"
+          - '--headless'
+          - "+lua assert(_G.LazyVim, 'LazyVim did not initialize')"
+          - '+qa'
+      register: lazyvim_startup
+      changed_when: false
+      failed_when: lazyvim_startup.rc != 0 or 'Error detected' in lazyvim_startup.stderr or 'E5108' in lazyvim_startup.stderr
+      when: not ansible_check_mode
+
+    - name: Record successful editor bootstrap
+      ansible.builtin.copy:
+        content: "Declared editor plugins restored and initialization verified.\n"
+        dest: "{{ lazyvim_bootstrap_stamp }}"
+        mode: "0600"
+      when: not ansible_check_mode
+
+    - name: Mark the managed Neovim configuration layout
+      ansible.builtin.copy:
+        content: "Static Lua links; runtime JSON files are seeded from dotfiles.\n"
+        dest: "{{ lazyvim_config_dir }}/.dotfiles-managed"
+        mode: "0600"

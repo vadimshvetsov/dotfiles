@@ -1,5 +1,8 @@
 ---
-# Default variables for lazyvim role
-lazyvim_config_dir: "{{ xdg_config_home }}/nvim"
-lazyvim_source_dir: "{{ playbook_dir }}/../home/.config/nvim"
+lazyvim_config_dir: "{{ user_context_home }}/.config/nvim"
+lazyvim_source_dir: "{{ dotfiles_repo_dir | default(playbook_dir ~ '/..') }}/home/.config/nvim"
+lazyvim_data_dir: "{{ user_context_home }}/.local/share/nvim"
+lazyvim_cache_dir: "{{ user_context_home }}/.cache/lazyvim"
 lazyvim_install_xclip: false
+lazyvim_linux_packages: [git, curl, unzip, build-essential, ripgrep, fd-find, fzf, tree-sitter-cli]
+lazyvim_macos_packages: [ripgrep, fd, fzf, tree-sitter]
