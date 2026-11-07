@@ -1,3 +1,13 @@
 ---
 opencode_config_dir: "{{ xdg_config_home }}/opencode"
 opencode_source_dir: "{{ playbook_dir }}/../home/.config/opencode"
+opencode_install_only: false
+opencode_version: 1.18.23
+opencode_linux_architectures:
+  x86_64: x64
+  aarch64: arm64
+opencode_linux_checksums:
+  x86_64: sha256:ab7015cd8113e011a461f30a0c2b77d8299a144ff688cb62e93e8802835d7288
+  aarch64: sha256:86d3afaf4e8784f9adab189be2a315c12b27ec40a04b70defbe70595c3cc7c65
+opencode_release_url: "https://github.com/anomalyco/opencode/releases/download/v{{ opencode_version }}"
+opencode_archive_name: "opencode-linux-{{ opencode_linux_architectures[ansible_facts['architecture']] }}.tar.gz"

@@ -1,11 +1,40 @@
 ---
-- name: Download OpenCode installer
-  ansible.builtin.get_url:
-    url: https://opencode.ai/install
-    dest: /tmp/opencode-install.sh
-    mode: '0755'
+- name: Validate supported OpenCode Linux architecture
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['system'] == 'Linux'
+      - ansible_facts['architecture'] in opencode_linux_architectures
 
-- name: Install OpenCode
-  ansible.builtin.command: /tmp/opencode-install.sh --no-modify-path
-  args:
-    creates: "{{ ansible_env.HOME }}/.opencode/bin/opencode"
+- name: Create OpenCode release directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - "{{ ansible_env.HOME }}/.local/bin"
+    - "{{ ansible_env.HOME }}/.local/share/opencode/releases/{{ opencode_version }}"
+    - "{{ ansible_env.HOME }}/.cache/dotfiles"
+
+- name: Download checksum-pinned OpenCode archive
+  ansible.builtin.get_url:
+    url: "{{ opencode_release_url }}/{{ opencode_archive_name }}"
+    dest: "{{ ansible_env.HOME }}/.cache/dotfiles/opencode-{{ opencode_version }}.tar.gz"
+    checksum: "{{ opencode_linux_checksums[ansible_facts['architecture']] }}"
+    mode: '0644'
+  when: not ansible_check_mode
+
+- name: Extract pinned OpenCode release
+  ansible.builtin.unarchive:
+    src: "{{ ansible_env.HOME }}/.cache/dotfiles/opencode-{{ opencode_version }}.tar.gz"
+    dest: "{{ ansible_env.HOME }}/.local/share/opencode/releases/{{ opencode_version }}"
+    remote_src: true
+    creates: "{{ ansible_env.HOME }}/.local/share/opencode/releases/{{ opencode_version }}/opencode"
+  when: not ansible_check_mode
+
+- name: Publish OpenCode binary
+  ansible.builtin.file:
+    src: "{{ ansible_env.HOME }}/.local/share/opencode/releases/{{ opencode_version }}/opencode"
+    dest: "{{ ansible_env.HOME }}/.local/bin/opencode"
+    state: link
+    force: true
+  when: not ansible_check_mode

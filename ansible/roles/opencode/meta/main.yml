@@ -1,6 +1,7 @@
 ---
 dependencies:
   - role: skills
+    when: not opencode_install_only | bool
     tags:
       - skills
       - opencode

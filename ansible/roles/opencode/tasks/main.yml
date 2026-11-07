@@ -13,3 +13,4 @@
     dest: "{{ opencode_config_dir }}"
     state: link
     force: true
+  when: not opencode_install_only | bool
