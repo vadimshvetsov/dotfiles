@@ -226,8 +226,8 @@ See [OpenCode skill permissions](https://docs.opencode.ai/docs/skills/#override-
 ### Add a skill while working remotely
 
 Start from `~/dev/dotfiles` and select IG-88, or use `opencode --agent ig-88`.
-IG-88 uses mode `all`, so it also remains callable as a subagent. Its own prompt
-records the complete installation workflow.
+IG-88 uses mode `all`, so it also remains callable as a subagent. The installation
+workflow lives in the repository `AGENTS.md`, keeping the agent prompt small.
 
 From a Herdr/OpenCode session, give IG-88 the discovered installer command as a
 source reference and name the intended agent. For example:

@@ -73,7 +73,8 @@ def main():
             profile = json.loads(result.stdout)
             if agent == "ig-88":
                 assert profile["mode"] == "all"
-                assert "Installing a Skill for an Agent" in profile["prompt"]
+                assert "AGENTS.md" in profile["prompt"]
+                assert "Installing a Skill for an Agent" not in profile["prompt"]
             assert not any(rule["permission"] == "skills" for rule in profile["permission"])
             rules = [rule for rule in profile["permission"] if rule["permission"] == "skill"]
             wildcard = max(i for i, rule in enumerate(rules) if rule["pattern"] == "*")
