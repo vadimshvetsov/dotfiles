@@ -1,0 +1,31 @@
+---
+- name: Create Collie instance directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0700'
+  loop:
+    - "{{ remote_access_home }}/.config/herdr/plugins/config/herdr.collie-{{ collie_instance.name }}"
+    - "{{ remote_access_home }}/.local/state/valarmorghulis/{{ collie_instance.name }}"
+
+- name: Configure Collie exact origin and authentication
+  ansible.builtin.template:
+    src: collie.env.j2
+    dest: "{{ remote_access_home }}/.config/herdr/plugins/config/herdr.collie-{{ collie_instance.name }}/.env"
+    mode: '0600'
+  notify: Restart managed Collie
+
+- name: Install Collie Linux user service
+  ansible.builtin.template:
+    src: collie.service.j2
+    dest: "{{ remote_access_home }}/.config/systemd/user/collie-{{ collie_instance.name }}.service"
+    mode: '0644'
+  notify: Restart managed Collie
+  when: ansible_facts['system'] == 'Linux'
+
+- name: Install Collie macOS launch agent
+  ansible.builtin.template:
+    src: collie.plist.j2
+    dest: "{{ remote_access_home }}/Library/LaunchAgents/io.dotfiles.collie-{{ collie_instance.name }}.plist"
+    mode: '0644'
+  when: ansible_facts['system'] == 'Darwin'

@@ -179,3 +179,36 @@ home directory without changing the real account.
 ```sh
 npx skills add <skill>
 ```
+
+## Paired remote agent access
+
+`ansible/remote_access.yml` installs only Herdr, OpenCode and Collie. It skips
+OpenCode's skills dependency and global config link, preserves existing OpenCode
+configuration, and installs Herdr's OpenCode integration. Linux binaries and all
+Collie binaries use pinned release checksums. macOS uses the existing Homebrew
+roles for Herdr/OpenCode and launchd for local server services.
+
+Supply `remote_access_instances`, each with `name`, `port`, exact HTTPS `origin`
+and `public` (default false). Public instances also require Cloudflare Access
+`access_team` and `access_aud`; their bridge validates the signed JWT in addition
+to mandatory device pairing. Separate instances use the same Herdr socket and
+independent pairing/state directories. Telemetry and automatic Tailscale Serve
+publication are disabled. No application credentials belong in these variables.
+
+On Ubuntu, run `ansible/remote_access_host.yml` as an administrator first. Set
+`remote_access_host_user`, `remote_access_host_bind`,
+`remote_access_host_ingress_sources` and `remote_access_host_instances`. This
+installs nginx without recommended packages, limits its local ingress to the
+specified proxy sources, and enables user lingering. The owner needs no sudo.
+Then run the user playbook from the target account's dotfiles checkout. Neither
+playbook runs zsh or the full bootstrap. Check mode validates configuration;
+binary extraction and live service changes wait for the actual run.
+
+Pair each installed PWA/browser separately using
+`COLLIE_INSTANCE=<name> collie pair`. Inspect or revoke credentials with
+`COLLIE_INSTANCE=<name> collie devices list` and
+`COLLIE_INSTANCE=<name> collie devices revoke <label>`. Named configurations live
+under `~/.config/herdr/plugins/config/herdr.collie-<name>`; state is owner-only
+under `~/.local/state/valarmorghulis/<name>`. Use the same Unix account and default
+Herdr session from SSH and web. A server restart ends live pane processes;
+disconnecting a client does not. Reapplying the profile never restarts Herdr.

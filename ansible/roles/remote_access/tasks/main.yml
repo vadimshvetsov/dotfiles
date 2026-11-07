@@ -1,0 +1,137 @@
+---
+- name: Validate remote access platform
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['system'] in ['Linux', 'Darwin']
+      - ansible_facts['architecture'] in ['x86_64', 'aarch64', 'arm64']
+      - remote_access_instances | length > 0
+      - remote_access_instances | map(attribute='name') | unique | length == remote_access_instances | length
+      - remote_access_instances | map(attribute='port') | unique | length == remote_access_instances | length
+
+- name: Validate exact origins and public identity gates
+  ansible.builtin.assert:
+    that:
+      - item.name is match('^[a-z0-9-]{1,16}$')
+      - item.origin is match('^https://[a-z0-9.-]+$')
+      - item.port | int > 1024
+      - not (item.public | default(false) | bool) or (item.access_team | default('') | length > 0 and item.access_aud | default('') | length > 0)
+  loop: "{{ remote_access_instances }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Resolve macOS Homebrew binaries
+  ansible.builtin.set_fact:
+    remote_access_herdr_binary: "{{ '/opt/homebrew/bin' if ansible_facts['architecture'] == 'arm64' else '/usr/local/bin' }}/herdr"
+    remote_access_opencode_binary: "{{ '/opt/homebrew/bin' if ansible_facts['architecture'] == 'arm64' else '/usr/local/bin' }}/opencode"
+  when: ansible_facts['system'] == 'Darwin'
+
+- name: Create owner-only remote access directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0700'
+  loop:
+    - "{{ remote_access_home }}/.cache/dotfiles"
+    - "{{ remote_access_home }}/.local/share/collie"
+    - "{{ remote_access_collie_root }}"
+    - "{{ remote_access_home }}/.local/state/valarmorghulis"
+    - "{{ remote_access_home }}/.config/opencode"
+    - "{{ remote_access_home }}/.config/systemd/user"
+
+- name: Create macOS launch agent directory
+  ansible.builtin.file:
+    path: "{{ remote_access_home }}/Library/LaunchAgents"
+    state: directory
+    mode: '0700'
+  when: ansible_facts['system'] == 'Darwin'
+
+- name: Download checksum-pinned Collie release
+  ansible.builtin.get_url:
+    url: "{{ remote_access_collie_release_url }}/{{ remote_access_collie_archive }}"
+    dest: "{{ remote_access_home }}/.cache/dotfiles/collie-{{ remote_access_collie_version }}.tar.gz"
+    checksum: "{{ remote_access_collie_checksums[remote_access_collie_platform] }}"
+    mode: '0600'
+  when: not ansible_check_mode
+
+- name: Extract Collie release without a build runtime
+  ansible.builtin.unarchive:
+    src: "{{ remote_access_home }}/.cache/dotfiles/collie-{{ remote_access_collie_version }}.tar.gz"
+    dest: "{{ remote_access_collie_root }}"
+    extra_opts: [--strip-components=1]
+    remote_src: true
+    creates: "{{ remote_access_collie_root }}/bin/collie"
+  when: not ansible_check_mode
+
+- name: Publish Collie binary
+  ansible.builtin.file:
+    src: "{{ remote_access_collie_root }}/bin/collie"
+    dest: "{{ remote_access_bin_dir }}/collie"
+    state: link
+    force: true
+  when: not ansible_check_mode
+
+- name: Create minimal OpenCode configuration on a fresh account
+  ansible.builtin.copy:
+    content: '{"$schema":"https://opencode.ai/config.json","autoupdate":false}
+'
+    dest: "{{ remote_access_home }}/.config/opencode/opencode.json"
+    force: false
+    mode: '0600'
+
+- name: Install Herdr OpenCode integration without unrelated tools
+  ansible.builtin.command:
+    argv: ["{{ remote_access_herdr_binary }}", integration, install, opencode]
+  environment:
+    PATH: "{{ remote_access_path }}"
+  args:
+    creates: "{{ remote_access_home }}/.config/opencode/plugins/herdr-agent-state.js"
+  when: not ansible_check_mode
+
+- name: Configure each paired Collie instance
+  ansible.builtin.include_tasks: instance.yml
+  loop: "{{ remote_access_instances }}"
+  loop_control:
+    loop_var: collie_instance
+    label: "{{ collie_instance.name }}"
+
+- name: Install Herdr user service
+  ansible.builtin.template:
+    src: herdr.service.j2
+    dest: "{{ remote_access_home }}/.config/systemd/user/herdr.service"
+    mode: '0644'
+  register: remote_access_herdr_unit
+  when: ansible_facts['system'] == 'Linux'
+
+- name: Start independent Herdr user service
+  ansible.builtin.systemd_service:
+    name: herdr
+    scope: user
+    daemon_reload: true
+    enabled: true
+    state: started
+  when: ansible_facts['system'] == 'Linux' and remote_access_manage_services | bool and not ansible_check_mode
+
+- name: Start or refresh Collie user services
+  ansible.builtin.systemd_service:
+    name: "collie-{{ item.name }}"
+    scope: user
+    daemon_reload: true
+    enabled: true
+    state: started
+  loop: "{{ remote_access_instances }}"
+  when: ansible_facts['system'] == 'Linux' and remote_access_manage_services | bool and not ansible_check_mode
+
+- name: Install macOS Herdr launch agent
+  ansible.builtin.template:
+    src: herdr.plist.j2
+    dest: "{{ remote_access_home }}/Library/LaunchAgents/io.dotfiles.herdr.plist"
+    mode: '0644'
+  when: ansible_facts['system'] == 'Darwin'
+
+- name: Start macOS launch agents
+  community.general.launchd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop: "{{ ['io.dotfiles.herdr'] + (remote_access_instances | map(attribute='name') | map('regex_replace', '^', 'io.dotfiles.collie-') | list) }}"
+  when: ansible_facts['system'] == 'Darwin' and remote_access_manage_services | bool and not ansible_check_mode

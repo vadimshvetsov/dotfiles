@@ -1,0 +1,38 @@
+# {{ ansible_managed }}
+map $http_upgrade $valar_connection {
+    default upgrade;
+    '' close;
+}
+server {
+    listen {{ remote_access_host_bind }}:{{ remote_access_host_ingress_port }} default_server;
+    server_name _;
+    return 444;
+}
+{% for instance in remote_access_host_instances %}
+server {
+    listen {{ remote_access_host_bind }}:{{ remote_access_host_ingress_port }};
+    server_name {{ instance.origin | urlsplit('hostname') }};
+{% for source in remote_access_host_ingress_sources %}
+    allow {{ source }};
+{% endfor %}
+    deny all;
+    client_max_body_size 25m;
+    # Preserve the real browser Origin. Only HTTPS on this exact name is valid.
+    if ($http_origin !~ "^(https://{{ instance.origin | urlsplit('hostname') | regex_escape }}(:443)?|)$") { return 403; }
+    location / {
+        proxy_pass http://127.0.0.1:{{ instance.port }};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Tailscale-User-Login "";
+        proxy_set_header X-Device-Id "";
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $valar_connection;
+        proxy_buffering off;
+        proxy_read_timeout 1800s;
+        proxy_send_timeout 1800s;
+    }
+}
+{% endfor %}

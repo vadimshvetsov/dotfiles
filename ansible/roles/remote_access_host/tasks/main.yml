@@ -1,0 +1,52 @@
+---
+- name: Validate private ingress prerequisites
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['os_family'] == 'Debian'
+      - remote_access_host_user | length > 0
+      - remote_access_host_ingress_sources | length > 0
+      - remote_access_host_instances | length > 0
+
+- name: Install local Collie ingress
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    install_recommends: false
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Inspect lingering state
+  ansible.builtin.stat:
+    path: "/var/lib/systemd/linger/{{ remote_access_host_user }}"
+  register: remote_access_host_linger
+
+- name: Keep owner user services alive after SSH logout
+  ansible.builtin.command:
+    argv: [loginctl, enable-linger, "{{ remote_access_host_user }}"]
+  when: not remote_access_host_linger.stat.exists
+  changed_when: true
+
+- name: Remove packaged default nginx listener
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload remote access nginx
+
+- name: Configure private local proxy to loopback-only Collie
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/conf.d/valarmorghulis.conf
+    mode: '0644'
+  notify: Reload remote access nginx
+
+- name: Validate nginx configuration
+  ansible.builtin.command: /usr/sbin/nginx -t
+  changed_when: false
+  when: not ansible_check_mode
+
+- name: Start local nginx ingress
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true
+  when: not ansible_check_mode

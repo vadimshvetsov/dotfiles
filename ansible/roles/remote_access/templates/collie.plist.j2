@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+<key>Label</key><string>io.dotfiles.collie-{{ collie_instance.name }}</string>
+<key>ProgramArguments</key><array><string>{{ remote_access_collie_root }}/bin/collie</string><string>_exec-bridge</string></array>
+<key>WorkingDirectory</key><string>{{ remote_access_collie_root }}</string>
+<key>EnvironmentVariables</key><dict>
+<key>PATH</key><string>{{ remote_access_path }}</string>
+<key>COLLIE_INSTANCE</key><string>{{ collie_instance.name }}</string>
+<key>COLLIE_PLUGIN_ROOT</key><string>{{ remote_access_collie_root }}</string>
+<key>HERDR_PLUGIN_CONFIG_DIR</key><string>{{ remote_access_home }}/.config/herdr/plugins/config/herdr.collie-{{ collie_instance.name }}</string>
+</dict>
+<key>RunAtLoad</key><true/><key>KeepAlive</key><true/>
+</dict></plist>

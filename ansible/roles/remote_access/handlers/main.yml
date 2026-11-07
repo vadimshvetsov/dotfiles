@@ -1,0 +1,9 @@
+---
+- name: Restart managed Collie
+  ansible.builtin.systemd_service:
+    name: "collie-{{ item.name }}"
+    scope: user
+    daemon_reload: true
+    state: restarted
+  loop: "{{ remote_access_instances }}"
+  when: ansible_facts['system'] == 'Linux' and remote_access_manage_services | bool and not ansible_check_mode

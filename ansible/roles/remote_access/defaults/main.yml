@@ -1,0 +1,22 @@
+---
+remote_access_home: "{{ ansible_env.HOME }}"
+remote_access_bin_dir: "{{ remote_access_home }}/.local/bin"
+remote_access_herdr_binary: "{{ remote_access_bin_dir }}/herdr"
+remote_access_opencode_binary: "{{ remote_access_bin_dir }}/opencode"
+remote_access_path: "{{ remote_access_bin_dir }}:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+remote_access_project_dir: "{{ remote_access_home }}/dev"
+remote_access_collie_version: 1.27.3
+remote_access_collie_root: "{{ remote_access_home }}/.local/share/collie/versions/{{ remote_access_collie_version }}"
+remote_access_collie_platform: >-
+  {{ 'macos' if ansible_facts['system'] == 'Darwin' else 'linux' }}-{{ 'arm64' if ansible_facts['architecture'] in ['aarch64', 'arm64'] else 'x64' }}
+remote_access_collie_checksums:
+  linux-x64: sha256:07542d40860f65ac1e1ca234387c0a391494f417472603fe26b41a703a482436
+  linux-arm64: sha256:f2ffb4742ce04bb1d81227d166372a2caf0c0d07f57549c3272dd2f17a0d6df8
+  macos-x64: sha256:ccd21ca77ab8bd6efa09bd10fda5b08daa81444bb49d89f8cff1dfec2ff91d49
+  macos-arm64: sha256:467ac6f437ea2d2a445623ea4294b66fae4d5dfe75fc1492a35e78c8414dc923
+# Every instance must declare an exact HTTPS origin. Access team/AUD must be
+# supplied for an Internet-facing instance, never inferred from a header.
+remote_access_instances: []
+remote_access_manage_services: true
+remote_access_collie_release_url: "https://github.com/AltanS/collie/releases/download/v{{ remote_access_collie_version }}"
+remote_access_collie_archive: "collie-{{ remote_access_collie_version }}-{{ remote_access_collie_platform }}.tar.gz"

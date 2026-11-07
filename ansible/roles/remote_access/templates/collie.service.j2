@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Collie {{ collie_instance.name }} paired Herdr access
+After=herdr.service
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+WorkingDirectory={{ remote_access_collie_root }}
+Environment=PATH={{ remote_access_path }}
+Environment=COLLIE_INSTANCE={{ collie_instance.name }}
+Environment=COLLIE_PLUGIN_ROOT={{ remote_access_collie_root }}
+Environment=HERDR_PLUGIN_CONFIG_DIR={{ remote_access_home }}/.config/herdr/plugins/config/herdr.collie-{{ collie_instance.name }}
+EnvironmentFile={{ remote_access_home }}/.config/herdr/plugins/config/herdr.collie-{{ collie_instance.name }}/.env
+ExecStart={{ remote_access_collie_root }}/bin/collie _exec-bridge
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+[Install]
+WantedBy=default.target

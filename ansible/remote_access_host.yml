@@ -1,0 +1,6 @@
+---
+- name: Prepare Ubuntu ingress and user service lifetime
+  hosts: all
+  become: true
+  roles:
+    - role: remote_access_host

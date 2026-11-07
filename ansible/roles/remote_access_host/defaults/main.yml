@@ -1,0 +1,6 @@
+---
+remote_access_host_user: "{{ dotfiles_user | default('') }}"
+remote_access_host_bind: 127.0.0.1
+remote_access_host_ingress_port: 8080
+remote_access_host_ingress_sources: []
+remote_access_host_instances: []

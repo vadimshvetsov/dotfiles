@@ -1,0 +1,12 @@
+---
+- name: Install persistent Herdr and paired Collie access
+  hosts: all
+  vars:
+    opencode_install_only: true
+  roles:
+    - role: herdr
+      tags: herdr
+    - role: opencode
+      tags: opencode
+    - role: remote_access
+      tags: remote_access

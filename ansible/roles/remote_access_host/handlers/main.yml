@@ -1,0 +1,6 @@
+---
+- name: Reload remote access nginx
+  ansible.builtin.service:
+    name: nginx
+    state: reloaded
+  when: not ansible_check_mode

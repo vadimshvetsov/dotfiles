@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Persistent Herdr workspace server
+[Service]
+Type=simple
+WorkingDirectory={{ remote_access_project_dir }}
+Environment=PATH={{ remote_access_path }}
+ExecStart={{ remote_access_herdr_binary }} server
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=default.target
