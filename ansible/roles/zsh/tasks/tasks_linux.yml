@@ -1,9 +1,36 @@
 ---
 - name: Install Zsh and Git
   ansible.builtin.apt:
-    name: [zsh, git, ca-certificates]
+    name: [zsh, git, ca-certificates, ncurses-bin]
     state: present
     update_cache: true
     cache_valid_time: 3600
   become: true
   become_user: root
+
+- name: Install Ghostty terminal capabilities for SSH clients
+  become: true
+  become_user: root
+  block:
+    - name: Copy the Ghostty terminal description
+      ansible.builtin.copy:
+        src: xterm-ghostty.terminfo
+        dest: /etc/terminfo/xterm-ghostty.terminfo
+        owner: root
+        group: root
+        mode: "0644"
+      register: zsh_terminfo_source
+
+    - name: Inspect the compiled Ghostty terminal entry
+      ansible.builtin.stat:
+        path: /etc/terminfo/x/xterm-ghostty
+      register: zsh_terminfo_entry
+
+    - name: Compile the Ghostty terminal description
+      ansible.builtin.command:
+        argv: [tic, '-x', '-o', /etc/terminfo, /etc/terminfo/xterm-ghostty.terminfo]
+      register: zsh_terminfo_compile
+      changed_when: zsh_terminfo_compile.rc == 0
+      when:
+        - zsh_terminfo_source.changed or not zsh_terminfo_entry.stat.exists
+        - not ansible_check_mode

@@ -114,7 +114,9 @@ ansible-playbook -K ansible/bootstrap.yml -t zsh
 
 Run as the account being configured. On Linux, an administrator can instead
 run the local playbook as root with `-e zsh_user=<account>`; configuration and
-plugins are then created as that account, not in root's home. The role registers
+plugins are then created as that account, not in root's home. The Linux role also installs the Ghostty `xterm-ghostty` terminfo entry in
+`/etc/terminfo`, so SSH input redraws correctly without installing the GUI or
+overriding `TERM`. The role registers
 the installed shell in `/etc/shells` and sets the target account's login shell.
 Use `-e zsh_manage_login_shell=false` to keep the existing login shell.
 
