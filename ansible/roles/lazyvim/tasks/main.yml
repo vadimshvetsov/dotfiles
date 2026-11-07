@@ -14,6 +14,9 @@
     name: fd
     state: present
 
+- name: Configure optional desktop clipboard provider
+  ansible.builtin.import_tasks: clipboard.yml
+
 - name: Create lazyvim folder
   ansible.builtin.file:
     path: "{{ lazyvim_config_dir }}"

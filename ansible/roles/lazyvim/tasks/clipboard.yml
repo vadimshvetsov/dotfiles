@@ -4,4 +4,6 @@
     name: xclip
     state: present
   become: true
-  when: ansible_os_family in ["Debian", "RedHat"]
+  when:
+    - lazyvim_install_xclip | default(false) | bool
+    - ansible_os_family in ["Debian", "RedHat"]

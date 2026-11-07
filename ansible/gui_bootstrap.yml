@@ -4,4 +4,9 @@
   roles:
     - { role: fonts, tags: fonts }
     - { role: ghostty, tags: ghostty }
-    - { role: desktop_clipboard, tags: desktop_clipboard }
+  tasks:
+    - name: Enable the LazyVim X11 clipboard provider
+      ansible.builtin.import_tasks: roles/lazyvim/tasks/clipboard.yml
+      vars:
+        lazyvim_install_xclip: true
+      tags: desktop_clipboard
