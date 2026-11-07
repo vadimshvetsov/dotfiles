@@ -1,33 +1,70 @@
 ---
-- name: Link global AI instructions
-  ansible.builtin.file:
-    src: "{{ agentsmd_source_file }}"
-    dest: "{{ ansible_env.HOME }}/AGENTS.md"
-    state: link
-    force: true
+- name: Configure global instructions as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  block:
+    - name: Inspect the OpenCode configuration directory
+      ansible.builtin.stat:
+        path: "{{ user_context_home }}/.config/opencode"
+      register: agentsmd_opencode_dir
 
-- name: Ensure Claude Code config directory exists
-  ansible.builtin.file:
-    path: "{{ agentsmd_claude_dir }}"
-    state: directory
-    mode: "0755"
+    - name: Create instruction directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0700"
+      loop: ["{{ agentsmd_claude_dir }}", "{{ user_context_home }}/.config/opencode"]
 
-- name: Link Claude Code global instructions
-  ansible.builtin.file:
-    src: "{{ agentsmd_claude_source_file }}"
-    dest: "{{ agentsmd_claude_dir }}/CLAUDE.md"
-    state: link
-    force: true
-    follow: false
+    - name: Mark an OpenCode directory created by dotfiles
+      ansible.builtin.copy:
+        content: "Individual config links; skills are managed by the skills role.\n"
+        dest: "{{ user_context_home }}/.config/opencode/.dotfiles-managed"
+        mode: "0600"
+        force: false
+      when: not agentsmd_opencode_dir.stat.exists
 
-- name: Inspect the old home CLAUDE.md entry
-  ansible.builtin.stat:
-    path: "{{ ansible_env.HOME }}/CLAUDE.md"
-    follow: false
-  register: agentsmd_legacy_claude
+    - name: Inspect existing instruction files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+        follow: false
+      loop:
+        - "{{ user_context_home }}/AGENTS.md"
+        - "{{ agentsmd_claude_dir }}/CLAUDE.md"
+        - "{{ user_context_home }}/.config/opencode/AGENTS.md"
+      register: agentsmd_existing
 
-- name: Remove the old home CLAUDE.md link
-  ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/CLAUDE.md"
-    state: absent
-  when: agentsmd_legacy_claude.stat.islnk | default(false)
+    - name: Preserve existing regular instruction files
+      ansible.builtin.copy:
+        src: "{{ item.item }}"
+        dest: "{{ item.item }}.pre-dotfiles"
+        remote_src: true
+        force: false
+        mode: "0600"
+      loop: "{{ agentsmd_existing.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      when: item.stat.isreg | default(false)
+
+    - name: Link global instructions for the home directory and coding tools
+      ansible.builtin.file:
+        src: "{{ agentsmd_source_file }}"
+        dest: "{{ item }}"
+        state: link
+        force: true
+        follow: false
+      loop:
+        - "{{ user_context_home }}/AGENTS.md"
+        - "{{ agentsmd_claude_dir }}/CLAUDE.md"
+        - "{{ user_context_home }}/.config/opencode/AGENTS.md"
+
+    - name: Inspect the legacy home CLAUDE.md entry
+      ansible.builtin.stat:
+        path: "{{ user_context_home }}/CLAUDE.md"
+        follow: false
+      register: agentsmd_legacy_claude
+
+    - name: Remove only the legacy home CLAUDE.md symlink
+      ansible.builtin.file:
+        path: "{{ user_context_home }}/CLAUDE.md"
+        state: absent
+      when: agentsmd_legacy_claude.stat.islnk | default(false)
