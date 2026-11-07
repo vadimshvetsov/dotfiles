@@ -1,4 +1,17 @@
 ---
-- name: Skip Herdr package install on Linux
-  ansible.builtin.debug:
-    msg: "Herdr package install is not automated on Linux; config will still be linked."
+- name: Require a supported Herdr Linux architecture
+  ansible.builtin.assert:
+    that: ansible_facts['architecture'] in herdr_linux_arch
+
+- name: Create the user executable directory
+  ansible.builtin.file:
+    path: "{{ herdr_bin_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Install the verified Herdr release
+  ansible.builtin.get_url:
+    url: "https://github.com/herdrdev/herdr/releases/download/v{{ herdr_version }}/herdr-linux-{{ herdr_linux_arch[ansible_facts['architecture']] }}"
+    dest: "{{ herdr_executable }}"
+    checksum: "{{ herdr_linux_checksums[ansible_facts['architecture']] }}"
+    mode: "0755"

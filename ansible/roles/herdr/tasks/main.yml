@@ -1,22 +1,50 @@
 ---
-- name: Install Herdr for macOS
-  ansible.builtin.include_tasks: tasks_darwin.yml
-  when: ansible_os_family == "Darwin"
+- name: Configure Herdr as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+    XDG_CONFIG_HOME: "{{ user_context_home }}/.config"
+  block:
+    - name: Create private Herdr configuration directory
+      ansible.builtin.file:
+        path: "{{ herdr_config_dir }}"
+        state: directory
+        mode: "0700"
 
-- name: Install Herdr for Linux
-  ansible.builtin.include_tasks: tasks_linux.yml
-  when: ansible_os_family != "Darwin"
+    - name: Install Herdr for macOS
+      ansible.builtin.include_tasks: tasks_darwin.yml
+      when: ansible_facts['os_family'] == 'Darwin'
 
-- name: Ensure Herdr runtime config directory exists
-  ansible.builtin.file:
-    path: "{{ herdr_config_dir }}"
-    state: directory
-    mode: "0755"
+    - name: Install Herdr for Linux
+      ansible.builtin.include_tasks: tasks_linux.yml
+      when: ansible_facts['os_family'] == 'Debian'
 
-- name: Link Herdr config file
-  ansible.builtin.file:
-    src: "{{ herdr_source_config_file }}"
-    dest: "{{ herdr_config_file }}"
-    state: link
-    force: true
-    follow: false
+    - name: Inspect the existing Herdr configuration
+      ansible.builtin.stat:
+        path: "{{ herdr_config_file }}"
+        follow: false
+      register: herdr_existing_config
+
+    - name: Preserve an existing regular Herdr configuration
+      ansible.builtin.copy:
+        src: "{{ herdr_config_file }}"
+        dest: "{{ herdr_config_file }}.pre-dotfiles"
+        remote_src: true
+        force: false
+        mode: "0600"
+      when: herdr_existing_config.stat.isreg | default(false)
+
+    - name: Link Herdr configuration
+      ansible.builtin.file:
+        src: "{{ herdr_source_config_file }}"
+        dest: "{{ herdr_config_file }}"
+        state: link
+        force: true
+        follow: false
+
+    - name: Check Herdr configuration without starting a server
+      ansible.builtin.command:
+        argv: ["{{ herdr_executable }}", config, check]
+      changed_when: false
+      when: not ansible_check_mode

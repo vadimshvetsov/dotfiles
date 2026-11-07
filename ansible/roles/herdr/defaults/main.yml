@@ -1,5 +1,16 @@
 ---
-herdr_config_dir: "{{ xdg_config_home }}/herdr"
-herdr_source_dir: "{{ playbook_dir }}/../home/.config/herdr"
+herdr_version: 0.9.5
+herdr_config_dir: "{{ user_context_home }}/.config/herdr"
+herdr_source_dir: "{{ dotfiles_repo_dir | default(playbook_dir ~ '/..') }}/home/.config/herdr"
 herdr_config_file: "{{ herdr_config_dir }}/config.toml"
 herdr_source_config_file: "{{ herdr_source_dir }}/config.toml"
+herdr_bin_dir: "{{ user_context_home }}/.local/bin"
+herdr_executable: >-
+  {{ (('/opt/homebrew/bin/herdr' if ansible_facts['architecture'] == 'arm64' else '/usr/local/bin/herdr')
+  if ansible_facts['os_family'] == 'Darwin' else herdr_bin_dir ~ '/herdr') }}
+herdr_linux_arch:
+  x86_64: x86_64
+  aarch64: aarch64
+herdr_linux_checksums:
+  x86_64: sha256:14d9e8bc8b4a9e0118d77c32266f76d461f09b40342eb23752960bd89f59929d
+  aarch64: sha256:17d7536f2da50859523680ef279dffcac8e4a235f4e46fe8da6c2ec44141897c

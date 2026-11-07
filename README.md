@@ -153,6 +153,25 @@ python3 -m unittest discover -s tests -v
 uvx ansible-lint ansible
 ```
 
+## Herdr
+
+```sh
+ansible-playbook ansible/bootstrap.yml -t herdr
+```
+
+macOS uses Homebrew. Ubuntu/Debian installs the official pinned release to
+`~/.local/bin/herdr`, verifying its SHA-256 before installation. Linux x86_64 and
+aarch64 are supported. Release pins and checksums live in the role defaults.
+The role links `~/.config/herdr/config.toml`, preserves an existing regular file
+as `config.toml.pre-dotfiles`, and runs `herdr config check`.
+It does not start a daemon or configure web access.
+
+Run as the owner on either OS. Linux administrators running the local playbook
+as root must set `-e dotfiles_user=<account>`; the role resolves that account's
+home and creates user files as that account. This shared account resolution is
+provided by `user_context`. Tests may override `dotfiles_home` for an isolated
+home directory without changing the real account.
+
 ## OpenCode
 
 `~/.config/opencode` is symlinked from `home/.config/opencode` via Ansible. Agent files live in `home/.config/opencode/agents`. Global skills install to `~/.agents/skills`. Custom OpenCode skills live in `~/.config/opencode/skills`.
