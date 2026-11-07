@@ -64,6 +64,12 @@ Run both playbooks for a desktop setup; use only `bootstrap.yml` for a headless
 SSH development machine. Fonts are rendered by the terminal on the client,
 so the SSH server does not need the desktop fonts role.
 
+The LazyVim role owns the optional X11 provider, controlled by
+`lazyvim_install_xclip` (default: `false`). The GUI playbook enables it and reuses
+only the clipboard tasks, without reinstalling the editor stack. The CLI
+bootstrap leaves it disabled. The Neovim configuration keeps its existing OSC 52
+clipboard support for SSH/Herdr/tmux sessions without a display.
+
 Use `-K` only when a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo.
 
 Run a tagged bootstrap when needed. OpenCode is intended to be run explicitly by tag. Skills are dependencies of that role, not a direct bootstrap target.

@@ -30,7 +30,11 @@ and X11 clipboard integration belong in the separate optional playbook:
 ansible-playbook -K ansible/gui_bootstrap.yml
 ```
 
-Keep GUI dependencies out of CLI roles, including indirect role dependencies.
+Keep GUI dependencies disabled in the CLI bootstrap, including indirect role
+dependencies. Optional desktop providers can stay in their owning CLI role when
+disabled by default and explicitly enabled by the GUI profile. LazyVim owns
+`lazyvim_install_xclip` (default `false`); the GUI playbook reuses its clipboard
+tasks without running the full editor role.
 
 Use `-K` only if a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo. Do not configure `ansible.cfg` to globally prompt for a become password.
 
