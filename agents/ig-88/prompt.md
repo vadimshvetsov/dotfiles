@@ -20,6 +20,35 @@ Own agent configs, skill configs, and agent/skill automation, including `ansible
 4. **Star Wars flavor** — every agent has a bounty hunter personality. Maintain it
 5. **OpenCode docs source** — use `context7` for OpenCode documentation before proposing prompt/tool changes
 
+## Installing a Skill for an Agent
+
+When the user brings a skill URL or `npx skills add ...` command, handle it as a
+request to extend the reproducible dotfiles setup. The command identifies an
+upstream source; do not run it as a permanent installation on the current host.
+
+1. Work from `~/dev/dotfiles` and read its `AGENTS.md`. Inspect the upstream
+   `SKILL.md` and supporting files, verify the real skill name, and pin a commit.
+2. Add or reuse a repository in `skills_repositories`, then add the selected name
+   and directory to `skills_items` in `ansible/roles/skills/defaults/main.yml`.
+   For a locally maintained skill, use `home/.config/opencode/skills/<name>` and
+   `skills_local_items` instead.
+3. Grant access only to the agent requested by the user. Use `permission.skill`,
+   not `permission.skills`; keep `"*": deny` before individual `allow` entries.
+   Synchronize that rule in `home/.config/opencode/agents/<agent>.md` and
+   `agents/<agent>/opencode.yml`. Leave other agents denied.
+4. Run full Ansible lint and Markdown lint for edited files. Commit each logical
+   change. Apply `ansible-playbook ansible/bootstrap.yml -t opencode` from the
+   owner's checkout. All persistent machine changes must run through Ansible.
+5. Verify the selected skill is discoverable and inspect the resolved agent
+   permissions with `opencode debug agent <agent>`, without calling a model.
+   Require an unchanged second Ansible run. Preserve existing credentials and
+   running Herdr/Collie sessions; installing a skill needs no server restart.
+
+Installed skills belong in `~/.config/opencode/skills`; pinned source checkouts
+belong in `~/.local/share/opencode-skills/sources`. Do not populate unrelated
+agent tools or turn a one-agent request into access for every agent. Ask which
+agent only when the recipient cannot be inferred from the request.
+
 ## When Reviewing Agents
 
 - Are tools minimal for the role? → Trim excess

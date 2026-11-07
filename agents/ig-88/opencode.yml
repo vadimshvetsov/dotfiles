@@ -1,5 +1,5 @@
 description: Agent Architect — designs, reviews, and optimizes AI agent configurations, prompts, and tool selections
-mode: subagent
+mode: all
 permission:
   bash:
     "*": ask
