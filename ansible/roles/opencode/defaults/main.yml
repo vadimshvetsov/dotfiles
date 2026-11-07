@@ -1,5 +1,5 @@
 ---
-opencode_version: 1.18.23
+opencode_version: 1.19.5
 opencode_install_only: false
 opencode_config_dir: "{{ user_context_home }}/.config/opencode"
 opencode_source_dir: "{{ dotfiles_repo_dir | default(playbook_dir ~ '/..') }}/home/.config/opencode"
@@ -13,5 +13,5 @@ opencode_linux_arch:
   x86_64: x64
   aarch64: arm64
 opencode_linux_checksums:
-  x86_64: sha256:ab7015cd8113e011a461f30a0c2b77d8299a144ff688cb62e93e8802835d7288
-  aarch64: sha256:86d3afaf4e8784f9adab189be2a315c12b27ec40a04b70defbe70595c3cc7c65
+  x86_64: sha256:588310a336fa3b9df36b3f0225b26f679d453efaad0cf3d66c3651ef3ec1647a
+  aarch64: sha256:fae5be262d693b7c5e562856cc473e59e741772936db0c0600ac0d5ed5bd088b
