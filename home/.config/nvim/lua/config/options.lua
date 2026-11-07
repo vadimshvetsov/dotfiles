@@ -2,10 +2,10 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
--- Clipboard over OSC 52. SSH_TTY is unset inside Herdr/tmux panes, so gate on
+-- Clipboard over OSC 52. SSH_TTY is unset inside Herdr panes, so gate on
 -- SSH_CONNECTION. Leave 'clipboard' empty: unnamedplus would route puts through
 -- paste, which Herdr can't answer (herdrdev/herdr#3136).
-local remote = vim.env.SSH_TTY or vim.env.SSH_CONNECTION or vim.env.HERDR_ENV or vim.env.TMUX
+local remote = vim.env.SSH_TTY or vim.env.SSH_CONNECTION or vim.env.HERDR_ENV
 if remote and not vim.env.DISPLAY and not vim.env.WAYLAND_DISPLAY then
   local osc52 = require("vim.ui.clipboard.osc52")
 

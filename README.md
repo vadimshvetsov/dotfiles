@@ -68,7 +68,7 @@ The LazyVim role owns the optional X11 provider, controlled by
 `lazyvim_install_xclip` (default: `false`). The GUI playbook enables it and reuses
 only the clipboard tasks, without reinstalling the editor stack. The CLI
 bootstrap leaves it disabled. The Neovim configuration keeps its existing OSC 52
-clipboard support for SSH/Herdr/tmux sessions without a display.
+clipboard support for SSH/Herdr sessions without a display.
 
 Use `-K` only when a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo.
 
@@ -95,7 +95,6 @@ home/
   .config/herdr/config.toml  -> ~/.config/herdr/config.toml
   .config/nvim/              -> ~/.config/nvim
   .config/opencode/          -> ~/.config/opencode
-  .config/tmux/              -> ~/.config/tmux
 ```
 
 Add a new dotfile by putting it at its mirrored path under `home/`, then pointing a role's `*_source_dir` at it.

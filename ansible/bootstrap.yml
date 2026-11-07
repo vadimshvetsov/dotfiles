@@ -4,7 +4,6 @@
   roles:
     - { role: agentsmd, tags: agentsmd }
     - { role: zsh, tags: zsh }
-    - { role: tmux, tags: tmux }
     - { role: herdr, tags: herdr }
     - { role: neovim, tags: neovim }
     - { role: lazygit, tags: lazygit }

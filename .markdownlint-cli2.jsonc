@@ -4,8 +4,6 @@
   "ignores": [
     "**/node_modules/**",
     ".ansible/**",
-    // tpm clones plugins into the linked ~/.config/tmux, so they land here.
-    "home/.config/tmux/plugins/**",
     // A one-line @AGENTS.md import, not prose.
     "CLAUDE.md"
   ],

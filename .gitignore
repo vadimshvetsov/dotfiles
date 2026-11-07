@@ -3,5 +3,4 @@ __pycache__/
 *.py[cod]
 *$py.class
 agents/generated/opencode/agents/*.md
-home/.config/tmux/plugins/
 .ansible/
