@@ -1,0 +1,17 @@
+---
+nodejs_version: 22.23.4
+nodejs_platform: "{{ 'darwin' if ansible_facts['os_family'] == 'Darwin' else 'linux' }}"
+nodejs_arch_map:
+  x86_64: x64
+  arm64: arm64
+  aarch64: arm64
+nodejs_arch: "{{ nodejs_arch_map[ansible_facts['architecture']] }}"
+nodejs_release: "node-v{{ nodejs_version }}-{{ nodejs_platform }}-{{ nodejs_arch }}"
+nodejs_install_dir: "{{ user_context_home }}/.local/share/nodejs/{{ nodejs_release }}"
+nodejs_bin_dir: "{{ user_context_home }}/.local/bin"
+nodejs_cache_dir: "{{ user_context_home }}/.cache/nodejs"
+nodejs_checksums:
+  linux-x64: sha256:b8492284c76a54baf58d61668dd0e41ee0fc98adabf9503d30f05d08f55b4406
+  linux-arm64: sha256:f7a1e486dbc8b286847815b477d4fb5e9fb963ed4489c3e1588853d685f589f9
+  darwin-x64: sha256:efcc2b0db6f94bf53eddb038fe2b370277a042bd29e4f19b8f8e23598795b819
+  darwin-arm64: sha256:c9e1dbc748b33ed2d14f42445191ecaf14c56259c7a9a26d0042c49ec2b66428

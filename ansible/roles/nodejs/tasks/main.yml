@@ -1,0 +1,54 @@
+---
+- name: Require a supported Node.js platform
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['architecture'] in nodejs_arch_map
+      - (nodejs_platform ~ '-' ~ nodejs_arch) in nodejs_checksums
+
+- name: Install Node.js as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+  block:
+    - name: Create Node.js directories
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "{{ item.mode }}"
+      loop:
+        - { path: "{{ nodejs_install_dir }}", mode: "0755" }
+        - { path: "{{ nodejs_bin_dir }}", mode: "0755" }
+        - { path: "{{ nodejs_cache_dir }}", mode: "0700" }
+
+    - name: Download the verified Node.js archive
+      ansible.builtin.get_url:
+        url: "https://nodejs.org/dist/v{{ nodejs_version }}/{{ nodejs_release }}.tar.gz"
+        dest: "{{ nodejs_cache_dir }}/{{ nodejs_release }}.tar.gz"
+        checksum: "{{ nodejs_checksums[nodejs_platform ~ '-' ~ nodejs_arch] }}"
+        mode: "0600"
+      when: not ansible_check_mode
+
+    - name: Extract the pinned Node.js release
+      ansible.builtin.command:
+        argv: [tar, '-xzf', "{{ nodejs_cache_dir }}/{{ nodejs_release }}.tar.gz", '-C', "{{ nodejs_install_dir }}", '--strip-components=1']
+        creates: "{{ nodejs_install_dir }}/bin/node"
+      when: not ansible_check_mode
+
+    - name: Link Node.js executables
+      ansible.builtin.file:
+        src: "{{ nodejs_install_dir }}/bin/{{ item }}"
+        dest: "{{ nodejs_bin_dir }}/{{ item }}"
+        state: link
+        force: true
+        follow: false
+      loop: [node, npm, npx]
+      when: not ansible_check_mode
+
+    - name: Verify the installed Node.js version
+      ansible.builtin.command:
+        argv: ["{{ nodejs_install_dir }}/bin/node", '--version']
+      register: nodejs_installed_version
+      changed_when: false
+      failed_when: nodejs_installed_version.stdout != 'v' ~ nodejs_version
+      when: not ansible_check_mode
