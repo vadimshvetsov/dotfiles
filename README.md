@@ -174,6 +174,36 @@ home directory without changing the real account.
 
 ## OpenCode
 
+The role installs OpenCode with its Node.js/npx and global skills dependencies:
+
+```sh
+ansible-playbook ansible/bootstrap.yml -t opencode
+```
+
+On Ubuntu/Debian, the official pinned archive is checked against SHA-256 and the
+executable is linked into `~/.local/bin`. macOS uses Homebrew. The shared
+`nodejs` role installs a pinned, checksum-verified official Node.js archive for
+Linux/macOS x64/arm64 into `~/.local/share/nodejs` and links `node`, `npm` and
+`npx` into `~/.local/bin`. It installs no global npm packages and leaves existing
+NVM installations intact. NVM may still select a different Node version in your
+shell; Ansible explicitly uses its managed Node for skills installation.
+
+Global skills use a pinned skills CLI and pinned upstream source commits.
+The legacy Next.js skills are kept at their last upstream revision before
+removal. The existing `opencode-expert` skill is vendored under
+`home/.config/opencode/skills` because its Smithery source is no longer available.
+
+An existing real OpenCode configuration directory is moved to
+`~/.config/opencode.pre-dotfiles` before linking. If that backup already exists,
+the role leaves the real directory in place and fails rather than discarding it.
+The role checks both the executable and resolved configuration without sending
+a model request. OpenCode automatic updates are disabled: update the release
+pins and rerun Ansible. User authentication stays outside the repository.
+
+For ChatGPT Pro, connect OpenAI using the ChatGPT subscription sign-in option;
+do not enter an API key. Browser authorization is an interactive account step,
+not part of bootstrap. See the [provider documentation](https://docs.opencode.ai/docs/providers/).
+
 `~/.config/opencode` is symlinked from `home/.config/opencode` via Ansible. Agent files live in `home/.config/opencode/agents`. Global skills install to `~/.agents/skills`. Custom OpenCode skills live in `~/.config/opencode/skills`.
 
 ```sh
@@ -212,3 +242,17 @@ under `~/.config/herdr/plugins/config/herdr.collie-<name>`; state is owner-only
 under `~/.local/state/valarmorghulis/<name>`. Use the same Unix account and default
 Herdr session from SSH and web. A server restart ends live pane processes;
 disconnecting a client does not. Reapplying the profile never restarts Herdr.
+
+## CLI role integration test
+
+The integration check installs Herdr, OpenCode and dependencies in a disposable
+home, verifies preservation of existing configs, and requires `changed=0` on a
+second run. It needs network access, Git and Ansible, and runs as a regular user.
+On macOS, Herdr and OpenCode must already be installed: the temporary home does
+not sandbox Homebrew package changes. It does not authenticate or call models.
+
+```sh
+python3 tests/check_cli_roles.py
+# Or use an isolated current Ansible controller:
+python3 tests/check_cli_roles.py --runner 'uvx --from ansible-core ansible-playbook'
+```

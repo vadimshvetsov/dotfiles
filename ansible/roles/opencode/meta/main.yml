@@ -1,9 +1,7 @@
 ---
 dependencies:
+  - role: user_context
+    tags: opencode
   - role: skills
     when: not opencode_install_only | bool
-    tags:
-      - skills
-      - opencode
-  - role: xdg_config
-    tags: opencode
+    tags: [skills, opencode]

@@ -1,0 +1,28 @@
+---
+- name: Create the configuration parent directory
+  ansible.builtin.file:
+    path: "{{ opencode_config_dir | dirname }}"
+    state: directory
+    mode: "0755"
+
+- name: Inspect the existing OpenCode configuration
+  ansible.builtin.stat:
+    path: "{{ opencode_config_dir }}"
+    follow: false
+  register: opencode_existing_config
+
+- name: Preserve an existing real OpenCode configuration directory
+  ansible.builtin.command:
+    argv: [mv, "{{ opencode_config_dir }}", "{{ opencode_config_dir }}.pre-dotfiles"]
+    creates: "{{ opencode_config_dir }}.pre-dotfiles"
+  when: opencode_existing_config.stat.isdir | default(false)
+
+- name: Link OpenCode configuration
+  ansible.builtin.file:
+    src: "{{ opencode_source_dir }}"
+    dest: "{{ opencode_config_dir }}"
+    state: link
+    force: true
+    follow: false
+  when: not ansible_check_mode or not (opencode_existing_config.stat.isdir | default(false))
+

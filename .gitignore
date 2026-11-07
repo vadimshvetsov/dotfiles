@@ -5,3 +5,9 @@ __pycache__/
 agents/generated/opencode/agents/*.md
 .ansible/
 home/.config/zsh/local.zsh
+
+# OpenCode's plugin runtime writes these through the config directory link.
+home/.config/opencode/node_modules/
+home/.config/opencode/package.json
+home/.config/opencode/bun.lock
+home/.config/opencode/bun.lockb
