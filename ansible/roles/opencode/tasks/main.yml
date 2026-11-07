@@ -22,6 +22,14 @@
       ansible.builtin.include_tasks: configure.yml
       when: not opencode_install_only | bool
 
+    - name: Install the OpenCode skill catalog
+      ansible.builtin.include_role:
+        name: skills
+        apply:
+          tags: [skills, opencode]
+      tags: [skills, opencode]
+      when: not opencode_install_only | bool
+
     - name: Verify OpenCode starts without a model request
       ansible.builtin.command:
         argv: ["{{ opencode_executable }}", '--version']

@@ -73,8 +73,8 @@ clipboard support for SSH/Herdr sessions without a display.
 Use `-K` only when a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo.
 
 Run a tagged bootstrap when needed. OpenCode is included in the default CLI bootstrap. Use `-t opencode` to run only
-OpenCode and its dependencies. Skills are dependencies of that role, not a direct
-bootstrap target.
+OpenCode and its dependencies. The OpenCode role installs its selected skills
+as part of its configuration.
 
 ```sh
 ansible-playbook ansible/bootstrap.yml -t opencode
@@ -94,7 +94,7 @@ home/
   .config/ghostty/           -> ~/.config/ghostty
   .config/herdr/config.toml  -> ~/.config/herdr/config.toml
   .config/nvim/              -> ~/.config/nvim
-  .config/opencode/          -> ~/.config/opencode
+  .config/opencode/          -> ~/.config/opencode      (individual entries)
 ```
 
 Add a new dotfile by putting it at its mirrored path under `home/`, then pointing a role's `*_source_dir` at it.
@@ -174,7 +174,7 @@ home directory without changing the real account.
 
 ## OpenCode
 
-The role installs OpenCode with its Node.js/npx and global skills dependencies:
+The role installs OpenCode, Node.js/npx for MCP servers, and its skill catalog:
 
 ```sh
 ansible-playbook ansible/bootstrap.yml -t opencode
@@ -186,16 +186,26 @@ executable is linked into `~/.local/bin`. macOS uses Homebrew. The shared
 Linux/macOS x64/arm64 into `~/.local/share/nodejs` and links `node`, `npm` and
 `npx` into `~/.local/bin`. It installs no global npm packages and leaves existing
 NVM installations intact. NVM may still select a different Node version in your
-shell; Ansible explicitly uses its managed Node for skills installation.
+shell; OpenCode launched from a clean setup can use the managed Node for MCP servers.
 
-Global skills use a pinned skills CLI and pinned upstream source commits.
+Ansible checks out pinned skill source commits once per repository under
+`~/.local/share/opencode-skills/sources` and links selected folders into
+`~/.config/opencode/skills`. It does not run a skills package manager or populate
+`~/.agents/skills`. Add an upstream source and its selected path to
+`ansible/roles/skills/defaults/main.yml`; custom skills can live under
+`home/.config/opencode/skills` and be listed in `skills_local_items`.
+
 The legacy Next.js skills are kept at their last upstream revision before
-removal. The existing `opencode-expert` skill is vendored under
-`home/.config/opencode/skills` because its Smithery source is no longer available.
+removal. The existing `opencode-expert` skill is vendored because its Smithery
+source is no longer available.
 
-An existing real OpenCode configuration directory is moved to
-`~/.config/opencode.pre-dotfiles` before linking. If that backup already exists,
-the role leaves the real directory in place and fails rather than discarding it.
+OpenCode's configuration root is a real directory with individual links for
+managed files, agents, commands, themes and plugins. This keeps downloaded
+skills and plugin runtime files outside the dotfiles checkout. An unmanaged real
+configuration directory is preserved once as `~/.config/opencode.pre-dotfiles`;
+an old root symlink is replaced without deleting its target. The role refuses
+to overwrite a real configuration when its backup already exists.
+
 The role checks both the executable and resolved configuration without sending
 a model request. OpenCode automatic updates are disabled: update the release
 pins and rerun Ansible. User authentication stays outside the repository.
@@ -204,11 +214,27 @@ For ChatGPT Pro, connect OpenAI using the ChatGPT subscription sign-in option;
 do not enter an API key. Browser authorization is an interactive account step,
 not part of bootstrap. See the [provider documentation](https://docs.opencode.ai/docs/providers/).
 
-`~/.config/opencode` is symlinked from `home/.config/opencode` via Ansible. Agent files live in `home/.config/opencode/agents`. Global skills install to `~/.agents/skills`. Custom OpenCode skills live in `~/.config/opencode/skills`.
+Agent instructions live in `home/.config/opencode/agents`. In each agent's
+frontmatter, use `permission.skill` (singular) with `"*": deny` first, then explicit
+allowed skills. Denied skills are hidden from that agent's available-skill list.
+Skills are loaded on demand; their full instructions are not added to every
+prompt. Boba Fett has the development skills, IG-88 has agent/tooling skills,
+and the other agents have none. Keep the generator sources in
+`agents/<agent>/opencode.yml` synchronized with the deployed Markdown frontmatter.
+See [OpenCode skill permissions](https://docs.opencode.ai/docs/skills/#override-per-agent).
 
-```sh
-npx skills add <skill>
-```
+### Add a skill while working remotely
+
+From a Herdr/OpenCode session, give IG-88 the discovered installer command as a
+source reference and name the intended agent. For example:
+
+> Add the skill from `npx skills add owner/repo --skill skill-name` for Boba Fett.
+> Manage it in dotfiles and Ansible, apply it, verify it, and keep other agents denied.
+
+The agent adds the pinned source and selected skill to the Ansible catalog,
+grants it to the named agent, and reapplies the OpenCode tag. A new machine gets
+the same installation from bootstrap. Running the original installer directly
+would bypass this reproducible setup. The workflow is recorded in `AGENTS.md`.
 
 ## Paired remote agent access
 

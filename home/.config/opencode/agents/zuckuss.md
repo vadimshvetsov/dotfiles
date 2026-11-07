@@ -29,7 +29,7 @@ permission:
     "tree *": allow
     "wc *": allow
     "which *": allow
-  skills:
+  skill:
     "*": deny
 tools:
   playwright*: true

@@ -16,7 +16,7 @@ permission:
     "git log*": allow
     "git show*": allow
     "git status*": allow
-  skills:
+  skill:
     "*": deny
 ---
 

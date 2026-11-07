@@ -73,3 +73,28 @@ docker compose up --build -d
 docker compose exec debian bash
 docker compose exec redhat bash
 ```
+
+## Adding OpenCode skills
+
+When the user supplies a command such as `npx skills add owner/repo --skill name`,
+use it as a source locator. Persistent installation must go through dotfiles
+Ansible, not an imperative package-manager command on the target machine.
+
+1. Verify the upstream repository, actual `SKILL.md` name, supporting files and
+   immutable commit. Reuse an existing pinned repository when possible.
+2. Add the repository to `skills_repositories` and the selected skill/path to
+   `skills_items` in `ansible/roles/skills/defaults/main.yml`. Locally maintained
+   skills belong under `home/.config/opencode/skills` and `skills_local_items`.
+3. Grant it only to the requested agent with `permission.skill` (singular).
+   Keep `"*": deny` first and specific grants after it. Keep the deployed agent
+   Markdown and its `agents/<name>/opencode.yml` source synchronized for this rule.
+4. Lint, commit the change, and apply only `ansible/bootstrap.yml -t opencode`
+   from the target's checkout as its owner. Verify the resolved agent permissions
+   and skill discovery without sending a model request. Do not restart active
+   Herdr/Collie services to install a skill.
+
+Skills live in `~/.config/opencode/skills`; upstream checkouts live under
+`~/.local/share/opencode-skills/sources`. The role does not populate global
+`~/.agents/skills` or install skills for other coding tools. Permissions hide
+unapproved skills from each OpenCode agent's available-skill list; this does not
+require separate copies of a skill for every agent.

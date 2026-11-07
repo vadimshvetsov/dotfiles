@@ -1,4 +1,4 @@
 ---
 dependencies:
-  - role: nodejs
+  - role: user_context
     tags: [skills, opencode]

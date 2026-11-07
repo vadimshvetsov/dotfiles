@@ -1,51 +1,71 @@
 ---
-skills_cli_version: 1.7.6
-skills_anthropic_plugins_source: https://github.com/anthropics/claude-plugins-official/tree/0412be76f50ab4f4f8abff3753efa9269fbbca5b/plugins
-skills_global_dirs:
-  - "{{ user_context_home }}/.agents/skills"
+skills_install_dir: '{{ user_context_home }}/.config/opencode/skills'
+skills_sources_dir: '{{ user_context_home }}/.local/share/opencode-skills/sources'
+skills_repositories:
+  anthropic:
+    repo: https://github.com/anthropics/skills.git
+    version: 2c5958ecac7cee2b583967a2c4981d0f4a75c579
+  claude_plugins:
+    repo: https://github.com/anthropics/claude-plugins-official.git
+    version: 0412be76f50ab4f4f8abff3753efa9269fbbca5b
+  automation:
+    repo: https://github.com/aj-geddes/useful-ai-prompts.git
+    version: 3f5182cfd739fc113f4af5244a1cf342ad7f7911
+  typescript:
+    repo: https://github.com/sickn33/antigravity-awesome-skills.git
+    version: 828257c3037dc7c3c3ec987decc5a603025a0ce5
+  vercel:
+    repo: https://github.com/vercel-labs/agent-skills.git
+    version: 1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62
+  next:
+    repo: https://github.com/vercel-labs/next-skills.git
+    version: dc1de9caf7612d73f56a8dec3cb1bd6c9ec096b9
 skills_items:
   - name: skill-creator
-    source: https://github.com/anthropics/skills/tree/2c5958ecac7cee2b583967a2c4981d0f4a75c579
-    skill: skill-creator
+    repository: anthropic
+    path: skills/skill-creator
   - name: agent-development
-    source: "{{ skills_anthropic_plugins_source }}/plugin-dev/skills/agent-development"
-    skill: agent-development
+    repository: claude_plugins
+    path: plugins/plugin-dev/skills/agent-development
   - name: skill-development
-    source: "{{ skills_anthropic_plugins_source }}/plugin-dev/skills/skill-development"
-    skill: skill-development
+    repository: claude_plugins
+    path: plugins/plugin-dev/skills/skill-development
   - name: plugin-structure
-    source: "{{ skills_anthropic_plugins_source }}/plugin-dev/skills/plugin-structure"
-    skill: plugin-structure
+    repository: claude_plugins
+    path: plugins/plugin-dev/skills/plugin-structure
   - name: plugin-settings
-    source: "{{ skills_anthropic_plugins_source }}/plugin-dev/skills/plugin-settings"
-    skill: plugin-settings
+    repository: claude_plugins
+    path: plugins/plugin-dev/skills/plugin-settings
   - name: writing-hookify-rules
-    source: "{{ skills_anthropic_plugins_source }}/hookify/skills/writing-rules"
-    skill: writing-hookify-rules
+    repository: claude_plugins
+    path: plugins/hookify/skills/writing-rules
   - name: ansible-automation
-    source: https://github.com/aj-geddes/useful-ai-prompts/tree/3f5182cfd739fc113f4af5244a1cf342ad7f7911
-    skill: ansible-automation
+    repository: automation
+    path: skills/ansible-automation
   - name: frontend-design
-    source: https://github.com/anthropics/skills/tree/2c5958ecac7cee2b583967a2c4981d0f4a75c579
-    skill: frontend-design
+    repository: anthropic
+    path: skills/frontend-design
   - name: typescript-expert
-    source: https://github.com/sickn33/antigravity-awesome-skills/tree/828257c3037dc7c3c3ec987decc5a603025a0ce5
-    skill: typescript-expert
+    repository: typescript
+    path: skills/typescript-expert
   - name: vercel-react-best-practices
-    source: https://github.com/vercel-labs/agent-skills/tree/1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62
-    skill: vercel-react-best-practices
+    repository: vercel
+    path: skills/react-best-practices
   - name: vercel-react-view-transitions
-    source: https://github.com/vercel-labs/agent-skills/tree/1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62
-    skill: vercel-react-view-transitions
+    repository: vercel
+    path: skills/react-view-transitions
   - name: vercel-react-native-skills
-    source: https://github.com/vercel-labs/agent-skills/tree/1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62
-    skill: vercel-react-native-skills
+    repository: vercel
+    path: skills/react-native-skills
   - name: next-best-practices
-    source: https://github.com/vercel-labs/next-skills/tree/dc1de9caf7612d73f56a8dec3cb1bd6c9ec096b9/skills
-    skill: next-best-practices
+    repository: next
+    path: skills/next-best-practices
   - name: next-cache-components
-    source: https://github.com/vercel-labs/next-skills/tree/dc1de9caf7612d73f56a8dec3cb1bd6c9ec096b9/skills
-    skill: next-cache-components
+    repository: next
+    path: skills/next-cache-components
   - name: next-upgrade
-    source: https://github.com/vercel-labs/next-skills/tree/dc1de9caf7612d73f56a8dec3cb1bd6c9ec096b9/skills
-    skill: next-upgrade
+    repository: next
+    path: skills/next-upgrade
+skills_local_items:
+  - name: opencode-expert
+    source: '{{ dotfiles_repo_dir | default(playbook_dir ~ ''/..'') }}/home/.config/opencode/skills/opencode-expert'

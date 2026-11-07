@@ -1,7 +1,7 @@
 ---
 dependencies:
   - role: user_context
-    tags: opencode
-  - role: skills
+    tags: [opencode, skills]
+  - role: nodejs
     when: not opencode_install_only | bool
-    tags: [skills, opencode]
+    tags: opencode

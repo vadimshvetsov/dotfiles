@@ -1,28 +1,61 @@
 ---
-- name: Create the configuration parent directory
-  ansible.builtin.file:
-    path: "{{ opencode_config_dir | dirname }}"
-    state: directory
-    mode: "0755"
-
 - name: Inspect the existing OpenCode configuration
   ansible.builtin.stat:
     path: "{{ opencode_config_dir }}"
     follow: false
   register: opencode_existing_config
 
-- name: Preserve an existing real OpenCode configuration directory
+- name: Inspect the OpenCode layout marker
+  ansible.builtin.stat:
+    path: "{{ opencode_config_dir }}/.dotfiles-managed"
+  register: opencode_layout_marker
+
+- name: Preserve an existing unmanaged real configuration directory
   ansible.builtin.command:
     argv: [mv, "{{ opencode_config_dir }}", "{{ opencode_config_dir }}.pre-dotfiles"]
     creates: "{{ opencode_config_dir }}.pre-dotfiles"
-  when: opencode_existing_config.stat.isdir | default(false)
+  when:
+    - opencode_existing_config.stat.isdir | default(false)
+    - not opencode_layout_marker.stat.exists
 
-- name: Link OpenCode configuration
+- name: Remove the old configuration directory link
   ansible.builtin.file:
-    src: "{{ opencode_source_dir }}"
-    dest: "{{ opencode_config_dir }}"
+    path: "{{ opencode_config_dir }}"
+    state: absent
+  when: opencode_existing_config.stat.islnk | default(false)
+
+- name: Require that an unmanaged directory was preserved
+  ansible.builtin.stat:
+    path: "{{ opencode_config_dir }}"
+  register: opencode_after_preserve
+  when: not ansible_check_mode
+
+- name: Refuse to replace a real configuration when its backup already exists
+  ansible.builtin.assert:
+    that: not opencode_after_preserve.stat.exists or opencode_layout_marker.stat.exists
+    fail_msg: Both the real OpenCode configuration and its backup exist; reconcile them before rerunning.
+  when:
+    - opencode_existing_config.stat.isdir | default(false)
+    - not ansible_check_mode
+
+- name: Create the real OpenCode configuration directory
+  ansible.builtin.file:
+    path: "{{ opencode_config_dir }}"
+    state: directory
+    mode: "0700"
+
+- name: Link managed OpenCode configuration entries
+  ansible.builtin.file:
+    src: "{{ opencode_source_dir }}/{{ item }}"
+    dest: "{{ opencode_config_dir }}/{{ item }}"
     state: link
     force: true
     follow: false
-  when: not ansible_check_mode or not (opencode_existing_config.stat.isdir | default(false))
+  loop: [opencode.json, tui.json, tui.jsonc, herdr-tui-session.js, agents, commands, themes, plugins]
+  when: not ansible_check_mode
 
+- name: Mark the managed OpenCode layout
+  ansible.builtin.copy:
+    content: "Individual config links; skills are managed by the skills role.\n"
+    dest: "{{ opencode_config_dir }}/.dotfiles-managed"
+    mode: "0600"

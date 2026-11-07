@@ -30,7 +30,8 @@ permission:
     "tree *": allow
     "wc *": allow
     "which *": allow
-  skills:
+  skill:
+    "*": deny
     frontend-design: allow
     ansible-automation: allow
     typescript-expert: allow
@@ -40,7 +41,6 @@ permission:
     next-best-practices: allow
     next-cache-components: allow
     next-upgrade: allow
-    "*": deny
   context7*: allow
 tools:
   context7*: true

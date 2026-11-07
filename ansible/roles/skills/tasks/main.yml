@@ -1,37 +1,79 @@
 ---
-- name: Install global skills as the owner
+- name: Install OpenCode skills as the owner
   become: "{{ user_context_user != ansible_facts['user_id'] }}"
   become_user: "{{ user_context_user }}"
   environment:
     HOME: "{{ user_context_home }}"
-    XDG_CONFIG_HOME: "{{ user_context_home }}/.config"
-    PATH: "{{ nodejs_bin_dir }}:{{ ansible_env.PATH }}"
-    NPM_CONFIG_CACHE: "{{ user_context_home }}/.cache/npm"
-    DISABLE_TELEMETRY: "1"
   block:
-    - name: Check installed skill manifests
+    - name: Inspect the OpenCode configuration root
       ansible.builtin.stat:
-        path: "{{ item.1 }}/{{ item.0.name }}/SKILL.md"
-      loop: "{{ skills_items | product(skills_global_dirs) | list }}"
-      loop_control:
-        label: "{{ item.1 }}/{{ item.0.name }}/SKILL.md"
-      register: skills_installed_dirs
+        path: "{{ skills_install_dir | dirname }}"
+        follow: false
+      register: skills_config_root
 
-    - name: Install global skills
-      ansible.builtin.command:
-        argv: >-
-          {{ [nodejs_bin_dir ~ '/npx', '--yes', 'skills@' ~ skills_cli_version, 'add', '-y', item.source]
-          + ((['--skill', item.skill]) if item.skill is defined else [])
-          + ['-a', 'opencode', '-g'] }}
-        chdir: "{{ user_context_home }}"
-      changed_when: true
+    - name: Require a real OpenCode configuration directory
+      ansible.builtin.assert:
+        that: not (skills_config_root.stat.islnk | default(false))
+        fail_msg: Run the opencode tag first to migrate the old configuration directory link.
+      when: not ansible_check_mode
+
+    - name: Create OpenCode skill directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0700"
+      loop: ["{{ skills_install_dir }}", "{{ skills_sources_dir }}"]
+
+    - name: Fetch pinned skill source repositories
+      ansible.builtin.git:
+        repo: "{{ item.value.repo }}"
+        dest: "{{ skills_sources_dir }}/{{ item.key }}"
+        version: "{{ item.value.version }}"
+        refspec: "{{ item.value.version }}"
+        depth: 1
+        recursive: false
+      loop: "{{ skills_repositories | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}"
+
+    - name: Inspect selected skill manifests
+      ansible.builtin.stat:
+        path: "{{ skills_sources_dir }}/{{ item.repository }}/{{ item.path }}/SKILL.md"
       loop: "{{ skills_items }}"
       loop_control:
         label: "{{ item.name }}"
-      when: >-
-        not ansible_check_mode and
-        (skills_installed_dirs.results
-        | selectattr('item.0.name', 'equalto', item.name)
-        | selectattr('stat.exists', 'equalto', false)
-        | list
-        | length) > 0
+      register: skills_manifests
+      when: not ansible_check_mode
+
+    - name: Require every selected skill manifest
+      ansible.builtin.assert:
+        that: item.stat.isreg | default(false)
+        fail_msg: "Missing manifest for {{ item.item.name }} at its pinned source."
+      loop: "{{ skills_manifests.results }}"
+      loop_control:
+        label: "{{ item.item.name }}"
+      when: not ansible_check_mode
+
+    - name: Link selected skills into the OpenCode catalog
+      ansible.builtin.file:
+        src: "{{ skills_sources_dir }}/{{ item.repository }}/{{ item.path }}"
+        dest: "{{ skills_install_dir }}/{{ item.name }}"
+        state: link
+        force: true
+        follow: false
+      loop: "{{ skills_items }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: not ansible_check_mode
+
+    - name: Link locally maintained OpenCode skills
+      ansible.builtin.file:
+        src: "{{ item.source }}"
+        dest: "{{ skills_install_dir }}/{{ item.name }}"
+        state: link
+        force: true
+        follow: false
+      loop: "{{ skills_local_items }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: not ansible_check_mode

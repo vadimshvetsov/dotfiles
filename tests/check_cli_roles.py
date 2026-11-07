@@ -54,8 +54,30 @@ def main():
         assert (config / "herdr/config.toml.pre-dotfiles").read_text() == "# original Herdr config\n"
         assert (config / "opencode.pre-dotfiles/local.txt").read_text() == "preserve this file\n"
         assert (config / "herdr/config.toml").is_symlink()
-        assert (config / "opencode").is_symlink()
-        print("Installation, config preservation and idempotence passed.")
+        assert (config / "opencode").is_dir() and not (config / "opencode").is_symlink()
+        assert (config / "opencode/opencode.json").is_symlink()
+        installed_skills = {manifest.parent.name for manifest in (config / "opencode/skills").glob("*/SKILL.md")}
+        assert installed_skills
+        assert not (home / ".agents/skills").exists()
+        executable = (shutil.which("opencode") if platform.system() == "Darwin"
+                      else str(home / ".local/bin/opencode"))
+        env = dict(os.environ, HOME=root, XDG_CONFIG_HOME=str(config),
+                   XDG_DATA_HOME=str(home / ".local/share"),
+                   XDG_CACHE_HOME=str(home / ".cache"),
+                   XDG_STATE_HOME=str(home / ".local/state"),
+                   PATH=str(home / ".local/bin") + os.pathsep + os.environ["PATH"])
+        for agent in ("boba-fett", "ig-88", "jabba-the-hutt", "dengar", "zuckuss", "4-lom"):
+            result = subprocess.run([executable, "debug", "agent", agent], env=env,
+                                    cwd=home, capture_output=True, text=True,
+                                    check=True, timeout=60)
+            profile = json.loads(result.stdout)
+            assert not any(rule["permission"] == "skills" for rule in profile["permission"])
+            rules = [rule for rule in profile["permission"] if rule["permission"] == "skill"]
+            wildcard = max(i for i, rule in enumerate(rules) if rule["pattern"] == "*")
+            assert rules[wildcard]["action"] == "deny", agent
+            actual = {rule["pattern"] for rule in rules[wildcard + 1:] if rule["action"] == "allow"}
+            assert actual <= installed_skills, (agent, actual - installed_skills)
+        print("Installation, preservation, idempotence and resolved agent permissions passed.")
 
 
 if __name__ == "__main__":
