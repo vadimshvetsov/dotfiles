@@ -1,11 +1,9 @@
 ---
-- name: Bootstrap development environment
+- name: Bootstrap CLI development environment
   hosts: all
   roles:
     - { role: agentsmd, tags: agentsmd }
     - { role: zsh, tags: zsh }
-    - { role: fonts, tags: fonts }
-    - { role: ghostty, tags: ghostty }
     - { role: tmux, tags: tmux }
     - { role: herdr, tags: herdr }
     - { role: neovim, tags: neovim }

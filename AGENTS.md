@@ -23,6 +23,15 @@ ansible-galaxy collection install -r requirements.yml
 ansible-playbook -K ansible/bootstrap.yml
 ```
 
+`ansible/bootstrap.yml` contains CLI tools only. GUI applications, desktop fonts
+and X11 clipboard integration belong in the separate optional playbook:
+
+```bash
+ansible-playbook -K ansible/gui_bootstrap.yml
+```
+
+Keep GUI dependencies out of CLI roles, including indirect role dependencies.
+
 Use `-K` only if a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo. Do not configure `ansible.cfg` to globally prompt for a become password.
 
 Run non-privileged tags without `-K`. Add `-K` for tagged runs that hit privileged tasks, such as shell changes or Linux package installs.

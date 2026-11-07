@@ -1,0 +1,7 @@
+---
+- name: Bootstrap GUI applications and desktop assets
+  hosts: all
+  roles:
+    - { role: fonts, tags: fonts }
+    - { role: ghostty, tags: ghostty }
+    - { role: desktop_clipboard, tags: desktop_clipboard }

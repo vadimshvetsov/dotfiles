@@ -44,12 +44,25 @@ ansible-playbook --version
 
 Run the remaining commands from the root of the cloned repository.
 
-Install Ansible Galaxy collections, then run bootstrap.
+Install Ansible Galaxy collections, then run the CLI bootstrap.
+The CLI playbook does not install Ghostty, desktop fonts or X11 clipboard tools.
 
 ```sh
 ansible-galaxy collection install -r requirements.yml
 ansible-playbook -K ansible/bootstrap.yml
 ```
+
+GUI applications and desktop assets are a separate, optional step:
+
+```sh
+ansible-playbook -K ansible/gui_bootstrap.yml
+```
+
+`gui_bootstrap.yml` installs Nerd Fonts, Ghostty and the X11 clipboard tool `xclip`
+on supported Linux distributions. macOS uses its built-in clipboard tools.
+Run both playbooks for a desktop setup; use only `bootstrap.yml` for a headless
+SSH development machine. Fonts are rendered by the terminal on the client,
+so the SSH server does not need the desktop fonts role.
 
 Use `-K` only when a run reaches privileged tasks and needs a sudo password. `-K` asks for the sudo/become password. It does not force every task to use sudo.
 

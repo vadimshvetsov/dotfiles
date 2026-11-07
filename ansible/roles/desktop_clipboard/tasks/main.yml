@@ -1,0 +1,7 @@
+---
+- name: Install XClip for the X11 desktop clipboard
+  ansible.builtin.package:
+    name: xclip
+    state: present
+  become: true
+  when: ansible_os_family in ["Debian", "RedHat"]

@@ -14,12 +14,6 @@
     name: fd
     state: present
 
-- name: Install XClip for clipboard
-  ansible.builtin.package:
-    name: xclip
-    state: present
-  when: ansible_os_family in ["Debian", "RedHat"]
-
 - name: Create lazyvim folder
   ansible.builtin.file:
     path: "{{ lazyvim_config_dir }}"
