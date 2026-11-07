@@ -20,7 +20,14 @@
     force: true
     follow: false
 
+- name: Inspect the old home CLAUDE.md entry
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/CLAUDE.md"
+    follow: false
+  register: agentsmd_legacy_claude
+
 - name: Remove the old home CLAUDE.md link
   ansible.builtin.file:
     path: "{{ ansible_env.HOME }}/CLAUDE.md"
     state: absent
+  when: agentsmd_legacy_claude.stat.islnk | default(false)
