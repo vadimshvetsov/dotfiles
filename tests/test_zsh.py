@@ -34,7 +34,7 @@ class ZshConfigTest(unittest.TestCase):
     def shell(self, command):
         result = subprocess.run(
             [ZSH, "-ic", command], env=self.env, text=True,
-            capture_output=True, timeout=15,
+            capture_output=True, input="", timeout=15,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(result.stderr, "")
@@ -63,6 +63,16 @@ class ZshConfigTest(unittest.TestCase):
         self.assertEqual(self.shell('print -r -- "$path[1]"'),
                          str(self.home / ".local/bin"))
         self.assertEqual(self.shell('print -r -- "$options[sharehistory]"'), "on")
+
+    def test_plugin_declarations_with_piped_stdin(self):
+        manager = self.home / ".local/share/zsh/zplug"
+        manager.mkdir(parents=True)
+        (manager / "init.zsh").write_text(
+            'zplug() { [[ $1 == load ]] && return 0; '
+            '[[ ! -p /dev/stdin ]] || { print "piped declaration" >&2; return 1; }; }\n'
+        )
+        (self.home / ".config/zsh/plugins.zsh").write_text("zplug test/plugin\n")
+        self.assertEqual(self.shell("print ready"), "ready")
 
     def test_private_override(self):
         (self.home / ".config/zsh/local.zsh").write_text("export EDITOR=vi\n")

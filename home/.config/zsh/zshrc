@@ -29,7 +29,8 @@ export ZPLUG_HOME=$XDG_DATA_HOME/zsh/zplug
 export ZPLUG_CACHE_DIR=$XDG_CACHE_HOME/zsh/zplug
 if [[ -r $ZPLUG_HOME/init.zsh && -r $XDG_CONFIG_HOME/zsh/plugins.zsh ]]; then
   source "$ZPLUG_HOME/init.zsh"
-  source "$XDG_CONFIG_HOME/zsh/plugins.zsh"
+  # Zplug mistakes piped SSH/agent stdin for its deprecated pipe declarations.
+  source "$XDG_CONFIG_HOME/zsh/plugins.zsh" < /dev/null
   # Zplug also initializes completion; syntax highlighting loads last (defer:2).
   zplug load
 else
