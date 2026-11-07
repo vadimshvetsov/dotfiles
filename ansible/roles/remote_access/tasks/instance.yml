@@ -28,4 +28,5 @@
     src: collie.plist.j2
     dest: "{{ remote_access_home }}/Library/LaunchAgents/io.dotfiles.collie-{{ collie_instance.name }}.plist"
     mode: '0644'
+  notify: Restart managed Collie
   when: ansible_facts['system'] == 'Darwin'

@@ -1,5 +1,6 @@
 ---
-- name: Restart managed Collie
+- name: Restart managed Collie on Linux
+  listen: Restart managed Collie
   ansible.builtin.systemd_service:
     name: "collie-{{ item.name }}"
     scope: user
@@ -7,3 +8,11 @@
     state: restarted
   loop: "{{ remote_access_instances }}"
   when: ansible_facts['system'] == 'Linux' and remote_access_manage_services | bool and not ansible_check_mode
+
+- name: Restart managed Collie on macOS
+  listen: Restart managed Collie
+  community.general.launchd:
+    name: "io.dotfiles.collie-{{ item.name }}"
+    state: restarted
+  loop: "{{ remote_access_instances }}"
+  when: ansible_facts['system'] == 'Darwin' and remote_access_manage_services | bool and not ansible_check_mode
