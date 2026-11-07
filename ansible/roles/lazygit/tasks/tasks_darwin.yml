@@ -1,6 +1,0 @@
----
-- name: Install Lazygit
-  community.general.homebrew:
-    name: lazygit
-    state: present
-    update_homebrew: true

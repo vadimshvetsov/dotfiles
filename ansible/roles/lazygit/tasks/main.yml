@@ -1,12 +1,50 @@
 ---
-- name: Install Lazygit for Darwin
-  ansible.builtin.include_tasks: tasks_darwin.yml
-  when: ansible_os_family == "Darwin"
+- name: Require a supported lazygit platform
+  ansible.builtin.assert:
+    that:
+      - ansible_facts['architecture'] in lazygit_arch_map
 
-- name: Install Lazygit for Debian
-  ansible.builtin.include_tasks: tasks_debian.yml
-  when: ansible_os_family == "Debian"
+- name: Install lazygit as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+  block:
+    - name: Create lazygit installation directories
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "{{ item.mode }}"
+      loop:
+        - { path: "{{ lazygit_install_dir }}", mode: "0755" }
+        - { path: "{{ lazygit_cache_dir }}", mode: "0700" }
+        - { path: "{{ user_context_home }}/.local/bin", mode: "0755" }
 
-- name: Install Lazygit for RedHat
-  ansible.builtin.include_tasks: tasks_redhat.yml
-  when: ansible_os_family == "RedHat"
+    - name: Download the verified lazygit archive
+      ansible.builtin.get_url:
+        url: "https://github.com/jesseduffield/lazygit/releases/download/v{{ lazygit_version }}/{{ lazygit_archive }}"
+        dest: "{{ lazygit_cache_dir }}/{{ lazygit_archive }}"
+        checksum: "{{ lazygit_checksums[lazygit_platform ~ '-' ~ lazygit_arch_map[ansible_facts['architecture']]] }}"
+        mode: "0600"
+      when: not ansible_check_mode
+
+    - name: Extract the pinned lazygit release
+      ansible.builtin.command:
+        argv: [tar, '-xzf', "{{ lazygit_cache_dir }}/{{ lazygit_archive }}", '-C', "{{ lazygit_install_dir }}"]
+        creates: "{{ lazygit_install_dir }}/lazygit"
+      when: not ansible_check_mode
+
+    - name: Link the lazygit executable
+      ansible.builtin.file:
+        src: "{{ lazygit_install_dir }}/lazygit"
+        dest: "{{ lazygit_executable }}"
+        state: link
+        force: true
+        follow: false
+      when: not ansible_check_mode
+
+    - name: Verify lazygit runs
+      ansible.builtin.command:
+        argv: ["{{ lazygit_executable }}", '--version']
+      changed_when: false
+      when: not ansible_check_mode

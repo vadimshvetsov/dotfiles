@@ -1,3 +1,4 @@
 ---
 dependencies:
-  - role: lazyvim
+  - role: user_context
+    tags: lazygit
