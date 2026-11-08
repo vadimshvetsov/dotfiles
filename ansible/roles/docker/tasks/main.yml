@@ -1,0 +1,37 @@
+---
+- name: Inspect the legacy Docker CLI configuration
+  ansible.builtin.stat:
+    path: "{{ user_context_home }}/.docker/config.json"
+  register: docker_legacy_config
+
+- name: Resolve the Docker CLI configuration directory
+  ansible.builtin.set_fact:
+    docker_config_dir: "{{ user_context_home ~ '/.docker' if docker_legacy_config.stat.exists else user_context_home ~ '/.config/docker' }}"
+
+- name: Install rootless Docker on Ubuntu and Debian
+  ansible.builtin.include_tasks: linux.yml
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install Docker CLI and the optional local VM runtime on macOS
+  community.general.homebrew:
+    name: [docker, docker-compose, docker-buildx, colima]
+    state: present
+  become: false
+  when: ansible_facts['os_family'] == 'Darwin'
+
+- name: Link Homebrew Docker CLI plugins on macOS
+  ansible.builtin.include_tasks: macos.yml
+  when: ansible_facts['os_family'] == 'Darwin'
+
+- name: Verify Docker CLI and Compose
+  ansible.builtin.command:
+    argv: "{{ item }}"
+  loop: [[docker, --version], [docker, compose, version]]
+  environment:
+    HOME: "{{ user_context_home }}"
+    DOCKER_CONFIG: "{{ docker_config_dir }}"
+    PATH: "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  changed_when: false
+  when: not ansible_check_mode

@@ -1,0 +1,102 @@
+---
+- name: Inspect existing system services
+  ansible.builtin.service_facts:
+
+- name: Preserve existing rootful container runtimes
+  ansible.builtin.assert:
+    that:
+      - ansible_facts.services.get('docker.service', {}).get('state', 'stopped') != 'running'
+      - ansible_facts.services.get('containerd.service', {}).get('state', 'stopped') != 'running'
+    fail_msg: Existing rootful Docker/containerd is running; migrate its workloads explicitly before installing this rootless profile.
+
+- name: Install Docker system prerequisites and packages
+  become: true
+  become_user: root
+  block:
+    - name: Install rootless Docker prerequisites
+      ansible.builtin.apt:
+        name: [ca-certificates, uidmap, dbus-user-session, slirp4netns, fuse-overlayfs]
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Create the APT keyring directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Install the official Docker APT signing key
+      ansible.builtin.get_url:
+        url: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}/gpg"
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+
+    - name: Configure the official Docker APT repository
+      ansible.builtin.apt_repository:
+        repo: >-
+          deb [arch={{ docker_arch_map[ansible_facts['architecture']] }} signed-by=/etc/apt/keyrings/docker.asc]
+          https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }} {{ ansible_facts['distribution_release'] }} stable
+        filename: docker
+        state: present
+        update_cache: false
+      register: docker_apt_repo
+
+    - name: Install Docker Engine and CLI plugins without starting rootful daemons
+      ansible.builtin.apt:
+        name: "{{ docker_linux_packages }}"
+        state: present
+        update_cache: true
+        cache_valid_time: "{{ 0 if docker_apt_repo.changed else 3600 }}"
+        policy_rc_d: 101
+      when: not ansible_check_mode
+
+    - name: Disable the unused rootful container services
+      ansible.builtin.systemd_service:
+        name: "{{ item }}"
+        enabled: false
+        state: stopped
+      loop: [docker.socket, docker.service, containerd.service]
+      when: not ansible_check_mode
+
+    - name: Enable user services after logout
+      ansible.builtin.command:
+        argv: [loginctl, enable-linger, "{{ user_context_user }}"]
+        creates: "/var/lib/systemd/linger/{{ user_context_user }}"
+
+- name: Resolve the Docker owner's account
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ user_context_user }}"
+
+- name: Install and manage Docker as the unprivileged owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+    DOCKER_CONFIG: "{{ docker_config_dir }}"
+    XDG_RUNTIME_DIR: "/run/user/{{ ansible_facts['getent_passwd'][user_context_user][1] }}"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ ansible_facts['getent_passwd'][user_context_user][1] }}/bus"
+    PATH: "/usr/local/bin:/usr/bin:/bin"
+  block:
+    - name: Install the native rootless Docker user service and CLI context
+      ansible.builtin.command:
+        argv: [/usr/bin/dockerd-rootless-setuptool.sh, install]
+        creates: "{{ user_context_home }}/.config/systemd/user/docker.service"
+      when: not ansible_check_mode
+
+    - name: Enable and start the rootless Docker service
+      ansible.builtin.systemd_service:
+        name: docker.service
+        scope: user
+        enabled: true
+        state: started
+      when: not ansible_check_mode
+
+    - name: Verify the daemon runs in rootless mode
+      ansible.builtin.command:
+        argv: [docker, info, '--format', '{{ "{{json .SecurityOptions}}" }}']
+      register: docker_security_options
+      changed_when: false
+      failed_when: docker_security_options.rc != 0 or 'rootless' not in docker_security_options.stdout
+      when: not ansible_check_mode

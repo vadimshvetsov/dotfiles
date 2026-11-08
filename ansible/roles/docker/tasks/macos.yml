@@ -1,0 +1,24 @@
+---
+- name: Resolve the Homebrew installation prefix
+  ansible.builtin.command:
+    argv: [brew, --prefix]
+  environment:
+    PATH: "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+  register: docker_brew_prefix
+  changed_when: false
+
+- name: Create the Docker CLI plugin directory
+  ansible.builtin.file:
+    path: "{{ docker_config_dir }}/cli-plugins"
+    state: directory
+    mode: "0700"
+
+- name: Link the installed Compose and Buildx plugins
+  ansible.builtin.file:
+    src: "{{ docker_brew_prefix.stdout }}/opt/{{ item }}/bin/{{ item }}"
+    dest: "{{ docker_config_dir }}/cli-plugins/{{ item }}"
+    state: link
+    force: true
+    follow: false
+  loop: [docker-compose, docker-buildx]
+  when: not ansible_check_mode

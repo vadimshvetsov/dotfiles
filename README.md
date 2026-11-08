@@ -153,6 +153,35 @@ python3 -m unittest discover -s tests -v
 uvx ansible-lint ansible
 ```
 
+## Git identity, NVM and Docker
+
+The CLI bootstrap also includes `git`, `nvm` and `docker` tags. Git identity is
+managed through `git_identity_name`, `git_identity_github_username` and
+`git_identity_email`; the default email is the owner's GitHub noreply address.
+The role preserves GitHub credentials and other Git settings.
+
+NVM is installed from its pinned upstream Git release under `~/.config/nvm`.
+An existing `~/.nvm` installation is reused without deleting Node versions.
+The Zsh loader supports both locations. The role does not change the active
+Node version; the managed Node.js runtime remains available for MCP and editors.
+
+On Ubuntu/Debian, Docker Engine, Compose and Buildx come from Docker's signed
+APT repository. Docker runs as the owner with a rootless user service and
+lingering; the rootful services stay disabled. The owner is not added to the
+privileged `docker` group. Existing running rootful Docker/containerd workloads
+must be migrated explicitly before applying this profile.
+
+On macOS, Homebrew installs Docker CLI, Compose, Buildx and Colima. Bootstrap
+does not start Colima or reserve VM memory. Start/stop it when needed with
+`colima start` and `colima stop`. Docker CLI configuration uses
+`~/.config/docker`; an existing `~/.docker/config.json` keeps its old location.
+Open a new Zsh session after bootstrap to load the Docker configuration path.
+
+```sh
+ansible-playbook ansible/bootstrap.yml -t git,nvm
+ansible-playbook -K ansible/bootstrap.yml -t docker
+```
+
 ## GitHub CLI
 
 GitHub CLI is included in the default CLI bootstrap on macOS and Ubuntu/Debian.

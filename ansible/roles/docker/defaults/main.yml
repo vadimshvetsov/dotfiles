@@ -1,0 +1,11 @@
+---
+docker_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+docker_linux_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-ce-rootless-extras
+  - docker-buildx-plugin
+  - docker-compose-plugin

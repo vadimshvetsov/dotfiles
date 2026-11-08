@@ -7,6 +7,13 @@ export XDG_STATE_HOME=${XDG_STATE_HOME:-$HOME/.local/state}
 export KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config}
 export K9SCONFIG=${K9SCONFIG:-$XDG_CONFIG_HOME/k9s}
 export EDITOR=nvim
+if [[ -z ${DOCKER_CONFIG:-} ]]; then
+  if [[ -f $HOME/.docker/config.json ]]; then
+    export DOCKER_CONFIG=$HOME/.docker
+  else
+    export DOCKER_CONFIG=$XDG_CONFIG_HOME/docker
+  fi
+fi
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 if [[ $OSTYPE == darwin* ]]; then
