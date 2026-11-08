@@ -56,13 +56,26 @@
         path: "{{ lazyvim_config_dir }}/.dotfiles-managed"
       register: lazyvim_layout_marker
 
+    - name: Inspect the Neovim entry point after an interrupted bootstrap
+      ansible.builtin.stat:
+        path: "{{ lazyvim_config_dir }}/init.lua"
+        follow: false
+      register: lazyvim_entry_point
+
+    - name: Recognize the managed layout independently of plugin installation
+      ansible.builtin.set_fact:
+        lazyvim_owned_layout: >-
+          {{ lazyvim_layout_marker.stat.exists or
+          ((lazyvim_entry_point.stat.islnk | default(false)) and
+          (lazyvim_entry_point.stat.lnk_target | default('')) == lazyvim_source_dir ~ '/init.lua') }}
+
     - name: Preserve an unmanaged real Neovim configuration
       ansible.builtin.command:
         argv: [mv, "{{ lazyvim_config_dir }}", "{{ lazyvim_config_dir }}.pre-dotfiles"]
         creates: "{{ lazyvim_config_dir }}.pre-dotfiles"
       when:
         - lazyvim_existing_config.stat.isdir | default(false)
-        - not lazyvim_layout_marker.stat.exists
+        - not lazyvim_owned_layout
 
     - name: Remove the old Neovim configuration directory symlink
       ansible.builtin.file:
@@ -78,7 +91,7 @@
 
     - name: Require a preserved or already managed Neovim configuration
       ansible.builtin.assert:
-        that: not lazyvim_after_preserve.stat.exists or lazyvim_layout_marker.stat.exists
+        that: not lazyvim_after_preserve.stat.exists or lazyvim_owned_layout
         fail_msg: Both Neovim configuration and backup exist; reconcile them before rerunning.
       when:
         - lazyvim_existing_config.stat.isdir | default(false)
@@ -99,6 +112,13 @@
         force: true
         follow: false
       loop: [init.lua, lua, stylua.toml]
+      when: not ansible_check_mode
+
+    - name: Mark the managed Neovim configuration layout
+      ansible.builtin.copy:
+        content: "Static Lua links; runtime JSON files are seeded from dotfiles.\n"
+        dest: "{{ lazyvim_config_dir }}/.dotfiles-managed"
+        mode: "0600"
       when: not ansible_check_mode
 
     - name: Fingerprint declared Lua and JSON configuration
@@ -191,9 +211,3 @@
         dest: "{{ lazyvim_bootstrap_stamp }}"
         mode: "0600"
       when: not ansible_check_mode
-
-    - name: Mark the managed Neovim configuration layout
-      ansible.builtin.copy:
-        content: "Static Lua links; runtime JSON files are seeded from dotfiles.\n"
-        dest: "{{ lazyvim_config_dir }}/.dotfiles-managed"
-        mode: "0600"
