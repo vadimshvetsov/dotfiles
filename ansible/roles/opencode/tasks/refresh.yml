@@ -1,0 +1,95 @@
+---
+- name: Inspect the existing OpenCode service without starting it
+  ansible.builtin.command:
+    argv: ["{{ opencode_executable }}", service, status]
+  register: opencode_service_status
+  changed_when: false
+  failed_when: false
+
+- name: Compare live and on-disk global configuration
+  when:
+    - opencode_service_status.rc == 0
+    - opencode_service_status.stdout is match('^http://127\.0\.0\.1:')
+  block:
+    - name: Read configuration from the existing service
+      ansible.builtin.command:
+        argv: ["{{ opencode_executable }}", debug, config]
+      register: opencode_live_config
+      changed_when: false
+      no_log: true
+
+    - name: Compare the managed global configuration document
+      ansible.builtin.set_fact:
+        opencode_config_stale: >-
+          {{ (opencode_disk_config.stdout | from_json
+          | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list)
+          != (opencode_live_config.stdout | from_json
+          | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list) }}
+      no_log: true
+
+    - name: Reload stale configuration without restarting terminal sessions
+      when: opencode_config_stale | bool
+      block:
+        - name: Check for active work across the existing service
+          ansible.builtin.command:
+            argv: ["{{ opencode_executable }}", api, GET, /api/session/active]
+          register: opencode_reload_active
+          changed_when: false
+          no_log: true
+
+        - name: Require no active work before reloading configuration
+          ansible.builtin.assert:
+            that: (opencode_reload_active.stdout | from_json).data | length == 0
+            fail_msg: Finish active OpenCode work and rerun the opencode tag to reload configuration.
+          no_log: true
+
+        - name: Inspect locations loaded by the existing service
+          ansible.builtin.command:
+            argv: ["{{ opencode_executable }}", api, GET, /api/debug/location]
+          register: opencode_reload_locations
+          changed_when: false
+          no_log: true
+
+        - name: Check pending interactions in every loaded location
+          ansible.builtin.command:
+            argv:
+              - "{{ opencode_executable }}"
+              - api
+              - GET
+              - "{{ item.0 }}?location[directory]={{ item.1 | urlencode }}"
+          loop: >-
+            {{ ['/api/form', '/api/permission/request']
+            | product(opencode_reload_locations.stdout | from_json | map(attribute='directory') | list) | list }}
+          register: opencode_reload_activity
+          changed_when: false
+          no_log: true
+
+        - name: Require an idle service before rebuilding its configuration
+          ansible.builtin.assert:
+            that: (item.stdout | from_json).data | length == 0
+            fail_msg: OpenCode configuration changed; rerun the opencode tag after active work and pending interactions finish.
+          loop: "{{ opencode_reload_activity.results }}"
+          loop_control:
+            label: "{{ item.item }}"
+          no_log: true
+
+        - name: Reload the idle OpenCode service
+          ansible.builtin.command:
+            argv: ["{{ opencode_executable }}", reload]
+          changed_when: true
+
+        - name: Read the refreshed service configuration
+          ansible.builtin.command:
+            argv: ["{{ opencode_executable }}", debug, config]
+          register: opencode_refreshed_config
+          changed_when: false
+          no_log: true
+
+        - name: Verify the service uses the managed global configuration
+          ansible.builtin.assert:
+            that: >-
+              (opencode_disk_config.stdout | from_json
+              | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list)
+              == (opencode_refreshed_config.stdout | from_json
+              | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list)
+          no_log: true

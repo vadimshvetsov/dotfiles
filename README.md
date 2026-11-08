@@ -242,6 +242,12 @@ The role checks both the executable and resolved configuration without sending
 a model request. OpenCode background updates are disabled: Ansible owns updates and checks
 for the latest stable release each time the role is applied. User authentication stays outside the repository.
 
+When an existing OpenCode service has cached an older global configuration, the
+role reloads it and verifies the live configuration. It does not start a service
+or restart Herdr. Active work and pending permissions/forms block the reload;
+finish those interactions and rerun the tag. Existing sessions retain their
+selected agent; the default agent applies to new sessions.
+
 For ChatGPT Pro, connect OpenAI using the ChatGPT subscription sign-in option;
 do not enter an API key. Browser authorization is an interactive account step,
 not part of bootstrap. See the [provider documentation](https://docs.opencode.ai/docs/providers/).

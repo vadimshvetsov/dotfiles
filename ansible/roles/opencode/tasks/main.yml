@@ -57,6 +57,13 @@
         argv: ["{{ opencode_executable }}", debug, config, '--standalone']
       changed_when: false
       no_log: true
+      register: opencode_disk_config
+      when:
+        - not ansible_check_mode
+        - not opencode_install_only | bool
+
+    - name: Refresh stale configuration in an idle OpenCode service
+      ansible.builtin.include_tasks: refresh.yml
       when:
         - not ansible_check_mode
         - not opencode_install_only | bool
