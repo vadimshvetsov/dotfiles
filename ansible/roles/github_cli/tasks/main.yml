@@ -1,0 +1,82 @@
+---
+- name: Require a supported GitHub CLI architecture
+  ansible.builtin.assert:
+    that: ansible_facts['architecture'] in github_cli_arch_map
+
+- name: Resolve the official stable GitHub CLI release
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/cli/cli/releases/{{ 'latest' if github_cli_version == 'latest' else 'tags/v' ~ github_cli_version }}"
+    return_content: true
+    timeout: 30
+  register: github_cli_release_metadata
+  check_mode: false
+  changed_when: false
+
+- name: Resolve the GitHub CLI release version
+  ansible.builtin.set_fact:
+    github_cli_resolved_version: "{{ github_cli_release_metadata.json.tag_name | regex_replace('^v', '') }}"
+
+- name: Select the matching GitHub CLI archive
+  ansible.builtin.set_fact:
+    github_cli_release_asset: >-
+      {{ github_cli_release_metadata.json.assets
+      | selectattr('name', 'equalto', github_cli_release_name ~ '.' ~ github_cli_extension)
+      | first | default({}) }}
+
+- name: Require a stable official archive with its SHA-256 digest
+  ansible.builtin.assert:
+    that:
+      - not github_cli_release_metadata.json.draft
+      - not github_cli_release_metadata.json.prerelease
+      - github_cli_resolved_version is match('^[0-9]+\.[0-9]+\.[0-9]+$')
+      - github_cli_release_asset.digest | default('') is match('^sha256:[a-f0-9]{64}$')
+    fail_msg: The official stable release must publish a matching archive and checksum.
+
+- name: Install GitHub CLI as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+  block:
+    - name: Create GitHub CLI installation directories
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "{{ item.mode }}"
+      loop:
+        - { path: "{{ github_cli_install_dir }}", mode: "0755" }
+        - { path: "{{ github_cli_cache_dir }}", mode: "0700" }
+        - { path: "{{ user_context_home }}/.local/bin", mode: "0755" }
+
+    - name: Download the verified GitHub CLI archive
+      ansible.builtin.get_url:
+        url: "{{ github_cli_release_asset.browser_download_url }}"
+        dest: "{{ github_cli_cache_dir }}/{{ github_cli_release_name }}.{{ github_cli_extension }}"
+        checksum: "{{ github_cli_release_asset.digest }}"
+        mode: "0600"
+      when: not ansible_check_mode
+
+    - name: Extract the official GitHub CLI release
+      ansible.builtin.unarchive:
+        src: "{{ github_cli_cache_dir }}/{{ github_cli_release_name }}.{{ github_cli_extension }}"
+        dest: "{{ github_cli_install_dir }}"
+        remote_src: true
+        creates: "{{ github_cli_install_dir }}/{{ github_cli_release_name }}/bin/gh"
+      when: not ansible_check_mode
+
+    - name: Link the GitHub CLI executable
+      ansible.builtin.file:
+        src: "{{ github_cli_install_dir }}/{{ github_cli_release_name }}/bin/gh"
+        dest: "{{ github_cli_executable }}"
+        state: link
+        force: true
+        follow: false
+      when: not ansible_check_mode
+
+    - name: Verify the installed GitHub CLI version
+      ansible.builtin.command:
+        argv: ["{{ github_cli_executable }}", '--version']
+      register: github_cli_installed
+      changed_when: false
+      failed_when: github_cli_installed.rc != 0 or ('gh version ' ~ github_cli_resolved_version ~ ' ') not in github_cli_installed.stdout
+      when: not ansible_check_mode

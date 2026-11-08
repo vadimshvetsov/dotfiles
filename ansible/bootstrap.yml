@@ -5,6 +5,7 @@
     - { role: agentsmd, tags: agentsmd }
     - { role: zsh, tags: zsh }
     - { role: herdr, tags: herdr }
+    - { role: github_cli, tags: [github_cli, gh] }
     - { role: neovim, tags: neovim }
     - { role: lazygit, tags: lazygit }
     - { role: lazyvim, tags: lazyvim }

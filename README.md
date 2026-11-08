@@ -153,6 +153,30 @@ python3 -m unittest discover -s tests -v
 uvx ansible-lint ansible
 ```
 
+## GitHub CLI
+
+GitHub CLI is included in the default CLI bootstrap on macOS and Ubuntu/Debian.
+Install or update only this tool without sudo:
+
+```sh
+ansible-playbook ansible/bootstrap.yml -t gh
+```
+
+The `github_cli` role (`gh` and `github_cli` tags) resolves the latest stable
+official release on each run, verifies its SHA-256 digest and installs a
+user-local binary at `~/.local/bin/gh` on x64/arm64. Set `github_cli_version` to
+an explicit release for rollback. Existing Homebrew/system packages are left
+installed; keep `~/.local/bin` first in `PATH` to use the managed version.
+
+The role does not sign in, modify Git identity or credential helpers, or copy
+tokens. Existing GitHub CLI credentials remain untouched. Authorize each machine
+separately when GitHub access is needed:
+
+```sh
+gh auth login --hostname github.com --git-protocol https --web
+gh auth status --hostname github.com
+```
+
 ## Herdr
 
 ```sh

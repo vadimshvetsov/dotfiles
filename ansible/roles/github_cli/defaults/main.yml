@@ -1,0 +1,12 @@
+---
+github_cli_version: latest
+github_cli_platform: "{{ 'macOS' if ansible_facts['os_family'] == 'Darwin' else 'linux' }}"
+github_cli_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+  arm64: arm64
+github_cli_extension: "{{ 'zip' if ansible_facts['os_family'] == 'Darwin' else 'tar.gz' }}"
+github_cli_release_name: "gh_{{ github_cli_resolved_version }}_{{ github_cli_platform }}_{{ github_cli_arch_map[ansible_facts['architecture']] }}"
+github_cli_install_dir: "{{ user_context_home }}/.local/share/github-cli/{{ github_cli_resolved_version }}"
+github_cli_cache_dir: "{{ user_context_home }}/.cache/github-cli-install"
+github_cli_executable: "{{ user_context_home }}/.local/bin/gh"
