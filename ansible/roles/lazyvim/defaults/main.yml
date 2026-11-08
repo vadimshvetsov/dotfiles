@@ -4,5 +4,12 @@ lazyvim_source_dir: "{{ dotfiles_repo_dir | default(playbook_dir ~ '/..') }}/hom
 lazyvim_data_dir: "{{ user_context_home }}/.local/share/nvim"
 lazyvim_cache_dir: "{{ user_context_home }}/.cache/lazyvim"
 lazyvim_install_xclip: false
-lazyvim_linux_packages: [git, curl, unzip, build-essential, ripgrep, fd-find, fzf, tree-sitter-cli]
+lazyvim_linux_packages: [git, curl, unzip, build-essential, ripgrep, fd-find, fzf]
 lazyvim_macos_packages: [ripgrep, fd, fzf, tree-sitter]
+lazyvim_tree_sitter_version: 0.27.2
+lazyvim_tree_sitter_arch:
+  x86_64: x64
+  aarch64: arm64
+lazyvim_tree_sitter_checksums:
+  x64: b4233ecc4f0e648d6d8ccc4bac96c00c712ca1a5eb1e0ca7197d29b750bffa6d
+  arm64: 4598875d129dfef384b3d78da329b766f151c2f827404fb5f3363a135935d0d3

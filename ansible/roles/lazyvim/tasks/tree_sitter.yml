@@ -1,0 +1,36 @@
+---
+- name: Resolve the Linux Tree-sitter distribution
+  ansible.builtin.set_fact:
+    lazyvim_ts_arch: "{{ lazyvim_tree_sitter_arch[ansible_facts['architecture']] }}"
+    lazyvim_ts_dir: "{{ user_context_home }}/.local/share/tree-sitter/{{ lazyvim_tree_sitter_version }}"
+
+- name: Create the Tree-sitter release directory
+  ansible.builtin.file:
+    path: "{{ lazyvim_ts_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Download the verified Tree-sitter CLI archive
+  ansible.builtin.get_url:
+    url: "https://github.com/tree-sitter/tree-sitter/releases/download/v{{ lazyvim_tree_sitter_version }}/tree-sitter-cli-linux-{{ lazyvim_ts_arch }}.zip"
+    dest: "{{ lazyvim_ts_dir }}/release.zip"
+    checksum: "sha256:{{ lazyvim_tree_sitter_checksums[lazyvim_ts_arch] }}"
+    mode: "0600"
+  when: not ansible_check_mode
+
+- name: Extract the Tree-sitter CLI
+  ansible.builtin.unarchive:
+    src: "{{ lazyvim_ts_dir }}/release.zip"
+    dest: "{{ lazyvim_ts_dir }}"
+    remote_src: true
+    creates: "{{ lazyvim_ts_dir }}/tree-sitter"
+  when: not ansible_check_mode
+
+- name: Link the supported Tree-sitter CLI
+  ansible.builtin.file:
+    src: "{{ lazyvim_ts_dir }}/tree-sitter"
+    dest: "{{ user_context_home }}/.local/bin/tree-sitter"
+    state: link
+    force: true
+    follow: false
+  when: not ansible_check_mode

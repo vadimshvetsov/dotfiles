@@ -30,6 +30,10 @@
     XDG_STATE_HOME: "{{ user_context_home }}/.local/state"
     PATH: "{{ user_context_home }}/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
   block:
+    - name: Install the supported Linux Tree-sitter CLI
+      ansible.builtin.include_tasks: tree_sitter.yml
+      when: ansible_facts['os_family'] == 'Debian'
+
     - name: Link Debian fd under its portable command name
       ansible.builtin.file:
         src: /usr/bin/fdfind
