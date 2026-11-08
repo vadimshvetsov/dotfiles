@@ -7,6 +7,7 @@
     - { role: herdr, tags: herdr }
     - { role: github_cli, tags: [github_cli, gh] }
     - { role: git_identity, tags: git }
+    - { role: nvm, tags: nvm }
     - { role: neovim, tags: neovim }
     - { role: lazygit, tags: lazygit }
     - { role: lazyvim, tags: lazyvim }

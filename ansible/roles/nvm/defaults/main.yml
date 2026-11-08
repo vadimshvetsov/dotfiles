@@ -1,0 +1,3 @@
+---
+nvm_version: v0.41.0
+nvm_install_dir: "{{ user_context_home }}/.config/nvm"

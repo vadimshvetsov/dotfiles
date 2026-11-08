@@ -1,0 +1,38 @@
+---
+- name: Install NVM as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+  block:
+    - name: Inspect an existing legacy NVM installation
+      ansible.builtin.stat:
+        path: "{{ user_context_home }}/.nvm/nvm.sh"
+      register: nvm_legacy
+
+    - name: Resolve the NVM installation location
+      ansible.builtin.set_fact:
+        nvm_target_dir: "{{ user_context_home ~ '/.nvm' if nvm_legacy.stat.exists else nvm_install_dir }}"
+
+    - name: Create the NVM parent directory
+      ansible.builtin.file:
+        path: "{{ nvm_target_dir | dirname }}"
+        state: directory
+        mode: "0755"
+
+    - name: Install the official pinned NVM release
+      ansible.builtin.git:
+        repo: https://github.com/nvm-sh/nvm.git
+        dest: "{{ nvm_target_dir }}"
+        version: "{{ nvm_version }}"
+        recursive: false
+
+    - name: Verify NVM without installing or switching Node versions
+      ansible.builtin.command:
+        argv: [bash, '-c', 'source "$NVM_DIR/nvm.sh" --no-use && nvm --version']
+      environment:
+        NVM_DIR: "{{ nvm_target_dir }}"
+      register: nvm_installed
+      changed_when: false
+      failed_when: nvm_installed.rc != 0 or nvm_installed.stdout != nvm_version | regex_replace('^v', '')
+      when: not ansible_check_mode
