@@ -4,3 +4,6 @@ remote_access_host_bind: 127.0.0.1
 remote_access_host_ingress_port: 8080
 remote_access_host_ingress_sources: []
 remote_access_host_instances: []
+remote_access_host_metrics_enabled: false
+remote_access_host_metrics_home: ""
+remote_access_host_metrics_disk: "{{ remote_access_host_metrics_home }}/dev"

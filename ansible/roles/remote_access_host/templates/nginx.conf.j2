@@ -19,6 +19,19 @@ server {
     client_max_body_size 25m;
     # Preserve the real browser Origin. Only HTTPS on this exact name is valid.
     if ($http_origin !~ "^(https://{{ instance.origin | urlsplit('hostname') | regex_escape }}(:443)?|)$") { return 403; }
+{% if remote_access_host_metrics_enabled | bool %}
+    location = /_crow/blackandwhite {
+{% if not (instance.public | default(false) | bool) %}
+        include /etc/nginx/crow-dev-auth.conf;
+        alias /var/lib/crow-dev/blackandwhite.json;
+        default_type application/json;
+        add_header Cache-Control "no-store" always;
+        limit_except GET { deny all; }
+{% else %}
+        return 404;
+{% endif %}
+    }
+{% endif %}
     location / {
         proxy_pass http://127.0.0.1:{{ instance.port }};
         proxy_http_version 1.1;

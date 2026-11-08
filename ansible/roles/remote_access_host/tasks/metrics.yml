@@ -1,0 +1,68 @@
+---
+- name: Validate development metrics home
+  ansible.builtin.assert:
+    that:
+      - remote_access_host_metrics_home is match('^/[A-Za-z0-9_./-]+$')
+      - remote_access_host_metrics_disk is match('^/[A-Za-z0-9_./-]+$')
+
+- name: Inspect existing read-only metrics credential
+  ansible.builtin.stat:
+    path: /etc/nginx/crow-dev-auth.conf
+  register: remote_access_host_metrics_auth
+
+- name: Require a credential for a fresh metrics installation
+  ansible.builtin.assert:
+    that:
+      - remote_access_host_metrics_auth.stat.exists or remote_access_host_metrics_token | default('') | length >= 32
+  no_log: true
+
+- name: Create count-only metrics directories
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+    state: directory
+  loop:
+    - { path: /usr/local/lib/crow, owner: root, group: root, mode: '0755' }
+    - { path: /var/lib/crow-dev, owner: "{{ remote_access_host_user }}", group: www-data, mode: '2750' }
+
+- name: Install count-only development metrics collector
+  ansible.builtin.copy:
+    src: dev_metrics.py
+    dest: /usr/local/lib/crow/dev_metrics.py
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Validate metrics credential alphabet
+  ansible.builtin.assert:
+    that: remote_access_host_metrics_token is match('^[A-Za-z0-9_-]{32,}$')
+  no_log: true
+  when: remote_access_host_metrics_token is defined
+
+- name: Configure independent read-only metrics authentication
+  ansible.builtin.template:
+    src: dev-metrics-auth.conf.j2
+    dest: /etc/nginx/crow-dev-auth.conf
+    owner: root
+    group: root
+    mode: '0600'
+  no_log: true
+  when: remote_access_host_metrics_token is defined
+  notify: Reload remote access nginx
+
+- name: Install development metrics service and timer
+  ansible.builtin.template:
+    src: "dev-metrics.{{ item }}.j2"
+    dest: "/etc/systemd/system/crow-dev-metrics.{{ item }}"
+    mode: '0644'
+  loop: [service, timer]
+
+- name: Enable count-only metrics refresh
+  ansible.builtin.systemd_service:
+    name: crow-dev-metrics.timer
+    daemon_reload: true
+    enabled: true
+    state: started
+  when: not ansible_check_mode

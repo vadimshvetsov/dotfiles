@@ -1,0 +1,12 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Count-only development VM metrics for Crow
+[Service]
+Type=oneshot
+User={{ remote_access_host_user }}
+Group={{ remote_access_host_user }}
+Environment=HOME={{ remote_access_host_metrics_home }}
+Environment=PATH={{ remote_access_host_metrics_home }}/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/python3 /usr/local/lib/crow/dev_metrics.py --herdr {{ remote_access_host_metrics_home }}/.local/bin/herdr --home {{ remote_access_host_metrics_home }} --disk {{ remote_access_host_metrics_disk }} --output /var/lib/crow-dev/blackandwhite.json
+NoNewPrivileges=true
+PrivateTmp=true

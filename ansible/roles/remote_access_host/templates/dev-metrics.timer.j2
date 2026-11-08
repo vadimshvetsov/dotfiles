@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+[Unit]
+Description=Refresh count-only development metrics
+[Timer]
+OnBootSec=15s
+OnUnitActiveSec=30s
+AccuracySec=1s
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,2 @@
+# {{ ansible_managed }}
+if ($http_authorization != "Bearer {{ remote_access_host_metrics_token }}") { return 401; }

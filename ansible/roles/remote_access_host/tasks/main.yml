@@ -32,6 +32,10 @@
     state: absent
   notify: Reload remote access nginx
 
+- name: Configure optional count-only development metrics
+  ansible.builtin.include_tasks: metrics.yml
+  when: remote_access_host_metrics_enabled | bool
+
 - name: Configure private local proxy to loopback-only Collie
   ansible.builtin.template:
     src: nginx.conf.j2
