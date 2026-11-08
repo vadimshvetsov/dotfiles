@@ -175,6 +175,10 @@ home directory without changing the real account.
 
 ## OpenCode
 
+New sessions default to Jabba the Hutt (`jabba-the-hutt`). This repository's
+project configuration overrides that default with IG-88 (`ig-88`) for dotfiles
+maintenance. Other projects can set their own `default_agent` explicitly.
+
 The role installs OpenCode, Node.js/npx for MCP servers, and its skill catalog:
 
 ```sh
