@@ -11,20 +11,33 @@
     - opencode_service_status.rc == 0
     - opencode_service_status.stdout is match('^http://127\.0\.0\.1:')
   block:
+    - name: Inspect locations loaded by the existing service
+      ansible.builtin.command:
+        argv: ["{{ opencode_executable }}", api, GET, /api/debug/location]
+      register: opencode_reload_locations
+      changed_when: false
+      no_log: true
+
     - name: Read configuration from the existing service
       ansible.builtin.command:
-        argv: ["{{ opencode_executable }}", debug, config]
+        argv: ["{{ opencode_executable }}", api, GET, "/api/config?location[directory]={{ item.directory | urlencode }}"]
+      loop: "{{ opencode_reload_locations.stdout | from_json }}"
       register: opencode_live_config
       changed_when: false
       no_log: true
 
+    - name: Initialize global configuration comparison
+      ansible.builtin.set_fact:
+        opencode_config_stale: false
+
     - name: Compare the managed global configuration document
       ansible.builtin.set_fact:
         opencode_config_stale: >-
-          {{ (opencode_disk_config.stdout | from_json
+          {{ opencode_config_stale or ((opencode_disk_config.stdout | from_json
           | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list)
-          != (opencode_live_config.stdout | from_json
-          | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list) }}
+          != (item.stdout | from_json
+          | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list)) }}
+      loop: "{{ opencode_live_config.results }}"
       no_log: true
 
     - name: Reload stale configuration without restarting terminal sessions
@@ -41,13 +54,6 @@
           ansible.builtin.assert:
             that: (opencode_reload_active.stdout | from_json).data | length == 0
             fail_msg: Finish active OpenCode work and rerun the opencode tag to reload configuration.
-          no_log: true
-
-        - name: Inspect locations loaded by the existing service
-          ansible.builtin.command:
-            argv: ["{{ opencode_executable }}", api, GET, /api/debug/location]
-          register: opencode_reload_locations
-          changed_when: false
           no_log: true
 
         - name: Check pending interactions in every loaded location
@@ -80,7 +86,8 @@
 
         - name: Read the refreshed service configuration
           ansible.builtin.command:
-            argv: ["{{ opencode_executable }}", debug, config]
+            argv: ["{{ opencode_executable }}", api, GET, "/api/config?location[directory]={{ item.directory | urlencode }}"]
+          loop: "{{ opencode_reload_locations.stdout | from_json }}"
           register: opencode_refreshed_config
           changed_when: false
           no_log: true
@@ -90,6 +97,7 @@
             that: >-
               (opencode_disk_config.stdout | from_json
               | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list)
-              == (opencode_refreshed_config.stdout | from_json
+              == (item.stdout | from_json
               | selectattr('path', 'equalto', opencode_config_dir ~ '/opencode.json') | list)
+          loop: "{{ opencode_refreshed_config.results }}"
           no_log: true
