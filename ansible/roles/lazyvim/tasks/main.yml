@@ -159,10 +159,10 @@
             local p=require('lazy.core.config').plugins['nvim-treesitter'];
             local opts=require('lazy.core.plugin').values(p,'opts',false);
             local langs=opts.ensure_installed or {'lua'};
-            local ts=require('nvim-treesitter'); ts.install(langs);
-            assert(vim.wait(300000,function() local have=ts.get_installed();
-            for _,lang in ipairs(langs) do if not vim.tbl_contains(have,lang) then return false end end;
-            return true end,100),'syntax parser installation did not complete')
+            local ts=require('nvim-treesitter');
+            local ok,err=pcall(function() assert(ts.install(langs):wait(300000),
+            'syntax parser installation did not complete') end);
+            if not ok then io.stderr:write(tostring(err)); vim.cmd('cquit 1') end
           - '+qa'
       register: lazyvim_parsers
       changed_when: lazyvim_parsers.rc == 0
