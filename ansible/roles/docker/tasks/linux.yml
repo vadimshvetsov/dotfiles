@@ -15,7 +15,7 @@
   block:
     - name: Install rootless Docker prerequisites
       ansible.builtin.apt:
-        name: [ca-certificates, uidmap, dbus-user-session, slirp4netns, fuse-overlayfs]
+        name: [ca-certificates, python3-debian, kmod, uidmap, dbus-user-session, slirp4netns, fuse-overlayfs]
         state: present
         update_cache: true
         cache_valid_time: 3600
@@ -33,14 +33,22 @@
         mode: "0644"
 
     - name: Configure the official Docker APT repository
-      ansible.builtin.apt_repository:
-        repo: >-
-          deb [arch={{ docker_arch_map[ansible_facts['architecture']] }} signed-by=/etc/apt/keyrings/docker.asc]
-          https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }} {{ ansible_facts['distribution_release'] }} stable
-        filename: docker
+      ansible.builtin.deb822_repository:
+        name: docker
+        types: [deb]
+        uris: "https://download.docker.com/linux/{{ ansible_facts['distribution'] | lower }}"
+        suites: ["{{ ansible_facts['distribution_release'] }}"]
+        components: [stable]
+        architectures: ["{{ docker_arch_map[ansible_facts['architecture']] }}"]
+        signed_by: /etc/apt/keyrings/docker.asc
         state: present
-        update_cache: false
+        mode: "0644"
       register: docker_apt_repo
+
+    - name: Remove the legacy Docker list managed by this role
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/docker.list
+        state: absent
 
     - name: Install Docker Engine and CLI plugins without starting rootful daemons
       ansible.builtin.apt:
@@ -63,6 +71,17 @@
       ansible.builtin.command:
         argv: [loginctl, enable-linger, "{{ user_context_user }}"]
         creates: "/var/lib/systemd/linger/{{ user_context_user }}"
+
+    - name: Load the rootless Docker netfilter prerequisite at boot
+      ansible.builtin.copy:
+        content: "nf_tables\n"
+        dest: /etc/modules-load.d/docker-rootless.conf
+        mode: "0644"
+
+    - name: Load the rootless Docker netfilter prerequisite now
+      ansible.builtin.command:
+        argv: [/usr/sbin/modprobe, nf_tables]
+        creates: /sys/module/nf_tables
 
 - name: Resolve the Docker owner's account
   ansible.builtin.getent:
