@@ -1,0 +1,16 @@
+---
+- name: Configure Git identity as the owner
+  become: "{{ user_context_user != ansible_facts['user_id'] }}"
+  become_user: "{{ user_context_user }}"
+  environment:
+    HOME: "{{ user_context_home }}"
+  block:
+    - name: Set the Git author and GitHub username
+      community.general.git_config:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        scope: global
+      loop:
+        - { name: user.name, value: "{{ git_identity_name }}" }
+        - { name: user.email, value: "{{ git_identity_email }}" }
+        - { name: github.user, value: "{{ git_identity_github_username }}" }
