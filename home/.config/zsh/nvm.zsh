@@ -1,5 +1,5 @@
 # Prefer the standard location, while preserving explicit and older XDG setups.
-if [[ -z ${NVM_DIR:-} ]]; then
+if [[ -z ${NVM_DIR:-} || ( ! -s $NVM_DIR/nvm.sh && -s $HOME/.nvm/nvm.sh ) ]]; then
   if [[ -s $HOME/.nvm/nvm.sh ]]; then
     export NVM_DIR=$HOME/.nvm
   else

@@ -89,6 +89,12 @@ class ZshConfigTest(unittest.TestCase):
         self.assertEqual(self.shell('print -r -- "$path[1]"'),
                          str(root / "versions/node/v22.9.0/bin"))
 
+    def test_nvm_stale_environment_uses_existing_legacy_installation(self):
+        root = self.nvm_fixture("22.9.0", legacy=True)
+        self.env["NVM_DIR"] = str(self.home / ".config/nvm")
+        self.assertEqual(self.shell('print -r -- "$NVM_DIR"'), str(root))
+        self.assertEqual(self.shell("nvm --version"), "loaded:--version")
+
     def test_nvm_alias_cycle_does_not_block_shell(self):
         root = self.nvm_fixture("loop")
         (root / "alias/loop").write_text("default\n")
